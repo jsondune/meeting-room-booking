@@ -23,8 +23,9 @@ class Holiday extends ActiveRecord
     public function rules()
     {
         return [
-            [['date', 'name_th'], 'required'],
-            ['date', 'date', 'format' => 'php:Y-m-d'],
+            [['holiday_date', 'name_th'], 'required'],
+            [['year'], 'integer'],            
+            ['holiday_date', 'date', 'format' => 'php:Y-m-d'],
             [['name_th', 'name_en'], 'string', 'max' => 255],
             ['description', 'string'],
             ['holiday_type', 'string', 'max' => 50],
@@ -41,7 +42,8 @@ class Holiday extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'date' => 'วันที่',
+            'holiday_date' => 'วันที่',
+            'year' => 'ปี พ.ศ.',            
             'name_th' => 'ชื่อวันหยุด (ไทย)',
             'name_en' => 'ชื่อวันหยุด (English)',
             'description' => 'รายละเอียด',
@@ -74,24 +76,24 @@ class Holiday extends ActiveRecord
         $dateStr = is_string($date) ? $date : date('Y-m-d', strtotime($date));
         
         return self::find()
-            ->where(['date' => $dateStr, 'is_active' => true])
+            ->where(['holiday_date' => $dateStr, 'is_active' => true])
             ->exists();
     }
     
     public static function getHolidaysInRange($startDate, $endDate)
     {
         return self::find()
-            ->where(['between', 'date', $startDate, $endDate])
+            ->where(['between', 'holiday_date', $startDate, $endDate])
             ->andWhere(['is_active' => true])
-            ->orderBy(['date' => SORT_ASC])
+            ->orderBy(['holiday_date' => SORT_ASC])
             ->all();
     }
     
     public static function getHolidayDatesInRange($startDate, $endDate)
     {
         return self::find()
-            ->select('date')
-            ->where(['between', 'date', $startDate, $endDate])
+            ->select('holiday_date')
+            ->where(['between', 'holiday_date', $startDate, $endDate])
             ->andWhere(['is_active' => true])
             ->column();
     }
@@ -99,9 +101,9 @@ class Holiday extends ActiveRecord
     public static function getUpcoming($limit = 10)
     {
         return self::find()
-            ->where(['>=', 'date', date('Y-m-d')])
+            ->where(['>=', 'holiday_date', date('Y-m-d')])
             ->andWhere(['is_active' => true])
-            ->orderBy(['date' => SORT_ASC])
+            ->orderBy(['holiday_date' => SORT_ASC])
             ->limit($limit)
             ->all();
     }

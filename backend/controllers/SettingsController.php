@@ -226,7 +226,7 @@ class SettingsController extends BaseController
 
         $file = UploadedFile::getInstanceByName('file');
         if (!$file) {
-            return ['success' => false, 'message' => 'กรุณาเลือกไฟล์'];
+            return ['success' => false, 'message' => 'โปรดเลือกไฟล์'];
         }
 
         $year = Yii::$app->request->post('year', date('Y'));
@@ -426,7 +426,7 @@ class SettingsController extends BaseController
 
         $email = Yii::$app->request->post('email');
         if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return ['success' => false, 'message' => 'กรุณาระบุอีเมลที่ถูกต้อง'];
+            return ['success' => false, 'message' => 'โปรดระบุอีเมลที่ถูกต้อง'];
         }
 
         try {
@@ -527,7 +527,7 @@ class SettingsController extends BaseController
 
         $file = UploadedFile::getInstanceByName('file');
         if (!$file) {
-            return ['success' => false, 'message' => 'กรุณาเลือกไฟล์'];
+            return ['success' => false, 'message' => 'โปรดเลือกไฟล์'];
         }
 
         try {

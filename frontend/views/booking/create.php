@@ -34,8 +34,8 @@ $purposes = [
     'other' => 'อื่นๆ',
 ];
 
-// Pre-selected room (from model or GET parameter)
-$selectedRoomId = $model->room_id ?? Yii::$app->request->get('room_id');
+// Pre-selected room
+$selectedRoomId = Yii::$app->request->get('room_id');
 ?>
 
 <div class="booking-create">
@@ -57,39 +57,25 @@ $selectedRoomId = $model->room_id ?? Yii::$app->request->get('room_id');
                 <form id="bookingForm" method="post" action="<?= Url::to(['booking/create']) ?>">
                     <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>" value="<?= Yii::$app->request->csrfToken ?>">
                     
-                    <?php 
-                    // Determine initial step - if there's a POST request with errors, start from step 2 or 3
-                    $initialStep = 1;
-                    $isPostBack = Yii::$app->request->isPost;
-                    if ($isPostBack && $model->hasErrors()) {
-                        // If validation error, go to step 2 (meeting details)
-                        $initialStep = 2;
-                    }
-                    ?>
-                    
                     <!-- Step Indicator -->
                     <div class="card shadow-sm border-0 mb-4">
                         <div class="card-body py-4">
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <div class="step-indicator <?= $initialStep == 1 ? 'active' : ($initialStep > 1 ? 'completed' : '') ?>" data-step="1">
-                                        <div class="step-number <?= $initialStep >= 1 ? 'bg-primary' : 'bg-secondary' ?> text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">
-                                            <?= $initialStep > 1 ? '<i class="bi bi-check"></i>' : '1' ?>
-                                        </div>
+                                    <div class="step-indicator active" data-step="1">
+                                        <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">1</div>
                                         <div class="small fw-semibold">เลือกห้อง & วันเวลา</div>
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="step-indicator <?= $initialStep == 2 ? 'active' : ($initialStep > 2 ? 'completed' : '') ?>" data-step="2">
-                                        <div class="step-number <?= $initialStep >= 2 ? 'bg-primary' : 'bg-secondary' ?> text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">
-                                            <?= $initialStep > 2 ? '<i class="bi bi-check"></i>' : '2' ?>
-                                        </div>
+                                    <div class="step-indicator" data-step="2">
+                                        <div class="step-number bg-secondary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">2</div>
                                         <div class="small fw-semibold">รายละเอียดการประชุม</div>
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="step-indicator <?= $initialStep == 3 ? 'active' : '' ?>" data-step="3">
-                                        <div class="step-number <?= $initialStep == 3 ? 'bg-primary' : 'bg-secondary' ?> text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">3</div>
+                                    <div class="step-indicator" data-step="3">
+                                        <div class="step-number bg-secondary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">3</div>
                                         <div class="small fw-semibold">ยืนยันการจอง</div>
                                     </div>
                                 </div>
@@ -98,7 +84,7 @@ $selectedRoomId = $model->room_id ?? Yii::$app->request->get('room_id');
                     </div>
 
                     <!-- Step 1: Room & Time Selection -->
-                    <div class="step-content" id="step1" style="<?= $initialStep != 1 ? 'display: none;' : '' ?>">
+                    <div class="step-content" id="step1">
                         <div class="card shadow-sm border-0 mb-4">
                             <div class="card-header bg-white">
                                 <h5 class="card-title mb-0">
@@ -162,18 +148,15 @@ $selectedRoomId = $model->room_id ?? Yii::$app->request->get('room_id');
                                     <div class="col-md-4">
                                         <label class="form-label">วันที่ประชุม <span class="text-danger">*</span></label>
                                         <input type="date" class="form-control" name="Booking[booking_date]" id="bookingDate" 
-                                               value="<?= Html::encode($model->booking_date ?? date('Y-m-d', strtotime('+1 day'))) ?>"
                                                min="<?= date('Y-m-d') ?>" required>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">เวลาเริ่ม <span class="text-danger">*</span></label>
                                         <select class="form-select" name="Booking[start_time]" id="startTime" required>
                                             <option value="">-- เลือก --</option>
-                                            <?php 
-                                            $selectedStartTime = substr($model->start_time ?? '', 0, 5);
-                                            for ($h = 8; $h <= 17; $h++): ?>
-                                                <option value="<?= sprintf('%02d:00', $h) ?>" <?= $selectedStartTime == sprintf('%02d:00', $h) ? 'selected' : '' ?>><?= sprintf('%02d:00 น.', $h) ?></option>
-                                                <option value="<?= sprintf('%02d:30', $h) ?>" <?= $selectedStartTime == sprintf('%02d:30', $h) ? 'selected' : '' ?>><?= sprintf('%02d:30 น.', $h) ?></option>
+                                            <?php for ($h = 8; $h <= 17; $h++): ?>
+                                                <option value="<?= sprintf('%02d:00', $h) ?>"><?= sprintf('%02d:00 น.', $h) ?></option>
+                                                <option value="<?= sprintf('%02d:30', $h) ?>"><?= sprintf('%02d:30 น.', $h) ?></option>
                                             <?php endfor; ?>
                                         </select>
                                     </div>
@@ -181,11 +164,9 @@ $selectedRoomId = $model->room_id ?? Yii::$app->request->get('room_id');
                                         <label class="form-label">เวลาสิ้นสุด <span class="text-danger">*</span></label>
                                         <select class="form-select" name="Booking[end_time]" id="endTime" required>
                                             <option value="">-- เลือก --</option>
-                                            <?php 
-                                            $selectedEndTime = substr($model->end_time ?? '', 0, 5);
-                                            for ($h = 9; $h <= 18; $h++): ?>
-                                                <option value="<?= sprintf('%02d:00', $h) ?>" <?= $selectedEndTime == sprintf('%02d:00', $h) ? 'selected' : '' ?>><?= sprintf('%02d:00 น.', $h) ?></option>
-                                                <option value="<?= sprintf('%02d:30', $h) ?>" <?= $selectedEndTime == sprintf('%02d:30', $h) ? 'selected' : '' ?>><?= sprintf('%02d:30 น.', $h) ?></option>
+                                            <?php for ($h = 9; $h <= 18; $h++): ?>
+                                                <option value="<?= sprintf('%02d:00', $h) ?>"><?= sprintf('%02d:00 น.', $h) ?></option>
+                                                <option value="<?= sprintf('%02d:30', $h) ?>"><?= sprintf('%02d:30 น.', $h) ?></option>
                                             <?php endfor; ?>
                                         </select>
                                     </div>
@@ -232,7 +213,7 @@ $selectedRoomId = $model->room_id ?? Yii::$app->request->get('room_id');
                     </div>
 
                     <!-- Step 2: Meeting Details -->
-                    <div class="step-content" id="step2" style="<?= $initialStep != 2 ? 'display: none;' : '' ?>">
+                    <div class="step-content" id="step2" style="display: none;">
                         <div class="card shadow-sm border-0 mb-4">
                             <div class="card-header bg-white">
                                 <h5 class="card-title mb-0">
@@ -244,7 +225,6 @@ $selectedRoomId = $model->room_id ?? Yii::$app->request->get('room_id');
                                     <div class="col-md-6">
                                         <label class="form-label">หัวข้อ/เรื่อง <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="Booking[meeting_title]" id="topic" 
-                                               value="<?= Html::encode($model->meeting_title ?? '') ?>"
                                                placeholder="ระบุหัวข้อการประชุม" required>
                                     </div>
                                     <div class="col-md-6">
@@ -252,26 +232,24 @@ $selectedRoomId = $model->room_id ?? Yii::$app->request->get('room_id');
                                         <select class="form-select" name="Booking[meeting_type]" id="purpose" required>
                                             <option value="">-- เลือกวัตถุประสงค์ --</option>
                                             <?php foreach ($purposes as $key => $label): ?>
-                                                <option value="<?= $key ?>" <?= ($model->meeting_type ?? '') == $key ? 'selected' : '' ?>><?= $label ?></option>
+                                                <option value="<?= $key ?>"><?= $label ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">จำนวนผู้เข้าร่วม <span class="text-danger">*</span></label>
                                         <input type="number" class="form-control" name="Booking[attendees_count]" id="attendees" 
-                                               value="<?= Html::encode($model->attendees_count ?? '') ?>"
                                                min="1" placeholder="ระบุจำนวนคน" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">ผู้ติดต่อ</label>
                                         <input type="text" class="form-control" name="Booking[contact_person]" 
-                                               value="<?= Html::encode($model->contact_person ?? '') ?>"
                                                placeholder="ชื่อผู้ติดต่อ">
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label">รายละเอียดเพิ่มเติม</label>
                                         <textarea class="form-control" name="Booking[meeting_description]" rows="3" 
-                                                  placeholder="ระบุรายละเอียดเพิ่มเติม (ถ้ามี)"><?= Html::encode($model->meeting_description ?? '') ?></textarea>
+                                                  placeholder="ระบุรายละเอียดเพิ่มเติม (ถ้ามี)"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -284,37 +262,32 @@ $selectedRoomId = $model->room_id ?? Yii::$app->request->get('room_id');
                                 </h5>
                             </div>
                             <div class="card-body">
-                                <?php 
-                                // Get previously selected equipment and services
-                                $selectedEquipment = Yii::$app->request->post('equipment', []);
-                                $selectedServices = Yii::$app->request->post('services', []);
-                                ?>
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <h6 class="mb-3">อุปกรณ์เพิ่มเติม</h6>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input extra-item" type="checkbox" name="equipment[]" value="laptop" data-price="200" <?= in_array('laptop', $selectedEquipment) ? 'checked' : '' ?>>
+                                            <input class="form-check-input extra-item" type="checkbox" name="equipment[]" value="laptop" data-price="200">
                                             <label class="form-check-label d-flex justify-content-between">
                                                 <span>โน๊ตบุ๊ค</span>
                                                 <span class="text-muted">+200 ฿</span>
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input extra-item" type="checkbox" name="equipment[]" value="wireless_mic" data-price="100" <?= in_array('wireless_mic', $selectedEquipment) ? 'checked' : '' ?>>
+                                            <input class="form-check-input extra-item" type="checkbox" name="equipment[]" value="wireless_mic" data-price="100">
                                             <label class="form-check-label d-flex justify-content-between">
                                                 <span>ไมโครโฟนไร้สาย</span>
                                                 <span class="text-muted">+100 ฿</span>
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input extra-item" type="checkbox" name="equipment[]" value="webcam" data-price="150" <?= in_array('webcam', $selectedEquipment) ? 'checked' : '' ?>>
+                                            <input class="form-check-input extra-item" type="checkbox" name="equipment[]" value="webcam" data-price="150">
                                             <label class="form-check-label d-flex justify-content-between">
                                                 <span>Webcam HD</span>
                                                 <span class="text-muted">+150 ฿</span>
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input extra-item" type="checkbox" name="equipment[]" value="flipchart" data-price="50" <?= in_array('flipchart', $selectedEquipment) ? 'checked' : '' ?>>
+                                            <input class="form-check-input extra-item" type="checkbox" name="equipment[]" value="flipchart" data-price="50">
                                             <label class="form-check-label d-flex justify-content-between">
                                                 <span>Flip Chart</span>
                                                 <span class="text-muted">+50 ฿</span>
@@ -324,28 +297,28 @@ $selectedRoomId = $model->room_id ?? Yii::$app->request->get('room_id');
                                     <div class="col-md-6">
                                         <h6 class="mb-3">บริการเพิ่มเติม</h6>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input extra-item" type="checkbox" name="services[]" value="water" data-price="60" <?= in_array('water', $selectedServices) ? 'checked' : '' ?>>
+                                            <input class="form-check-input extra-item" type="checkbox" name="services[]" value="water" data-price="60">
                                             <label class="form-check-label d-flex justify-content-between">
                                                 <span>น้ำดื่ม (12 ขวด)</span>
                                                 <span class="text-muted">+60 ฿</span>
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input extra-item" type="checkbox" name="services[]" value="coffee" data-price="30" <?= in_array('coffee', $selectedServices) ? 'checked' : '' ?>>
+                                            <input class="form-check-input extra-item" type="checkbox" name="services[]" value="coffee" data-price="30">
                                             <label class="form-check-label d-flex justify-content-between">
                                                 <span>กาแฟ/ชา (ต่อคน)</span>
                                                 <span class="text-muted">+30 ฿/คน</span>
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input extra-item" type="checkbox" name="services[]" value="snack" data-price="80" <?= in_array('snack', $selectedServices) ? 'checked' : '' ?>>
+                                            <input class="form-check-input extra-item" type="checkbox" name="services[]" value="snack" data-price="80">
                                             <label class="form-check-label d-flex justify-content-between">
                                                 <span>อาหารว่าง (ต่อคน)</span>
                                                 <span class="text-muted">+80 ฿/คน</span>
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input extra-item" type="checkbox" name="services[]" value="lunch" data-price="150" <?= in_array('lunch', $selectedServices) ? 'checked' : '' ?>>
+                                            <input class="form-check-input extra-item" type="checkbox" name="services[]" value="lunch" data-price="150">
                                             <label class="form-check-label d-flex justify-content-between">
                                                 <span>อาหารกลางวัน (ต่อคน)</span>
                                                 <span class="text-muted">+150 ฿/คน</span>
@@ -366,19 +339,18 @@ $selectedRoomId = $model->room_id ?? Yii::$app->request->get('room_id');
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label">รูปแบบการจัดโต๊ะ</label>
-                                        <?php $tableLayout = $model->room_setup ?? 'boardroom'; ?>
-                                        <select class="form-select" name="Booking[room_setup]">
-                                            <option value="theater" <?= $tableLayout == 'theater' ? 'selected' : '' ?>>Theater Style</option>
-                                            <option value="classroom" <?= $tableLayout == 'classroom' ? 'selected' : '' ?>>Classroom Style</option>
-                                            <option value="u_shape" <?= $tableLayout == 'u_shape' ? 'selected' : '' ?>>U-Shape</option>
-                                            <option value="boardroom" <?= $tableLayout == 'boardroom' ? 'selected' : '' ?>>Boardroom</option>
-                                            <option value="banquet" <?= $tableLayout == 'banquet' ? 'selected' : '' ?>>Banquet</option>
+                                        <select class="form-select" name="table_layout">
+                                            <option value="theater">Theater Style</option>
+                                            <option value="classroom">Classroom Style</option>
+                                            <option value="u_shape">U-Shape</option>
+                                            <option value="boardroom" selected>Boardroom</option>
+                                            <option value="banquet">Banquet</option>
                                         </select>
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label">หมายเหตุ/ความต้องการพิเศษ</label>
                                         <textarea class="form-control" name="Booking[special_requests]" rows="2" 
-                                                  placeholder="เช่น ต้องการเปิดแอร์ล่วงหน้า 30 นาที"><?= Html::encode($model->special_requests ?? '') ?></textarea>
+                                                  placeholder="เช่น ต้องการเปิดแอร์ล่วงหน้า 30 นาที"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -729,7 +701,16 @@ $this->registerCss($css);
         var attendees = document.getElementById('attendees').value;
         
         document.getElementById('confirmRoom').textContent = roomName;
-        document.getElementById('confirmDate').textContent = date ? new Date(date).toLocaleDateString('th-TH', {day: 'numeric', month: 'long', year: 'numeric'}) : '-';
+        // Use ThaiDate helper if available
+        if (date) {
+            if (typeof ThaiDate !== 'undefined') {
+                document.getElementById('confirmDate').textContent = ThaiDate.format(date, 'long');
+            } else {
+                document.getElementById('confirmDate').textContent = new Date(date).toLocaleDateString('th-TH', {day: 'numeric', month: 'long', year: 'numeric'});
+            }
+        } else {
+            document.getElementById('confirmDate').textContent = '-';
+        }
         document.getElementById('confirmTime').textContent = startTime + ' - ' + endTime + ' น.';
         document.getElementById('confirmTopic').textContent = topic || '-';
         document.getElementById('confirmPurpose').textContent = purposeLabels[purpose] || '-';

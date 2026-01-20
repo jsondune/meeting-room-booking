@@ -194,7 +194,7 @@ $homeUrl = Url::to(['/'], true);
                     <tr>
                         <td style="text-align: center; padding: 0 20px;">
                             <p style="color: #999; font-size: 11px; line-height: 1.6;">
-                                อีเมลนี้ถูกส่งอัตโนมัติจากระบบ กรุณาอย่าตอบกลับอีเมลนี้โดยตรง
+                                อีเมลนี้ถูกส่งอัตโนมัติจากระบบ โปรดอย่าตอบกลับอีเมลนี้โดยตรง
                             </p>
                         </td>
                     </tr>

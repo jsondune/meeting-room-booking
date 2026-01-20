@@ -568,14 +568,14 @@ function approveBooking(id) {
 }
 
 function rejectBooking(id) {
-    var reason = prompt('กรุณาระบุเหตุผลในการปฏิเสธ:');
+    var reason = prompt('โปรดระบุเหตุผลในการปฏิเสธ:');
     if (reason !== null) {
         window.location.href = '{$rejectUrl}?id=' + id + '&reason=' + encodeURIComponent(reason);
     }
 }
 
 function cancelBooking(id) {
-    var reason = prompt('กรุณาระบุเหตุผลในการยกเลิก:');
+    var reason = prompt('โปรดระบุเหตุผลในการยกเลิก:');
     if (reason !== null) {
         window.location.href = 'cancel?id=' + id + '&reason=' + encodeURIComponent(reason);
     }

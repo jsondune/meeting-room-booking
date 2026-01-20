@@ -26,7 +26,9 @@ $unreadNotifications = Yii::$app->user->isGuest ? 0 : Notification::getUnreadCou
 <head>
     <title><?= Html::encode($this->title) ?> | ระบบจองห้องประชุม</title>
     <?php $this->head() ?>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         :root {
@@ -41,7 +43,7 @@ $unreadNotifications = Yii::$app->user->isGuest ? 0 : Notification::getUnreadCou
         }
         
         body {
-            font-family: 'Sarabun', sans-serif;
+            font-family: 'Prompt', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background-color: #f8fafc;
         }
         
@@ -532,7 +534,7 @@ $unreadNotifications = Yii::$app->user->isGuest ? 0 : Notification::getUnreadCou
     <!-- Footer -->
     <footer class="text-center py-3 border-top bg-white">
         <small class="text-muted">
-            &copy; <?= date('Y') ?> ระบบจองห้องประชุม - Meeting Room Booking System v1.0
+            &copy; <?= date('Y') + 543 ?> ระบบจองห้องประชุม - Meeting Room Booking System v1.0
         </small>
     </footer>
 </div>
@@ -554,6 +556,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<!-- Thai Date Formatter -->
+<script src="<?= Yii::getAlias('@web') ?>/js/thai-date.js"></script>
 
 <?php $this->endBody() ?>
 </body>

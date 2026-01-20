@@ -23,10 +23,19 @@ $this->beginPage();
     <title><?= Html::encode($this->title) ?> | <?= Yii::$app->name ?> - Backend</title>
     <?php $this->head() ?>
     
+    <!-- Google Fonts - Prompt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        * {
+            font-family: 'Prompt', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         
         body {
@@ -35,6 +44,7 @@ $this->beginPage();
             display: flex;
             align-items: center;
             justify-content: center;
+            font-family: 'Prompt', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         
         .auth-container {
@@ -237,7 +247,7 @@ $this->beginPage();
 </div>
 
 <div class="version-info">
-    <?= Yii::$app->name ?> v1.0.0 &copy; <?= date('Y') ?> PBRI
+    <?= Yii::$app->name ?> v1.0.0 &copy; <?= date('Y') + 543 ?> PBRI
 </div>
 
 <?php $this->endBody() ?>

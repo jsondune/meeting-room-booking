@@ -430,7 +430,7 @@ function bulkAction(action) {
     });
     
     if (ids.length === 0) {
-        alert('กรุณาเลือกผู้ใช้อย่างน้อย 1 คน');
+        alert('โปรดเลือกผู้ใช้อย่างน้อย 1 คน');
         return;
     }
     

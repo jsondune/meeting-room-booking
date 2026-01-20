@@ -27,9 +27,9 @@ $isUpdate = !$model->isNewRecord;
                         <div class="row g-3">
                             <div class="col-md-8">
                                 <label class="form-label">ชื่อหน่วยงาน <span class="text-danger">*</span></label>
-                                <input type="text" name="Department[name]" 
+                                <input type="text" name="Department[name_th]" 
                                     class="form-control" 
-                                    value="<?= Html::encode($model->name ?? '') ?>"
+                                    value="<?= Html::encode($model->name_th ?? '') ?>"
                                     placeholder="เช่น กองกลาง, คณะวิทยาศาสตร์"
                                     required>
                             </div>
@@ -49,13 +49,6 @@ $isUpdate = !$model->isNewRecord;
                                     class="form-control" 
                                     value="<?= Html::encode($model->name_en ?? '') ?>"
                                     placeholder="English name">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">ชื่อย่อ</label>
-                                <input type="text" name="Department[short_name]" 
-                                    class="form-control" 
-                                    value="<?= Html::encode($model->short_name ?? '') ?>"
-                                    placeholder="ชื่อย่อหน่วยงาน">
                             </div>
                             <div class="col-12">
                                 <label class="form-label">คำอธิบาย</label>
@@ -81,7 +74,7 @@ $isUpdate = !$model->isNewRecord;
                                 <label class="form-label">หน่วยงานหลัก</label>
                                 <select name="Department[parent_id]" class="form-select">
                                     <option value="">-- ไม่มี (เป็นหน่วยงานระดับสูงสุด) --</option>
-                                    <option value="1" <?= ($model->parent_id ?? '') == 1 ? 'selected' : '' ?>>สำนักงานเลขานุการกรม</option>
+                                    <option value="1" <?= ($model->parent_id ?? '') == 1 ? 'selected' : '' ?>>สำนักงานอธิการบดี</option>
                                     <option value="2" <?= ($model->parent_id ?? '') == 2 ? 'selected' : '' ?>>คณะวิทยาศาสตร์</option>
                                     <option value="3" <?= ($model->parent_id ?? '') == 3 ? 'selected' : '' ?>>คณะวิศวกรรมศาสตร์</option>
                                     <option value="4" <?= ($model->parent_id ?? '') == 4 ? 'selected' : '' ?>>คณะมนุษยศาสตร์</option>
@@ -89,22 +82,13 @@ $isUpdate = !$model->isNewRecord;
                                 </select>
                                 <div class="form-text">เลือกหน่วยงานที่อยู่เหนือหน่วยงานนี้ในโครงสร้างองค์กร</div>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label">ระดับ</label>
-                                <select name="Department[level]" class="form-select">
-                                    <option value="1" <?= ($model->level ?? 1) == 1 ? 'selected' : '' ?>>ระดับ 1 (สูงสุด)</option>
-                                    <option value="2" <?= ($model->level ?? 1) == 2 ? 'selected' : '' ?>>ระดับ 2</option>
-                                    <option value="3" <?= ($model->level ?? 1) == 3 ? 'selected' : '' ?>>ระดับ 3</option>
-                                    <option value="4" <?= ($model->level ?? 1) == 4 ? 'selected' : '' ?>>ระดับ 4</option>
-                                    <option value="5" <?= ($model->level ?? 1) == 5 ? 'selected' : '' ?>>ระดับ 5</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label class="form-label">ลำดับการแสดง</label>
                                 <input type="number" name="Department[sort_order]" 
                                     class="form-control" 
                                     value="<?= Html::encode($model->sort_order ?? 0) ?>"
                                     min="0">
+                                <div class="form-text">ตัวเลขน้อยแสดงก่อน</div>
                             </div>
                         </div>
 
@@ -169,7 +153,7 @@ $isUpdate = !$model->isNewRecord;
                                     <input type="email" name="Department[email]" 
                                         class="form-control" 
                                         value="<?= Html::encode($model->email ?? '') ?>"
-                                        placeholder="department@gmail.com">
+                                        placeholder="department@university.ac.th">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -239,11 +223,11 @@ $isUpdate = !$model->isNewRecord;
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">สถานะ</label>
-                            <select name="Department[status]" class="form-select">
-                                <option value="active" <?= ($model->status ?? 'active') === 'active' ? 'selected' : '' ?>>
+                            <select name="Department[is_active]" class="form-select">
+                                <option value="1" <?= ($model->is_active ?? true) ? 'selected' : '' ?>>
                                     ใช้งานอยู่
                                 </option>
-                                <option value="inactive" <?= ($model->status ?? '') === 'inactive' ? 'selected' : '' ?>>
+                                <option value="0" <?= !($model->is_active ?? true) ? 'selected' : '' ?>>
                                     ไม่ใช้งาน
                                 </option>
                             </select>
@@ -271,85 +255,6 @@ $isUpdate = !$model->isNewRecord;
                                 <?= $isUpdate ? 'บันทึกการแก้ไข' : 'สร้างหน่วยงาน' ?>
                             </button>
                             <?= Html::a('<i class="fas fa-times me-1"></i> ยกเลิก', ['index'], ['class' => 'btn btn-outline-secondary']) ?>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Logo Upload -->
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white py-3">
-                        <h5 class="mb-0">
-                            <i class="fas fa-image text-info me-2"></i>โลโก้หน่วยงาน
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center mb-3">
-                            <div class="border rounded bg-light d-flex align-items-center justify-content-center mx-auto" 
-                                style="width: 150px; height: 150px;" id="logoPreview">
-                                <?php if ($isUpdate && !empty($model->logo)): ?>
-                                    <img src="<?= Html::encode($model->logo) ?>" 
-                                        class="img-fluid" 
-                                        style="max-height: 140px;">
-                                <?php else: ?>
-                                    <div class="text-muted">
-                                        <i class="fas fa-building fa-3x mb-2"></i>
-                                        <div class="small">ยังไม่มีโลโก้</div>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <input type="file" name="logo" 
-                                class="form-control" 
-                                id="logoInput"
-                                accept="image/*">
-                        </div>
-                        <div class="form-text text-center">
-                            PNG, JPG ขนาดไม่เกิน 2MB<br>
-                            แนะนำขนาด 200x200 พิกเซล
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Booking Settings -->
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white py-3">
-                        <h5 class="mb-0">
-                            <i class="fas fa-calendar-alt text-danger me-2"></i>การตั้งค่าการจอง
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-check form-switch mb-3">
-                            <input class="form-check-input" type="checkbox" 
-                                name="Department[can_book_external]" 
-                                id="canBookExternal"
-                                value="1"
-                                <?= ($model->can_book_external ?? true) ? 'checked' : '' ?>>
-                            <label class="form-check-label" for="canBookExternal">
-                                จองห้องประชุมหน่วยงานอื่นได้
-                            </label>
-                        </div>
-                        <div class="form-check form-switch mb-3">
-                            <input class="form-check-input" type="checkbox" 
-                                name="Department[require_approval]" 
-                                id="requireApproval"
-                                value="1"
-                                <?= ($model->require_approval ?? true) ? 'checked' : '' ?>>
-                            <label class="form-check-label" for="requireApproval">
-                                ต้องขออนุมัติก่อนจอง
-                            </label>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">จำนวนการจองสูงสุด/เดือน</label>
-                            <div class="input-group">
-                                <input type="number" name="Department[max_bookings_per_month]" 
-                                    class="form-control" 
-                                    value="<?= Html::encode($model->max_bookings_per_month ?? '') ?>"
-                                    min="0"
-                                    placeholder="ไม่จำกัด">
-                                <span class="input-group-text">ครั้ง</span>
-                            </div>
-                            <div class="form-text">เว้นว่างหากไม่จำกัด</div>
                         </div>
                     </div>
                 </div>

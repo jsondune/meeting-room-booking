@@ -28,7 +28,7 @@ class AuthController extends BaseController
         $password = Yii::$app->request->post('password');
 
         if (empty($username) || empty($password)) {
-            return $this->error('กรุณาระบุชื่อผู้ใช้และรหัสผ่าน', 400);
+            return $this->error('โปรดระบุชื่อผู้ใช้และรหัสผ่าน', 400);
         }
 
         // Find user by username or email
@@ -55,7 +55,7 @@ class AuthController extends BaseController
                 return [
                     'success' => false,
                     'requires_2fa' => true,
-                    'message' => 'กรุณาระบุรหัสยืนยันตัวตน',
+                    'message' => 'โปรดระบุรหัสยืนยันตัวตน',
                 ];
             }
 
@@ -137,7 +137,7 @@ class AuthController extends BaseController
 
             return $this->success([
                 'user' => $this->formatUser($model),
-            ], 'ลงทะเบียนสำเร็จ กรุณาตรวจสอบอีเมลเพื่อยืนยันบัญชี');
+            ], 'ลงทะเบียนสำเร็จ โปรดตรวจสอบอีเมลเพื่อยืนยันบัญชี');
         }
 
         return $this->error('เกิดข้อผิดพลาดในการลงทะเบียน', 500);
@@ -154,7 +154,7 @@ class AuthController extends BaseController
         $refreshToken = Yii::$app->request->post('refresh_token');
 
         if (empty($refreshToken)) {
-            return $this->error('กรุณาระบุ refresh token', 400);
+            return $this->error('โปรดระบุ refresh token', 400);
         }
 
         $decoded = $this->validateToken($refreshToken);
@@ -206,7 +206,7 @@ class AuthController extends BaseController
         $email = Yii::$app->request->post('email');
 
         if (empty($email)) {
-            return $this->error('กรุณาระบุอีเมล', 400);
+            return $this->error('โปรดระบุอีเมล', 400);
         }
 
         $user = User::findByEmail($email);
@@ -242,7 +242,7 @@ class AuthController extends BaseController
         $passwordConfirm = Yii::$app->request->post('password_confirm');
 
         if (empty($token)) {
-            return $this->error('กรุณาระบุ token', 400);
+            return $this->error('โปรดระบุ token', 400);
         }
 
         if (empty($password) || strlen($password) < 8) {
@@ -281,7 +281,7 @@ class AuthController extends BaseController
         $token = Yii::$app->request->get('token');
 
         if (empty($token)) {
-            return $this->error('กรุณาระบุ token', 400);
+            return $this->error('โปรดระบุ token', 400);
         }
 
         $user = User::findByVerificationToken($token);

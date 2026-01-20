@@ -487,7 +487,7 @@ class BookingController extends Controller
         if (!$model->actual_start_time) {
             return [
                 'success' => false,
-                'message' => 'กรุณาเช็คอินก่อนเช็คเอาท์',
+                'message' => 'โปรดเช็คอินก่อนเช็คเอาท์',
             ];
         }
 

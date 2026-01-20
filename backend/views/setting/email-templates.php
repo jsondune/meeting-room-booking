@@ -335,13 +335,13 @@ $selectedTemplate = $templates[0]; // Default to first template
                 <a href="{{site_url}}/booking/view?id={{booking_id}}" style="display: inline-block; background: #0d6efd; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">ดูรายละเอียดการจอง</a>
             </div>
             
-            <p style="color: #666; font-size: 14px;">หากคุณมีข้อสงสัย กรุณาติดต่อ {{contact_email}}</p>
+            <p style="color: #666; font-size: 14px;">หากคุณมีข้อสงสัย โปรดติดต่อ {{contact_email}}</p>
         </div>
         
         <!-- Footer -->
         <div style="text-align: center; margin-top: 20px; color: #666; font-size: 12px;">
             <p>{{site_name}}</p>
-            <p>อีเมลนี้ถูกส่งโดยอัตโนมัติ กรุณาอย่าตอบกลับ</p>
+            <p>อีเมลนี้ถูกส่งโดยอัตโนมัติ โปรดอย่าตอบกลับ</p>
         </div>
     </div>
 </body>
@@ -365,11 +365,11 @@ $selectedTemplate = $templates[0]; // Default to first template
 
 ดูรายละเอียดการจอง: {{site_url}}/booking/view?id={{booking_id}}
 
-หากคุณมีข้อสงสัย กรุณาติดต่อ {{contact_email}}
+หากคุณมีข้อสงสัย โปรดติดต่อ {{contact_email}}
 
 --
 {{site_name}}
-อีเมลนี้ถูกส่งโดยอัตโนมัติ กรุณาอย่าตอบกลับ</textarea>
+อีเมลนี้ถูกส่งโดยอัตโนมัติ โปรดอย่าตอบกลับ</textarea>
                             </div>
 
                             <!-- Preview -->
@@ -658,7 +658,7 @@ function resetTemplate() {
 function sendTestEmail() {
     const email = document.getElementById('testEmail').value;
     if (!email) {
-        alert('กรุณากรอกอีเมล');
+        alert('โปรดกรอกอีเมล');
         return;
     }
     

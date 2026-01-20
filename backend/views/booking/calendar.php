@@ -11,9 +11,13 @@ $this->title = 'ปฏิทินการจอง';
 $this->params['breadcrumbs'][] = ['label' => 'การจองห้องประชุม', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-// Register FullCalendar CSS and JS
-$this->registerCssFile('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css');
-$this->registerJsFile('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js', ['position' => \yii\web\View::POS_HEAD]);
+// Register FullCalendar JS
+$this->registerJsFile('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js', [
+    'position' => \yii\web\View::POS_HEAD
+]);
+
+// Ensure rooms is an array
+$roomsArray = (is_array($rooms)) ? $rooms : [];
 ?>
 
 <div class="booking-calendar">
@@ -41,15 +45,11 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.gl
                         <label class="form-label fw-medium">ห้องประชุม</label>
                         <select id="room-filter" class="form-select form-select-sm">
                             <option value="">ทุกห้อง</option>
-                            <?php if (!empty($rooms) && is_array($rooms)): ?>
-                                <?php foreach ($rooms as $roomId => $roomName): ?>
-                                    <?php if (is_scalar($roomId)): ?>
-                                    <option value="<?= Html::encode($roomId) ?>">
-                                        <?= Html::encode(is_string($roomName) ? $roomName : 'ห้องประชุม') ?>
-                                    </option>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                            <?php foreach ($roomsArray as $roomId => $roomName): ?>
+                                <option value="<?= Html::encode($roomId) ?>">
+                                    <?= Html::encode($roomName) ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
@@ -70,18 +70,6 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.gl
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input status-filter" type="checkbox" value="rejected" id="status-rejected">
-                                <label class="form-check-label" for="status-rejected">
-                                    <span class="badge bg-danger me-1">&nbsp;</span> ถูกปฏิเสธ
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input status-filter" type="checkbox" value="cancelled" id="status-cancelled">
-                                <label class="form-check-label" for="status-cancelled">
-                                    <span class="badge bg-secondary me-1">&nbsp;</span> ยกเลิก
-                                </label>
-                            </div>
-                            <div class="form-check">
                                 <input class="form-check-input status-filter" type="checkbox" value="completed" id="status-completed">
                                 <label class="form-check-label" for="status-completed">
                                     <span class="badge bg-info me-1">&nbsp;</span> เสร็จสิ้น
@@ -94,23 +82,19 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.gl
                     <div class="mb-3">
                         <label class="form-label fw-medium">คำอธิบายสี</label>
                         <div class="legend-items">
-                            <?php 
+                            <?php
                             $colorArray = ['#3788d8', '#28a745', '#dc3545', '#ffc107', '#17a2b8', '#6f42c1', '#fd7e14', '#20c997'];
                             $index = 0;
-                            if (!empty($rooms) && is_array($rooms)):
-                                foreach ($rooms as $roomId => $roomName): 
-                                    if (!is_scalar($roomId)) continue;
-                                    $color = $colorArray[$index % count($colorArray)];
-                                    $displayName = is_string($roomName) ? $roomName : (is_array($roomName) ? ($roomName['name_th'] ?? 'ห้องประชุม') : 'ห้องประชุม');
+                            foreach ($roomsArray as $roomId => $roomName):
+                                $color = $colorArray[$index % count($colorArray)];
                             ?>
                                 <div class="d-flex align-items-center mb-2">
-                                    <span class="legend-color me-2" style="background-color: <?= $color ?>;"></span>
-                                    <small><?= Html::encode($displayName) ?></small>
+                                    <span class="me-2" style="width:16px;height:16px;border-radius:4px;background-color:<?= $color ?>;display:inline-block;"></span>
+                                    <small><?= Html::encode($roomName) ?></small>
                                 </div>
-                            <?php 
-                                    $index++;
-                                endforeach;
-                            endif;
+                            <?php
+                                $index++;
+                            endforeach;
                             ?>
                         </div>
                     </div>
@@ -128,16 +112,12 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.gl
                         <span class="fw-medium" id="stat-total">0</span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">อนุมัติแล้ว</span>
-                        <span class="fw-medium text-success" id="stat-approved">0</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">รอดำเนินการ</span>
+                        <span class="text-muted">รออนุมัติ</span>
                         <span class="fw-medium text-warning" id="stat-pending">0</span>
                     </div>
                     <div class="d-flex justify-content-between">
-                        <span class="text-muted">ยกเลิก/ปฏิเสธ</span>
-                        <span class="fw-medium text-danger" id="stat-cancelled">0</span>
+                        <span class="text-muted">อนุมัติแล้ว</span>
+                        <span class="fw-medium text-success" id="stat-approved">0</span>
                     </div>
                 </div>
             </div>
@@ -164,60 +144,22 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.gl
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-8">
-                        <h4 id="modal-title" class="mb-3"></h4>
-                        <table class="table table-borderless">
-                            <tr>
-                                <td class="text-muted" style="width: 140px;">รหัสการจอง</td>
-                                <td id="modal-code" class="fw-medium"></td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">ห้องประชุม</td>
-                                <td id="modal-room"></td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">วันที่</td>
-                                <td id="modal-date"></td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">เวลา</td>
-                                <td id="modal-time"></td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">ผู้จอง</td>
-                                <td id="modal-user"></td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">จำนวนผู้เข้าร่วม</td>
-                                <td id="modal-attendees"></td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">วัตถุประสงค์</td>
-                                <td id="modal-purpose"></td>
-                            </tr>
-                        </table>
+                    <div class="col-md-6">
+                        <p><strong>รหัสการจอง:</strong> <span id="modal-code">-</span></p>
+                        <p><strong>หัวข้อ:</strong> <span id="modal-title">-</span></p>
+                        <p><strong>ห้องประชุม:</strong> <span id="modal-room">-</span></p>
+                        <p><strong>ผู้จอง:</strong> <span id="modal-user">-</span></p>
                     </div>
-                    <div class="col-md-4">
-                        <div class="text-center mb-3">
-                            <span id="modal-status" class="badge fs-6 px-3 py-2"></span>
-                        </div>
-                        <div class="card bg-light border-0">
-                            <div class="card-body text-center">
-                                <small class="text-muted d-block mb-1">สร้างเมื่อ</small>
-                                <span id="modal-created"></span>
-                            </div>
-                        </div>
+                    <div class="col-md-6">
+                        <p><strong>วันที่:</strong> <span id="modal-date">-</span></p>
+                        <p><strong>เวลา:</strong> <span id="modal-time">-</span></p>
+                        <p><strong>สถานะ:</strong> <span id="modal-status">-</span></p>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <div id="modal-actions">
-                    <!-- Dynamic buttons based on status -->
-                </div>
-                <a id="modal-view-link" href="#" class="btn btn-outline-primary">
-                    <i class="bi bi-eye me-1"></i> ดูรายละเอียด
-                </a>
+            <div class="modal-footer" id="modal-actions">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                <a href="#" id="modal-view-btn" class="btn btn-primary">ดูรายละเอียด</a>
             </div>
         </div>
     </div>
@@ -237,13 +179,9 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.gl
                         <label class="form-label">ห้องประชุม <span class="text-danger">*</span></label>
                         <select id="quick-room" class="form-select" required>
                             <option value="">-- เลือกห้องประชุม --</option>
-                            <?php if (!empty($rooms) && is_array($rooms)): ?>
-                                <?php foreach ($rooms as $roomId => $roomName): ?>
-                                    <?php if (is_scalar($roomId)): ?>
-                                    <option value="<?= Html::encode($roomId) ?>"><?= Html::encode(is_string($roomName) ? $roomName : 'ห้องประชุม') ?></option>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                            <?php foreach ($roomsArray as $roomId => $roomName): ?>
+                                <option value="<?= Html::encode($roomId) ?>"><?= Html::encode($roomName) ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -257,7 +195,7 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.gl
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">จำนวนผู้เข้าร่วม</label>
-                            <input type="number" id="quick-attendees" class="form-control" value="1" min="1">
+                            <input type="number" id="quick-attendees" class="form-control" min="1" value="5">
                         </div>
                     </div>
                     <div class="row">
@@ -274,8 +212,8 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.gl
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                <button type="button" class="btn btn-primary" id="quick-create-submit">
-                    <i class="bi bi-check-lg me-1"></i> สร้างการจอง
+                <button type="button" class="btn btn-primary" id="quick-submit">
+                    <i class="bi bi-check-lg me-1"></i>จองห้องประชุม
                 </button>
             </div>
         </div>
@@ -283,117 +221,32 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.gl
 </div>
 
 <style>
-.legend-color {
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-    display: inline-block;
-}
-
-#calendar {
-    min-height: 700px;
-}
-
-.fc {
-    font-family: inherit;
-}
-
-.fc .fc-toolbar-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-}
-
-.fc .fc-button {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.875rem;
-}
-
-.fc .fc-button-primary {
-    background-color: var(--bs-primary);
-    border-color: var(--bs-primary);
-}
-
-.fc .fc-button-primary:not(:disabled).fc-button-active,
-.fc .fc-button-primary:not(:disabled):active {
-    background-color: var(--bs-primary);
-    border-color: var(--bs-primary);
-}
-
-.fc .fc-daygrid-day-number {
-    padding: 8px;
-    font-weight: 500;
-}
-
-.fc .fc-daygrid-day.fc-day-today {
-    background-color: rgba(var(--bs-primary-rgb), 0.1);
-}
-
 .fc-event {
     cursor: pointer;
     border-radius: 4px;
-    padding: 2px 6px;
-    font-size: 0.8rem;
+    font-size: 0.85em;
 }
-
-.fc-event-pending {
-    background-color: #ffc107 !important;
-    border-color: #ffc107 !important;
-    color: #000 !important;
+.fc-daygrid-event {
+    white-space: normal !important;
 }
-
-.fc-event-approved {
-    background-color: #28a745 !important;
-    border-color: #28a745 !important;
-}
-
-.fc-event-rejected {
-    background-color: #dc3545 !important;
-    border-color: #dc3545 !important;
-}
-
-.fc-event-cancelled {
-    background-color: #6c757d !important;
-    border-color: #6c757d !important;
-}
-
-.fc-event-completed {
-    background-color: #17a2b8 !important;
-    border-color: #17a2b8 !important;
-}
-
-.fc .fc-timegrid-slot {
-    height: 40px;
-}
-
-.fc .fc-col-header-cell-cushion {
-    padding: 10px 4px;
-    font-weight: 600;
-}
-
-@media (max-width: 767.98px) {
-    .fc .fc-toolbar {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .fc .fc-toolbar-chunk {
-        display: flex;
-        justify-content: center;
-    }
+.fc-toolbar-title {
+    font-size: 1.25rem !important;
 }
 </style>
 
 <?php
 $eventsJson = json_encode($events ?? []);
 $csrfToken = Yii::$app->request->csrfToken;
-$approveUrl = Url::to(['approve']);
-$rejectUrl = Url::to(['reject']);
 $createUrl = Url::to(['create']);
 
 $js = <<<JS
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
-    var allEvents = {$eventsJson};
+    if (!calendarEl) return;
+    
+    var events = {$eventsJson};
+    var currentRoomId = '';
+    var checkedStatuses = ['pending', 'approved'];
     
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
@@ -401,191 +254,121 @@ document.addEventListener('DOMContentLoaded', function() {
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+            right: 'dayGridMonth,timeGridWeek,listWeek'
         },
         buttonText: {
             today: 'วันนี้',
             month: 'เดือน',
             week: 'สัปดาห์',
-            day: 'วัน',
             list: 'รายการ'
         },
-        events: allEvents,
+        // Thai day header
+        dayHeaderFormat: { weekday: 'short' },
+        events: events,
+        
+        // Update title to Buddhist Era
+        datesSet: function(info) {
+            var titleEl = calendarEl.querySelector('.fc-toolbar-title');
+            if (titleEl && typeof ThaiDate !== 'undefined') {
+                var viewDate = info.view.currentStart;
+                var month = ThaiDate.months[viewDate.getMonth()];
+                var year = ThaiDate.toBuddhistYear(viewDate.getFullYear());
+                titleEl.textContent = month + ' ' + year;
+            }
+        },
+        
         eventClick: function(info) {
-            showBookingModal(info.event);
+            var event = info.event;
+            var props = event.extendedProps || {};
+            
+            document.getElementById('modal-code').textContent = props.booking_code || '-';
+            document.getElementById('modal-title').textContent = event.title || '-';
+            document.getElementById('modal-room').textContent = props.room || '-';
+            document.getElementById('modal-user').textContent = props.user || '-';
+            // Format date as Thai Buddhist Era
+            var dateStr = '-';
+            if (event.start) {
+                if (typeof ThaiDate !== 'undefined') {
+                    dateStr = ThaiDate.format(event.start, 'long');
+                } else {
+                    dateStr = event.start.toLocaleDateString('th-TH');
+                }
+            }
+            document.getElementById('modal-date').textContent = dateStr;
+            document.getElementById('modal-time').textContent = props.time || '-';
+            document.getElementById('modal-status').innerHTML = getStatusBadge(props.status);
+            document.getElementById('modal-view-btn').href = props.viewUrl || '#';
+            
+            var modal = new bootstrap.Modal(document.getElementById('bookingModal'));
+            modal.show();
         },
         dateClick: function(info) {
-            // Open quick create modal
             document.getElementById('quick-date').value = info.dateStr;
-            document.getElementById('quick-start').value = '09:00';
-            document.getElementById('quick-end').value = '10:00';
-            var quickModal = new bootstrap.Modal(document.getElementById('quickCreateModal'));
-            quickModal.show();
-        },
-        eventDidMount: function(info) {
-            // Add status class
-            var status = info.event.extendedProps.status;
-            info.el.classList.add('fc-event-' + status);
-            
-            // Add tooltip
-            info.el.setAttribute('title', info.event.title + ' (' + getStatusText(status) + ')');
-        },
-        height: 'auto',
-        navLinks: true,
-        editable: false,
-        selectable: true,
-        selectMirror: true,
-        dayMaxEvents: 3,
-        weekends: true,
-        nowIndicator: true,
-        slotMinTime: '07:00:00',
-        slotMaxTime: '20:00:00'
+            var modal = new bootstrap.Modal(document.getElementById('quickCreateModal'));
+            modal.show();
+        }
     });
     
     calendar.render();
     
     // Update stats
-    updateStats(allEvents);
+    var totalEvents = events.length;
+    var pendingEvents = events.filter(function(e) { return e.extendedProps && e.extendedProps.status === 'pending'; }).length;
+    var approvedEvents = events.filter(function(e) { return e.extendedProps && e.extendedProps.status === 'approved'; }).length;
     
-    // Filter by room
+    document.getElementById('stat-total').textContent = totalEvents;
+    document.getElementById('stat-pending').textContent = pendingEvents;
+    document.getElementById('stat-approved').textContent = approvedEvents;
+    
+    // Room filter
     document.getElementById('room-filter').addEventListener('change', function() {
+        currentRoomId = this.value;
         filterEvents();
     });
     
-    // Filter by status
+    // Status filter
     document.querySelectorAll('.status-filter').forEach(function(checkbox) {
         checkbox.addEventListener('change', function() {
+            checkedStatuses = [];
+            document.querySelectorAll('.status-filter:checked').forEach(function(cb) {
+                checkedStatuses.push(cb.value);
+            });
             filterEvents();
         });
     });
     
     function filterEvents() {
-        var roomId = document.getElementById('room-filter').value;
-        var checkedStatuses = [];
-        document.querySelectorAll('.status-filter:checked').forEach(function(cb) {
-            checkedStatuses.push(cb.value);
-        });
-        
-        var filteredEvents = allEvents.filter(function(event) {
-            var roomMatch = !roomId || event.room_id == roomId;
-            var statusMatch = checkedStatuses.includes(event.status);
+        var filtered = events.filter(function(event) {
+            var props = event.extendedProps || {};
+            var roomMatch = !currentRoomId || props.room_id == currentRoomId;
+            var statusMatch = checkedStatuses.includes(props.status);
             return roomMatch && statusMatch;
         });
         
         calendar.removeAllEvents();
-        calendar.addEventSource(filteredEvents);
-        updateStats(filteredEvents);
+        calendar.addEventSource(filtered);
     }
     
-    function updateStats(events) {
-        var total = events.length;
-        var approved = events.filter(e => e.status === 'approved').length;
-        var pending = events.filter(e => e.status === 'pending').length;
-        var cancelled = events.filter(e => e.status === 'cancelled' || e.status === 'rejected').length;
-        
-        document.getElementById('stat-total').textContent = total;
-        document.getElementById('stat-approved').textContent = approved;
-        document.getElementById('stat-pending').textContent = pending;
-        document.getElementById('stat-cancelled').textContent = cancelled;
-    }
-    
-    function getStatusText(status) {
-        var statusMap = {
-            'pending': 'รอดำเนินการ',
-            'approved': 'อนุมัติแล้ว',
-            'rejected': 'ถูกปฏิเสธ',
-            'cancelled': 'ยกเลิก',
-            'completed': 'เสร็จสิ้น'
+    function getStatusBadge(status) {
+        var badges = {
+            'pending': '<span class="badge bg-warning text-dark">รออนุมัติ</span>',
+            'approved': '<span class="badge bg-success">อนุมัติแล้ว</span>',
+            'rejected': '<span class="badge bg-danger">ไม่อนุมัติ</span>',
+            'cancelled': '<span class="badge bg-secondary">ยกเลิก</span>',
+            'completed': '<span class="badge bg-info">เสร็จสิ้น</span>'
         };
-        return statusMap[status] || status;
-    }
-    
-    function getStatusClass(status) {
-        var classMap = {
-            'pending': 'bg-warning text-dark',
-            'approved': 'bg-success',
-            'rejected': 'bg-danger',
-            'cancelled': 'bg-secondary',
-            'completed': 'bg-info'
-        };
-        return classMap[status] || 'bg-secondary';
-    }
-    
-    function showBookingModal(event) {
-        var props = event.extendedProps;
-        
-        document.getElementById('modal-title').textContent = event.title;
-        document.getElementById('modal-code').textContent = props.booking_code || '-';
-        document.getElementById('modal-room').textContent = props.room_name || '-';
-        document.getElementById('modal-date').textContent = props.booking_date || '-';
-        document.getElementById('modal-time').textContent = props.time_range || '-';
-        document.getElementById('modal-user').textContent = props.user_name || '-';
-        document.getElementById('modal-attendees').textContent = (props.attendees_count || 0) + ' คน';
-        document.getElementById('modal-purpose').textContent = props.purpose || '-';
-        document.getElementById('modal-created').textContent = props.created_at || '-';
-        
-        var statusEl = document.getElementById('modal-status');
-        statusEl.textContent = getStatusText(props.status);
-        statusEl.className = 'badge fs-6 px-3 py-2 ' + getStatusClass(props.status);
-        
-        document.getElementById('modal-view-link').href = 'view?id=' + event.id;
-        
-        // Action buttons based on status
-        var actionsEl = document.getElementById('modal-actions');
-        actionsEl.innerHTML = '';
-        
-        if (props.status === 'pending') {
-            actionsEl.innerHTML = '<button class="btn btn-success me-2" onclick="approveBooking(' + event.id + ')"><i class="bi bi-check-lg me-1"></i> อนุมัติ</button>' +
-                '<button class="btn btn-danger me-2" onclick="rejectBooking(' + event.id + ')"><i class="bi bi-x-lg me-1"></i> ปฏิเสธ</button>';
-        } else if (props.status === 'approved') {
-            actionsEl.innerHTML = '<button class="btn btn-secondary me-2" onclick="cancelBooking(' + event.id + ')"><i class="bi bi-x-circle me-1"></i> ยกเลิก</button>';
-        }
-        
-        var modal = new bootstrap.Modal(document.getElementById('bookingModal'));
-        modal.show();
+        return badges[status] || '<span class="badge bg-secondary">' + (status || '-') + '</span>';
     }
     
     // Quick create submit
-    document.getElementById('quick-create-submit').addEventListener('click', function() {
-        var form = document.getElementById('quick-create-form');
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-        }
-        
-        // Redirect to create page with pre-filled data
-        var params = new URLSearchParams({
-            room_id: document.getElementById('quick-room').value,
-            title: document.getElementById('quick-title').value,
-            booking_date: document.getElementById('quick-date').value,
-            start_time: document.getElementById('quick-start').value,
-            end_time: document.getElementById('quick-end').value,
-            attendees_count: document.getElementById('quick-attendees').value
-        });
-        
-        window.location.href = '{$createUrl}?' + params.toString();
+    document.getElementById('quick-submit').addEventListener('click', function() {
+        window.location.href = '{$createUrl}' + 
+            '?room_id=' + document.getElementById('quick-room').value +
+            '&date=' + document.getElementById('quick-date').value +
+            '&start=' + document.getElementById('quick-start').value +
+            '&end=' + document.getElementById('quick-end').value;
     });
 });
-
-function approveBooking(id) {
-    if (confirm('ยืนยันการอนุมัติการจองนี้?')) {
-        window.location.href = '{$approveUrl}?id=' + id;
-    }
-}
-
-function rejectBooking(id) {
-    var reason = prompt('กรุณาระบุเหตุผลในการปฏิเสธ:');
-    if (reason !== null) {
-        window.location.href = '{$rejectUrl}?id=' + id + '&reason=' + encodeURIComponent(reason);
-    }
-}
-
-function cancelBooking(id) {
-    var reason = prompt('กรุณาระบุเหตุผลในการยกเลิก:');
-    if (reason !== null) {
-        window.location.href = 'cancel?id=' + id + '&reason=' + encodeURIComponent(reason);
-    }
-}
 JS;
 
 $this->registerJs($js);

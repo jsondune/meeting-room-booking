@@ -31,8 +31,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute' => 'date',
                         'format' => 'raw',
                         'value' => function ($model) {
-                            $thaiDate = Yii::$app->formatter->asDate($model->date, 'php:d M Y');
-                            $dayOfWeek = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'][date('w', strtotime($model->date))];
+                            $thaiDate = Yii::$app->formatter->asDate($model->holiday_date, 'php:d M Y');
+                            $dayOfWeek = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'][date('w', strtotime($model->holiday_date))];
                             return "<strong>{$thaiDate}</strong> <small class='text-muted'>({$dayOfWeek})</small>";
                         },
                     ],

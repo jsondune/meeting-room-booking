@@ -472,7 +472,7 @@ class BookingController extends BaseController
         }
 
         if (!$model->actual_start_time) {
-            return $this->error('กรุณาเช็คอินก่อนเช็คเอาท์', 400);
+            return $this->error('โปรดเช็คอินก่อนเช็คเอาท์', 400);
         }
 
         if ($model->checkOut()) {

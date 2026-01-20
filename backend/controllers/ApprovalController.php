@@ -269,7 +269,7 @@ class ApprovalController extends BaseController
         // Check for conflicts
         $conflicts = $this->checkConflicts($model);
         if (!empty($conflicts)) {
-            $this->setFlash('warning', 'พบการจองที่ทับซ้อน กรุณาตรวจสอบก่อนอนุมัติ');
+            $this->setFlash('warning', 'พบการจองที่ทับซ้อน โปรดตรวจสอบก่อนอนุมัติ');
         }
         
         $model->approve($user->id);
@@ -313,7 +313,7 @@ class ApprovalController extends BaseController
             $reason = Yii::$app->request->post('reason', '');
             
             if (empty($reason)) {
-                $this->setFlash('error', 'กรุณาระบุเหตุผลในการปฏิเสธ');
+                $this->setFlash('error', 'โปรดระบุเหตุผลในการปฏิเสธ');
                 return $this->redirect(['view', 'id' => $id]);
             }
             
@@ -347,7 +347,7 @@ class ApprovalController extends BaseController
         $user = $this->getUser();
         
         if (empty($ids)) {
-            $this->setFlash('error', 'กรุณาเลือกการจองที่ต้องการอนุมัติ');
+            $this->setFlash('error', 'โปรดเลือกการจองที่ต้องการอนุมัติ');
             return $this->redirect(['pending']);
         }
         
@@ -389,7 +389,7 @@ class ApprovalController extends BaseController
         $user = $this->getUser();
         
         if (empty($ids)) {
-            $this->setFlash('error', 'กรุณาเลือกการจองที่ต้องการปฏิเสธ');
+            $this->setFlash('error', 'โปรดเลือกการจองที่ต้องการปฏิเสธ');
             return $this->redirect(['pending']);
         }
         
@@ -441,7 +441,7 @@ class ApprovalController extends BaseController
             $note = Yii::$app->request->post('note', '');
             
             if (empty($newApproverId)) {
-                $this->setFlash('error', 'กรุณาเลือกผู้อนุมัติ');
+                $this->setFlash('error', 'โปรดเลือกผู้อนุมัติ');
                 return $this->redirect(['reassign', 'id' => $id]);
             }
             

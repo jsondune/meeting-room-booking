@@ -277,7 +277,7 @@ class RoomController extends BaseController
         $ids = Yii::$app->request->post('ids', []);
         
         if (empty($ids)) {
-            $this->setFlash('error', 'กรุณาเลือกห้องประชุมที่ต้องการลบ');
+            $this->setFlash('error', 'โปรดเลือกห้องประชุมที่ต้องการลบ');
             return $this->redirect(['index']);
         }
 
@@ -494,7 +494,7 @@ class RoomController extends BaseController
         $buildingId = Yii::$app->request->get('building_id');
 
         if (!$date || !$startTime || !$endTime) {
-            return ['success' => false, 'message' => 'กรุณาระบุวันที่และเวลา'];
+            return ['success' => false, 'message' => 'โปรดระบุวันที่และเวลา'];
         }
 
         $query = MeetingRoom::find()

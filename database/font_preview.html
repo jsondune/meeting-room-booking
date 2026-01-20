@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตัวอย่าง Font สำหรับ Web App - ฟรี ล้ำสมัย อ่านง่าย</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai+Looped:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&family=Mitr:wght@300;400;500;600;700&family=Chakra+Petch:wght@300;400;500;600;700&family=K2D:wght@300;400;500;600;700&family=Mali:wght@300;400;500;600;700&family=Bai+Jamjuree:wght@300;400;500;600;700&family=Sriracha&family=Pridi:wght@300;400;500;600;700&family=Thasadith:wght@400;700&family=Athiti:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.8);
+            text-align: center;
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+            margin-bottom: 30px;
+        }
+        
+        .font-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .font-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        
+        .font-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .font-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .font-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-recommended {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .badge-modern {
+            background: #10b981;
+            color: white;
+        }
+        
+        .badge-readable {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .badge-thai {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .sample-text {
+            margin: 16px 0;
+            line-height: 1.8;
+        }
+        
+        .sample-title {
+            font-size: 1.75rem;
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+        
+        .sample-body {
+            font-size: 1rem;
+            color: #4b5563;
+        }
+        
+        .sample-numbers {
+            font-size: 1.25rem;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+        
+        .weight-samples {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed #e5e7eb;
+        }
+        
+        .weight-item {
+            text-align: center;
+        }
+        
+        .weight-label {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-bottom: 4px;
+        }
+        
+        .css-code {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.875rem;
+            color: #475569;
+        }
+        
+        .recommendation {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .recommendation h2 {
+            color: #92400e;
+            margin: 0 0 12px 0;
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+        }
+        
+        .recommendation ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #78350f;
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+        }
+        
+        .recommendation li {
+            margin-bottom: 8px;
+        }
+        
+        .category-title {
+            color: white;
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+            font-size: 1.25rem;
+            margin: 30px 0 15px 0;
+            padding-left: 12px;
+            border-left: 4px solid rgba(255,255,255,0.5);
+        }
+        
+        /* Font Families */
+        .ibm-plex-thai { font-family: 'IBM Plex Sans Thai', sans-serif; }
+        .ibm-plex-thai-looped { font-family: 'IBM Plex Sans Thai Looped', sans-serif; }
+        .noto-sans-thai { font-family: 'Noto Sans Thai', sans-serif; }
+        .sarabun { font-family: 'Sarabun', sans-serif; }
+        .prompt { font-family: 'Prompt', sans-serif; }
+        .kanit { font-family: 'Kanit', sans-serif; }
+        .mitr { font-family: 'Mitr', sans-serif; }
+        .chakra-petch { font-family: 'Chakra Petch', sans-serif; }
+        .k2d { font-family: 'K2D', sans-serif; }
+        .mali { font-family: 'Mali', sans-serif; }
+        .bai-jamjuree { font-family: 'Bai Jamjuree', sans-serif; }
+        .sriracha { font-family: 'Sriracha', cursive; }
+        .pridi { font-family: 'Pridi', serif; }
+        .thasadith { font-family: 'Thasadith', sans-serif; }
+        .athiti { font-family: 'Athiti', sans-serif; }
+        .inter { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 ตัวอย่าง Font สำหรับ Web Application</h1>
+        <p class="subtitle">ฟรี • ล้ำสมัย • อ่านง่าย • รองรับภาษาไทย • จาก Google Fonts</p>
+        
+        <div class="recommendation">
+            <h2>💡 แนะนำ Top 5 สำหรับ Enterprise App</h2>
+            <ul>
+                <li><strong>IBM Plex Sans Thai</strong> - ดีที่สุดสำหรับ Dashboard และระบบจัดการ ออกแบบโดย IBM อ่านง่ายมาก</li>
+                <li><strong>Noto Sans Thai</strong> - มาตรฐานจาก Google รองรับทุก weight ครบถ้วน</li>
+                <li><strong>Sarabun</strong> - เรียบง่าย สะอาดตา เหมาะกับเอกสารและรายงาน</li>
+                <li><strong>Prompt</strong> - ทันสมัย เหมาะกับ Tech Startup และ Modern UI</li>
+                <li><strong>Kanit</strong> - เป็นเอกลักษณ์ เหมาะกับ Branding และหัวข้อ</li>
+            </ul>
+        </div>
+        
+        <!-- ================ RECOMMENDED ================ -->
+        <h3 class="category-title">⭐ แนะนำอย่างยิ่ง (Highly Recommended)</h3>
+        
+        <!-- IBM Plex Sans Thai -->
+        <div class="font-card">
+            <div class="font-header">
+                <span class="font-name ibm-plex-thai">IBM Plex Sans Thai</span>
+                <div>
+                    <span class="font-badge badge-recommended">แนะนำมาก</span>
+                    <span class="font-badge badge-modern">ล้ำสมัย</span>
+                </div>
+            </div>
+            <div class="sample-text ibm-plex-thai">
+                <div class="sample-title">ระบบจองห้องประชุมออนไลน์</div>
+                <div class="sample-body">จองห้องประชุมได้ง่ายๆ เพียงไม่กี่คลิก รองรับการจองล่วงหน้า การแจ้งเตือนอัตโนมัติ และรายงานการใช้งาน สะดวก รวดเร็ว ทันสมัย</div>
+                <div class="sample-numbers">0123456789 | ฿1,234.56 | 09:00-17:00</div>
+            </div>
+            <div class="weight-samples">
+                <div class="weight-item"><div class="weight-label">Light 300</div><span class="ibm-plex-thai" style="font-weight:300">ตัวอย่างข้อความ</span></div>
+                <div class="weight-item"><div class="weight-label">Regular 400</div><span class="ibm-plex-thai" style="font-weight:400">ตัวอย่างข้อความ</span></div>
+                <div class="weight-item"><div class="weight-label">Medium 500</div><span class="ibm-plex-thai" style="font-weight:500">ตัวอย่างข้อความ</span></div>
+                <div class="weight-item"><div class="weight-label">SemiBold 600</div><span class="ibm-plex-thai" style="font-weight:600">ตัวอย่างข้อความ</span></div>
+                <div class="weight-item"><div class="weight-label">Bold 700</div><span class="ibm-plex-thai" style="font-weight:700">ตัวอย่างข้อความ</span></div>
+            </div>
+            <div class="css-code">
+                font-family: 'IBM Plex Sans Thai', sans-serif;<br>
+                /* Google Fonts: fonts.google.com/specimen/IBM+Plex+Sans+Thai */
+            </div>
+        </div>
+        
+        <!-- Noto Sans Thai -->
+        <div class="font-card">
+            <div class="font-header">
+                <span class="font-name noto-sans-thai">Noto Sans Thai</span>
+                <div>
+                    <span class="font-badge badge-recommended">แนะนำ</span>
+                    <span class="font-badge badge-readable">อ่านง่าย</span>
+                </div>
+            </div>
+            <div class="sample-text noto-sans-thai">
+                <div class="sample-title">ระบบจองห้องประชุมออนไลน์</div>
+                <div class="sample-body">จองห้องประชุมได้ง่ายๆ เพียงไม่กี่คลิก รองรับการจองล่วงหน้า การแจ้งเตือนอัตโนมัติ และรายงานการใช้งาน สะดวก รวดเร็ว ทันสมัย</div>
+                <div class="sample-numbers">0123456789 | ฿1,234.56 | 09:00-17:00</div>
+            </div>
+            <div class="weight-samples">
+                <div class="weight-item"><div class="weight-label">Light 300</div><span class="noto-sans-thai" style="font-weight:300">ตัวอย่างข้อความ</span></div>
+                <div class="weight-item"><div class="weight-label">Regular 400</div><span class="noto-sans-thai" style="font-weight:400">ตัวอย่างข้อความ</span></div>
+                <div class="weight-item"><div class="weight-label">Medium 500</div><span class="noto-sans-thai" style="font-weight:500">ตัวอย่างข้อความ</span></div>
+                <div class="weight-item"><div class="weight-label">SemiBold 600</div><span class="noto-sans-thai" style="font-weight:600">ตัวอย่างข้อความ</span></div>
+                <div class="weight-item"><div class="weight-label">Bold 700</div><span class="noto-sans-thai" style="font-weight:700">ตัวอย่างข้อความ</span></div>
+            </div>
+            <div class="css-code">
+                font-family: 'Noto Sans Thai', sans-serif;<br>
+                /* Google Fonts: fonts.google.com/noto/specimen/Noto+Sans+Thai */
+            </div>
+        </div>
+        
+        <!-- Sarabun -->
+        <div class="font-card">
+            <div class="font-header">
+                <span class="font-name sarabun">Sarabun</span>
+                <div>
+                    <span class="font-badge badge-recommended">แนะนำ</span>
+                    <span class="font-badge badge-thai">สะอาดตา</span>
+                </div>
+            </div>
+            <div class="sample-text sarabun">
+                <div class="sample-title">ระบบจองห้องประชุมออนไลน์</div>
+                <div class="sample-body">จองห้องประชุมได้ง่ายๆ เพียงไม่กี่คลิก รองรับการจองล่วงหน้า การแจ้งเตือนอัตโนมัติ และรายงานการใช้งาน สะดวก รวดเร็ว ทันสมัย</div>
+                <div class="sample-numbers">0123456789 | ฿1,234.56 | 09:00-17:00</div>
+            </div>
+            <div class="weight-samples">
+                <div class="weight-item"><div class="weight-label">Light 300</div><span class="sarabun" style="font-weight:300">ตัวอย่างข้อความ</span></div>
+                <div class="weight-item"><div class="weight-label">Regular 400</div><span class="sarabun" style="font-weight:400">ตัวอย่างข้อความ</span></div>
+                <div class="weight-item"><div class="weight-label">Medium 500</div><span class="sarabun" style="font-weight:500">ตัวอย่างข้อความ</span></div>
+                <div class="weight-item"><div class="weight-label">SemiBold 600</div><span class="sarabun" style="font-weight:600">ตัวอย่างข้อความ</span></div>
+                <div class="weight-item"><div class="weight-label">Bold 700</div><span class="sarabun" style="font-weight:700">ตัวอย่างข้อความ</span></div>
+            </div>
+            <div class="css-code">
+                font-family: 'Sarabun', sans-serif;<br>
+                /* Google Fonts: fonts.google.com/specimen/Sarabun */
+            </div>
+        </div>
+        
+        <!-- ================ MODERN ================ -->
+        <h3 class="category-title">🚀 ทันสมัย (Modern & Trendy)</h3>
+        
+        <!-- Prompt -->
+        <div class="font-card">
+            <div class="font-header">
+                <span class="font-name prompt">Prompt</span>
+                <div>
+                    <span class="font-badge badge-modern">ทันสมัย</span>
+                </div>
+            </div>
+            <div class="sample-text prompt">
+                <div class="sample-title">ระบบจองห้องประชุมออนไลน์</div>
+                <div class="sample-body">จองห้องประชุมได้ง่ายๆ เพียงไม่กี่คลิก รองรับการจองล่วงหน้า การแจ้งเตือนอัตโนมัติ และรายงานการใช้งาน สะดวก รวดเร็ว ทันสมัย</div>
+                <div class="sample-numbers">0123456789 | ฿1,234.56 | 09:00-17:00</div>
+            </div>
+            <div class="css-code">font-family: 'Prompt', sans-serif;</div>
+        </div>
+        
+        <!-- Kanit -->
+        <div class="font-card">
+            <div class="font-header">
+                <span class="font-name kanit">Kanit</span>
+                <div>
+                    <span class="font-badge badge-modern">ทันสมัย</span>
+                    <span class="font-badge badge-thai">เอกลักษณ์ไทย</span>
+                </div>
+            </div>
+            <div class="sample-text kanit">
+                <div class="sample-title">ระบบจองห้องประชุมออนไลน์</div>
+                <div class="sample-body">จองห้องประชุมได้ง่ายๆ เพียงไม่กี่คลิก รองรับการจองล่วงหน้า การแจ้งเตือนอัตโนมัติ และรายงานการใช้งาน สะดวก รวดเร็ว ทันสมัย</div>
+                <div class="sample-numbers">0123456789 | ฿1,234.56 | 09:00-17:00</div>
+            </div>
+            <div class="css-code">font-family: 'Kanit', sans-serif;</div>
+        </div>
+        
+        <!-- Bai Jamjuree -->
+        <div class="font-card">
+            <div class="font-header">
+                <span class="font-name bai-jamjuree">Bai Jamjuree</span>
+                <div>
+                    <span class="font-badge badge-modern">ทันสมัย</span>
+                </div>
+            </div>
+            <div class="sample-text bai-jamjuree">
+                <div class="sample-title">ระบบจองห้องประชุมออนไลน์</div>
+                <div class="sample-body">จองห้องประชุมได้ง่ายๆ เพียงไม่กี่คลิก รองรับการจองล่วงหน้า การแจ้งเตือนอัตโนมัติ และรายงานการใช้งาน สะดวก รวดเร็ว ทันสมัย</div>
+                <div class="sample-numbers">0123456789 | ฿1,234.56 | 09:00-17:00</div>
+            </div>
+            <div class="css-code">font-family: 'Bai Jamjuree', sans-serif;</div>
+        </div>
+        
+        <!-- Chakra Petch -->
+        <div class="font-card">
+            <div class="font-header">
+                <span class="font-name chakra-petch">Chakra Petch</span>
+                <div>
+                    <span class="font-badge badge-modern">Tech/Gaming</span>
+                </div>
+            </div>
+            <div class="sample-text chakra-petch">
+                <div class="sample-title">ระบบจองห้องประชุมออนไลน์</div>
+                <div class="sample-body">จองห้องประชุมได้ง่ายๆ เพียงไม่กี่คลิก รองรับการจองล่วงหน้า การแจ้งเตือนอัตโนมัติ และรายงานการใช้งาน สะดวก รวดเร็ว ทันสมัย</div>
+                <div class="sample-numbers">0123456789 | ฿1,234.56 | 09:00-17:00</div>
+            </div>
+            <div class="css-code">font-family: 'Chakra Petch', sans-serif;</div>
+        </div>
+        
+        <!-- K2D -->
+        <div class="font-card">
+            <div class="font-header">
+                <span class="font-name k2d">K2D</span>
+                <div>
+                    <span class="font-badge badge-modern">Rounded</span>
+                </div>
+            </div>
+            <div class="sample-text k2d">
+                <div class="sample-title">ระบบจองห้องประชุมออนไลน์</div>
+                <div class="sample-body">จองห้องประชุมได้ง่ายๆ เพียงไม่กี่คลิก รองรับการจองล่วงหน้า การแจ้งเตือนอัตโนมัติ และรายงานการใช้งาน สะดวก รวดเร็ว ทันสมัย</div>
+                <div class="sample-numbers">0123456789 | ฿1,234.56 | 09:00-17:00</div>
+            </div>
+            <div class="css-code">font-family: 'K2D', sans-serif;</div>
+        </div>
+        
+        <!-- ================ FRIENDLY ================ -->
+        <h3 class="category-title">😊 เป็นกันเอง (Friendly & Casual)</h3>
+        
+        <!-- Mitr -->
+        <div class="font-card">
+            <div class="font-header">
+                <span class="font-name mitr">Mitr</span>
+                <div>
+                    <span class="font-badge badge-readable">อบอุ่น</span>
+                </div>
+            </div>
+            <div class="sample-text mitr">
+                <div class="sample-title">ระบบจองห้องประชุมออนไลน์</div>
+                <div class="sample-body">จองห้องประชุมได้ง่ายๆ เพียงไม่กี่คลิก รองรับการจองล่วงหน้า การแจ้งเตือนอัตโนมัติ และรายงานการใช้งาน สะดวก รวดเร็ว ทันสมัย</div>
+                <div class="sample-numbers">0123456789 | ฿1,234.56 | 09:00-17:00</div>
+            </div>
+            <div class="css-code">font-family: 'Mitr', sans-serif;</div>
+        </div>
+        
+        <!-- Mali -->
+        <div class="font-card">
+            <div class="font-header">
+                <span class="font-name mali">Mali</span>
+                <div>
+                    <span class="font-badge badge-readable">น่ารัก</span>
+                </div>
+            </div>
+            <div class="sample-text mali">
+                <div class="sample-title">ระบบจองห้องประชุมออนไลน์</div>
+                <div class="sample-body">จองห้องประชุมได้ง่ายๆ เพียงไม่กี่คลิก รองรับการจองล่วงหน้า การแจ้งเตือนอัตโนมัติ และรายงานการใช้งาน สะดวก รวดเร็ว ทันสมัย</div>
+                <div class="sample-numbers">0123456789 | ฿1,234.56 | 09:00-17:00</div>
+            </div>
+            <div class="css-code">font-family: 'Mali', sans-serif;</div>
+        </div>
+        
+        <!-- ================ CLASSIC ================ -->
+        <h3 class="category-title">📜 คลาสสิก (Classic & Elegant)</h3>
+        
+        <!-- Pridi -->
+        <div class="font-card">
+            <div class="font-header">
+                <span class="font-name pridi">Pridi</span>
+                <div>
+                    <span class="font-badge badge-thai">Serif</span>
+                </div>
+            </div>
+            <div class="sample-text pridi">
+                <div class="sample-title">ระบบจองห้องประชุมออนไลน์</div>
+                <div class="sample-body">จองห้องประชุมได้ง่ายๆ เพียงไม่กี่คลิก รองรับการจองล่วงหน้า การแจ้งเตือนอัตโนมัติ และรายงานการใช้งาน สะดวก รวดเร็ว ทันสมัย</div>
+                <div class="sample-numbers">0123456789 | ฿1,234.56 | 09:00-17:00</div>
+            </div>
+            <div class="css-code">font-family: 'Pridi', serif;</div>
+        </div>
+        
+        <!-- Athiti -->
+        <div class="font-card">
+            <div class="font-header">
+                <span class="font-name athiti">Athiti</span>
+                <div>
+                    <span class="font-badge badge-readable">เรียบง่าย</span>
+                </div>
+            </div>
+            <div class="sample-text athiti">
+                <div class="sample-title">ระบบจองห้องประชุมออนไลน์</div>
+                <div class="sample-body">จองห้องประชุมได้ง่ายๆ เพียงไม่กี่คลิก รองรับการจองล่วงหน้า การแจ้งเตือนอัตโนมัติ และรายงานการใช้งาน สะดวก รวดเร็ว ทันสมัย</div>
+                <div class="sample-numbers">0123456789 | ฿1,234.56 | 09:00-17:00</div>
+            </div>
+            <div class="css-code">font-family: 'Athiti', sans-serif;</div>
+        </div>
+        
+        <!-- ================ HOW TO USE ================ -->
+        <div class="font-card" style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%); color: white;">
+            <h2 style="margin-top:0;">📝 วิธีใช้งานใน Project</h2>
+            
+            <h3>1. เพิ่มใน HTML head</h3>
+            <div class="css-code" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #e2e8f0;">
+&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;<br>
+&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;<br>
+&lt;link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet"&gt;
+            </div>
+            
+            <h3>2. เพิ่มใน CSS</h3>
+            <div class="css-code" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #e2e8f0;">
+body {<br>
+&nbsp;&nbsp;font-family: 'IBM Plex Sans Thai', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;<br>
+}
+            </div>
+            
+            <h3>3. สำหรับ Yii2 - แก้ไขไฟล์ layout</h3>
+            <div class="css-code" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #e2e8f0;">
+// backend/views/layouts/main.php หรือ frontend/views/layouts/main.php<br><br>
+
+// เพิ่มใน &lt;head&gt; section:<br>
+$this->registerCssFile('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap');<br><br>
+
+// หรือเพิ่มใน CSS:<br>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap');
+            </div>
+        </div>
+        
+    </div>
+</body>
+</html>

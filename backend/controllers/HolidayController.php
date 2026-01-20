@@ -42,7 +42,7 @@ class HolidayController extends BaseController
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Holiday::find()->orderBy(['date' => SORT_DESC]),
+            'query' => Holiday::find()->orderBy(['holiday_date' => SORT_DESC]),
             'pagination' => [
                 'pageSize' => 20,
             ],
@@ -153,34 +153,35 @@ class HolidayController extends BaseController
     protected function importThaiHolidays($year)
     {
         $holidays = [
-            ['date' => "{$year}-01-01", 'name_th' => 'วันขึ้นปีใหม่', 'name_en' => "New Year's Day", 'is_recurring' => true],
-            ['date' => "{$year}-02-26", 'name_th' => 'วันมาฆบูชา', 'name_en' => 'Makha Bucha Day', 'is_recurring' => false],
-            ['date' => "{$year}-04-06", 'name_th' => 'วันจักรี', 'name_en' => 'Chakri Memorial Day', 'is_recurring' => true],
-            ['date' => "{$year}-04-13", 'name_th' => 'วันสงกรานต์', 'name_en' => 'Songkran Festival', 'is_recurring' => true],
-            ['date' => "{$year}-04-14", 'name_th' => 'วันสงกรานต์', 'name_en' => 'Songkran Festival', 'is_recurring' => true],
-            ['date' => "{$year}-04-15", 'name_th' => 'วันสงกรานต์', 'name_en' => 'Songkran Festival', 'is_recurring' => true],
-            ['date' => "{$year}-05-01", 'name_th' => 'วันแรงงานแห่งชาติ', 'name_en' => 'National Labour Day', 'is_recurring' => true],
-            ['date' => "{$year}-05-04", 'name_th' => 'วันฉัตรมงคล', 'name_en' => 'Coronation Day', 'is_recurring' => true],
-            ['date' => "{$year}-05-22", 'name_th' => 'วันวิสาขบูชา', 'name_en' => 'Visakha Bucha Day', 'is_recurring' => false],
-            ['date' => "{$year}-06-03", 'name_th' => 'วันเฉลิมพระชนมพรรษาสมเด็จพระราชินี', 'name_en' => "Queen's Birthday", 'is_recurring' => true],
-            ['date' => "{$year}-07-20", 'name_th' => 'วันอาสาฬหบูชา', 'name_en' => 'Asalha Puja Day', 'is_recurring' => false],
-            ['date' => "{$year}-07-21", 'name_th' => 'วันเข้าพรรษา', 'name_en' => 'Buddhist Lent Day', 'is_recurring' => false],
-            ['date' => "{$year}-07-28", 'name_th' => 'วันเฉลิมพระชนมพรรษา ร.10', 'name_en' => "King's Birthday", 'is_recurring' => true],
-            ['date' => "{$year}-08-12", 'name_th' => 'วันเฉลิมพระชนมพรรษา สมเด็จพระบรมราชชนนีพันปีหลวง', 'name_en' => "Queen Mother's Birthday", 'is_recurring' => true],
-            ['date' => "{$year}-10-13", 'name_th' => 'วันคล้ายวันสวรรคต ร.9', 'name_en' => 'King Bhumibol Memorial Day', 'is_recurring' => true],
-            ['date' => "{$year}-10-23", 'name_th' => 'วันปิยมหาราช', 'name_en' => 'Chulalongkorn Day', 'is_recurring' => true],
-            ['date' => "{$year}-12-05", 'name_th' => 'วันคล้ายวันพระราชสมภพ ร.9', 'name_en' => "King Bhumibol's Birthday", 'is_recurring' => true],
-            ['date' => "{$year}-12-10", 'name_th' => 'วันรัฐธรรมนูญ', 'name_en' => 'Constitution Day', 'is_recurring' => true],
-            ['date' => "{$year}-12-31", 'name_th' => 'วันสิ้นปี', 'name_en' => "New Year's Eve", 'is_recurring' => true],
+            ['holiday_date' => "{$year}-01-01", 'name_th' => 'วันขึ้นปีใหม่', 'name_en' => "New Year's Day", 'is_recurring' => true],
+            ['holiday_date' => "{$year}-02-26", 'name_th' => 'วันมาฆบูชา', 'name_en' => 'Makha Bucha Day', 'is_recurring' => false],
+            ['holiday_date' => "{$year}-04-06", 'name_th' => 'วันจักรี', 'name_en' => 'Chakri Memorial Day', 'is_recurring' => true],
+            ['holiday_date' => "{$year}-04-13", 'name_th' => 'วันสงกรานต์', 'name_en' => 'Songkran Festival', 'is_recurring' => true],
+            ['holiday_date' => "{$year}-04-14", 'name_th' => 'วันสงกรานต์', 'name_en' => 'Songkran Festival', 'is_recurring' => true],
+            ['holiday_date' => "{$year}-04-15", 'name_th' => 'วันสงกรานต์', 'name_en' => 'Songkran Festival', 'is_recurring' => true],
+            ['holiday_date' => "{$year}-05-01", 'name_th' => 'วันแรงงานแห่งชาติ', 'name_en' => 'National Labour Day', 'is_recurring' => true],
+            ['holiday_date' => "{$year}-05-04", 'name_th' => 'วันฉัตรมงคล', 'name_en' => 'Coronation Day', 'is_recurring' => true],
+            ['holiday_date' => "{$year}-05-22", 'name_th' => 'วันวิสาขบูชา', 'name_en' => 'Visakha Bucha Day', 'is_recurring' => false],
+            ['holiday_date' => "{$year}-06-03", 'name_th' => 'วันเฉลิมพระชนมพรรษาสมเด็จพระราชินี', 'name_en' => "Queen's Birthday", 'is_recurring' => true],
+            ['holiday_date' => "{$year}-07-20", 'name_th' => 'วันอาสาฬหบูชา', 'name_en' => 'Asalha Puja Day', 'is_recurring' => false],
+            ['holiday_date' => "{$year}-07-21", 'name_th' => 'วันเข้าพรรษา', 'name_en' => 'Buddhist Lent Day', 'is_recurring' => false],
+            ['holiday_date' => "{$year}-07-21", 'name_th' => 'วันเข้าพรรษา', 'name_en' => 'Buddhist Lent Day', 'is_recurring' => false],
+            ['holiday_date' => "{$year}-07-28", 'name_th' => 'วันเฉลิมพระชนมพรรษา ร.10', 'name_en' => "King's Birthday", 'is_recurring' => true],
+            ['holiday_date' => "{$year}-08-12", 'name_th' => 'วันเฉลิมพระชนมพรรษา สมเด็จพระบรมราชชนนีพันปีหลวง', 'name_en' => "Queen Mother's Birthday", 'is_recurring' => true],
+            ['holiday_date' => "{$year}-10-13", 'name_th' => 'วันคล้ายวันสวรรคต ร.9', 'name_en' => 'King Bhumibol Memorial Day', 'is_recurring' => true],
+            ['holiday_date' => "{$year}-10-23", 'name_th' => 'วันปิยมหาราช', 'name_en' => 'Chulalongkorn Day', 'is_recurring' => true],
+            ['holiday_date' => "{$year}-12-05", 'name_th' => 'วันคล้ายวันพระราชสมภพ ร.9', 'name_en' => "King Bhumibol's Birthday", 'is_recurring' => true],
+            ['holiday_date' => "{$year}-12-10", 'name_th' => 'วันรัฐธรรมนูญ', 'name_en' => 'Constitution Day', 'is_recurring' => true],
+            ['holiday_date' => "{$year}-12-31", 'name_th' => 'วันสิ้นปี', 'name_en' => "New Year's Eve", 'is_recurring' => true],
         ];
 
         $count = 0;
         foreach ($holidays as $data) {
             // Check if already exists
-            $exists = Holiday::find()->where(['date' => $data['date']])->exists();
+            $exists = Holiday::find()->where(['holiday_date' => $data['date']])->exists();
             if (!$exists) {
                 $holiday = new Holiday();
-                $holiday->date = $data['date'];
+                $holiday->holiday_date = $data['date'];
                 $holiday->name_th = $data['name_th'];
                 $holiday->name_en = $data['name_en'];
                 $holiday->holiday_type = Holiday::TYPE_NATIONAL;

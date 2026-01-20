@@ -44,7 +44,7 @@ $showCaptcha = $model->isCaptchaRequired();
         <?php if ($model->isAccountLocked()): ?>
             <div class="alert alert-danger">
                 <i class="bi bi-shield-exclamation me-2"></i>
-                บัญชีถูกล็อคชั่วคราว กรุณารอสักครู่แล้วลองใหม่อีกครั้ง
+                บัญชีถูกล็อคชั่วคราว โปรดรอสักครู่แล้วลองใหม่อีกครั้ง
             </div>
         <?php endif; ?>
 

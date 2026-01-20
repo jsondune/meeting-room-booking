@@ -279,7 +279,7 @@ class SettingController extends Controller
         $year = Yii::$app->request->post('year', date('Y'));
 
         if (!$file) {
-            return ['success' => false, 'message' => 'กรุณาเลือกไฟล์'];
+            return ['success' => false, 'message' => 'โปรดเลือกไฟล์'];
         }
 
         // Read CSV file
@@ -453,7 +453,7 @@ class SettingController extends Controller
         $templateId = Yii::$app->request->post('template_id');
 
         if (!$email) {
-            return ['success' => false, 'message' => 'กรุณาระบุอีเมล'];
+            return ['success' => false, 'message' => 'โปรดระบุอีเมล'];
         }
 
         $template = $templateId ? EmailTemplate::findOne($templateId) : null;
@@ -506,7 +506,7 @@ class SettingController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         $enable = Yii::$app->request->post('enable', false);
-        $message = Yii::$app->request->post('message', 'ระบบอยู่ระหว่างการปรับปรุง กรุณากลับมาใหม่ภายหลัง');
+        $message = Yii::$app->request->post('message', 'ระบบอยู่ระหว่างการปรับปรุง โปรดกลับมาใหม่ภายหลัง');
 
         $setting = Setting::findOne(['key' => 'maintenance_mode']);
         if (!$setting) {

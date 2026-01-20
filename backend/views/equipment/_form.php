@@ -225,14 +225,10 @@ $isNewRecord = $model->isNewRecord;
                     <h6 class="mb-0"><i class="bi bi-gear me-2"></i>สถานะและการดำเนินการ</h6>
                 </div>
                 <div class="card-body">
-                    <?= $form->field($model, 'status')->dropDownList([
-                        'available' => 'พร้อมใช้งาน',
-                        'in_use' => 'กำลังใช้งาน',
-                        'maintenance' => 'ซ่อมบำรุง',
-                        'retired' => 'ปลดระวาง',
-                    ], [
-                        'class' => 'form-select'
-                    ])->label('สถานะ') ?>
+                    <?= $form->field($model, 'status')->dropDownList(
+                        \common\models\Equipment::getStatusOptions(),
+                        ['class' => 'form-select']
+                    )->label('สถานะ') ?>
 
                     <div class="d-grid gap-2 mt-4">
                         <?= Html::submitButton(
@@ -250,24 +246,41 @@ $isNewRecord = $model->isNewRecord;
                     <h6 class="mb-0"><i class="bi bi-image me-2"></i>รูปภาพ</h6>
                 </div>
                 <div class="card-body">
-                    <div class="mb-3">
-                        <label class="form-label">อัปโหลดรูปภาพ</label>
-                        <input type="file" name="Equipment[imageFile]" class="form-control" accept="image/*" id="image-input">
-                        <small class="text-muted">รองรับ JPG, PNG ขนาดไม่เกิน 2MB</small>
-                    </div>
-                    
-                    <div id="image-preview" class="mb-3 <?= $model->image ? '' : 'd-none' ?>">
-                        <label class="form-label">ตัวอย่างรูปภาพ</label>
-                        <div class="position-relative">
-                            <img id="preview-img" src="<?= $model->image ?>" class="img-fluid rounded" style="max-height: 200px;">
-                            <?php if ($model->image): ?>
-                                <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" onclick="removeImage()">
-                                    <i class="bi bi-x"></i>
-                                </button>
-                            <?php endif; ?>
+                    <!-- Current Image Preview -->
+                    <div id="current-image" class="mb-3 <?= $model->hasImage() ? '' : 'd-none' ?>">
+                        <label class="form-label">รูปภาพปัจจุบัน</label>
+                        <div class="position-relative d-inline-block">
+                            <img id="current-img" 
+                                src="<?= $model->hasImage() ? Html::encode($model->imageUrl) : '' ?>" 
+                                class="img-thumbnail" 
+                                style="max-height: 200px; max-width: 100%;">
+                            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1" 
+                                onclick="deleteCurrentImage()" title="ลบรูปภาพ">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </div>
                     </div>
+
+                    <!-- New Image Preview (hidden by default) -->
+                    <div id="new-image-preview" class="mb-3 d-none">
+                        <label class="form-label">ตัวอย่างรูปภาพใหม่</label>
+                        <div class="position-relative d-inline-block">
+                            <img id="preview-img" src="" class="img-thumbnail" style="max-height: 200px; max-width: 100%;">
+                            <button type="button" class="btn btn-sm btn-secondary position-absolute top-0 end-0 m-1" 
+                                onclick="cancelNewImage()" title="ยกเลิก">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Upload Input -->
+                    <div class="mb-2">
+                        <label class="form-label">อัปโหลดรูปภาพ <?= $model->hasImage() ? '(เลือกไฟล์ใหม่เพื่อเปลี่ยน)' : '' ?></label>
+                        <input type="file" name="Equipment[imageFile]" class="form-control" accept="image/*" id="image-input">
+                        <small class="text-muted">รองรับ JPG, PNG, GIF ขนาดไม่เกิน 2MB</small>
+                    </div>
                     
+                    <!-- Hidden field to track image removal -->
                     <input type="hidden" name="Equipment[removeImage]" id="remove-image" value="0">
                 </div>
             </div>
@@ -374,24 +387,58 @@ $isNewRecord = $model->isNewRecord;
 
 <?php
 $js = <<<JS
-// Image preview
+// Image preview for new uploads
 document.getElementById('image-input').addEventListener('change', function(e) {
     var file = e.target.files[0];
     if (file) {
+        // Validate file size (2MB max)
+        if (file.size > 2 * 1024 * 1024) {
+            alert('ไฟล์มีขนาดใหญ่เกินไป กรุณาเลือกไฟล์ที่มีขนาดไม่เกิน 2MB');
+            this.value = '';
+            return;
+        }
+        
+        // Validate file type
+        if (!file.type.match('image.*')) {
+            alert('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
+            this.value = '';
+            return;
+        }
+        
         var reader = new FileReader();
         reader.onload = function(e) {
             document.getElementById('preview-img').src = e.target.result;
-            document.getElementById('image-preview').classList.remove('d-none');
+            document.getElementById('new-image-preview').classList.remove('d-none');
+            // Hide current image when new one is selected
+            document.getElementById('current-image').classList.add('d-none');
         };
         reader.readAsDataURL(file);
         document.getElementById('remove-image').value = '0';
     }
 });
 
-function removeImage() {
-    document.getElementById('image-preview').classList.add('d-none');
+// Delete current image (mark for deletion on save)
+function deleteCurrentImage() {
+    if (confirm('คุณต้องการลบรูปภาพนี้หรือไม่?')) {
+        document.getElementById('current-image').classList.add('d-none');
+        document.getElementById('remove-image').value = '1';
+    }
+}
+
+// Cancel new image selection (revert to current)
+function cancelNewImage() {
+    document.getElementById('new-image-preview').classList.add('d-none');
     document.getElementById('image-input').value = '';
-    document.getElementById('remove-image').value = '1';
+    // Show current image again if it exists and wasn't marked for deletion
+    if (document.getElementById('current-img').src && document.getElementById('remove-image').value !== '1') {
+        document.getElementById('current-image').classList.remove('d-none');
+    }
+}
+
+// Restore current image display
+function restoreCurrentImage() {
+    document.getElementById('current-image').classList.remove('d-none');
+    document.getElementById('remove-image').value = '0';
 }
 JS;
 $this->registerJs($js);

@@ -181,7 +181,7 @@ $connectedCount = count($connections);
                                         <?php else: ?>
                                         <button type="button" class="btn btn-outline-secondary" disabled
                                                 data-bs-toggle="tooltip" 
-                                                title="ไม่สามารถยกเลิกได้ กรุณาตั้งรหัสผ่านก่อน">
+                                                title="ไม่สามารถยกเลิกได้ โปรดตั้งรหัสผ่านก่อน">
                                             <i class="bi bi-x-circle me-1"></i>ยกเลิกการเชื่อมต่อ
                                         </button>
                                         <?php endif; ?>

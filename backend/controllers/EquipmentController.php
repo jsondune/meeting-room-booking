@@ -64,7 +64,7 @@ class EquipmentController extends BaseController
      */
     public function actionIndex()
     {
-        $query = Equipment::find()->with(['category', 'room']);
+        $query = Equipment::find()->with(['category', 'rooms']);
 
         // Apply filters
         $categoryId = Yii::$app->request->get('category_id');
@@ -218,6 +218,12 @@ class EquipmentController extends BaseController
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post())) {
+            // Handle remove image request
+            $removeImage = Yii::$app->request->post('Equipment')['removeImage'] ?? 0;
+            if ($removeImage == 1) {
+                $model->deleteImage();
+            }
+
             // Handle image upload
             $imageFile = UploadedFile::getInstance($model, 'imageFile');
             if ($imageFile) {

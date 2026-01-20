@@ -134,7 +134,7 @@ $cancellerText = match($cancelledBy ?? 'user') {
                                 </h4>
                                 <p style="color: #0284c7; font-size: 14px; margin: 0; line-height: 1.6;">
                                     หากมีการชำระเงินล่วงหน้า จะได้รับการคืนเงินตามนโยบายการยกเลิก 
-                                    กรุณาติดต่อเจ้าหน้าที่สำหรับรายละเอียดเพิ่มเติม
+                                    โปรดติดต่อเจ้าหน้าที่สำหรับรายละเอียดเพิ่มเติม
                                 </p>
                             </div>
                             <?php endif; ?>
@@ -148,7 +148,7 @@ $cancellerText = match($cancelledBy ?? 'user') {
                             </div>
                             
                             <p style="color: #9ca3af; font-size: 13px; margin: 25px 0 0; line-height: 1.6; text-align: center;">
-                                หากมีข้อสงสัยเกี่ยวกับการยกเลิก กรุณาติดต่อเจ้าหน้าที่
+                                หากมีข้อสงสัยเกี่ยวกับการยกเลิก โปรดติดต่อเจ้าหน้าที่
                             </p>
                         </td>
                     </tr>
@@ -160,7 +160,7 @@ $cancellerText = match($cancelledBy ?? 'user') {
                                 ระบบจองห้องประชุม | Meeting Room Booking System
                             </p>
                             <p style="color: #9ca3af; font-size: 11px; margin: 0;">
-                                อีเมลนี้ถูกส่งอัตโนมัติ กรุณาอย่าตอบกลับ
+                                อีเมลนี้ถูกส่งอัตโนมัติ โปรดอย่าตอบกลับ
                             </p>
                         </td>
                     </tr>

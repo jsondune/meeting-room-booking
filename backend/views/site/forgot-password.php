@@ -33,7 +33,7 @@ $this->context->layout = 'main-login';
         
         <div class="alert alert-info mb-4">
             <i class="bi bi-info-circle me-2"></i>
-            กรุณากรอกอีเมลที่ใช้ลงทะเบียน ระบบจะส่งลิงก์สำหรับตั้งรหัสผ่านใหม่ไปให้
+            โปรดกรอกอีเมลที่ใช้ลงทะเบียน ระบบจะส่งลิงก์สำหรับตั้งรหัสผ่านใหม่ไปให้
         </div>
 
         <?php $form = ActiveForm::begin([

@@ -217,7 +217,7 @@ $currentTime = date('H:i:s');
                                 </span>
                                 <span>
                                     <i class="fas fa-users me-1"></i>
-                                    <?= $model->attendee_count ?> คน
+                                    <?= $model->attendees_count ?> คน
                                 </span>
                             </div>
                             <?php if ($model->description): ?>
@@ -295,7 +295,7 @@ $currentTime = date('H:i:s');
                             <p class="card-text small text-muted mb-0">
                                 <i class="fas fa-user me-1"></i><?= Html::encode($model->user->full_name ?? '-') ?>
                                 <span class="ms-2">
-                                    <i class="fas fa-users me-1"></i><?= $model->attendee_count ?>
+                                    <i class="fas fa-users me-1"></i><?= $model->attendees_count ?>
                                 </span>
                             </p>
                         </div>

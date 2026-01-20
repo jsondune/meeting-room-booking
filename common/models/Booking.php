@@ -939,7 +939,7 @@ class Booking extends ActiveRecord
     }
 
     /**
-     * Alias for attendees_count (backward compatibility for attendee_count)
+     * Alias for attendees_count (backward compatibility for attendees_count)
      * @return int
      */
     public function getAttendee_count()

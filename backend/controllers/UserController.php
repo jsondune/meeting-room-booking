@@ -510,7 +510,7 @@ class UserController extends BaseController
         $ids = Yii::$app->request->post('ids', []);
 
         if (empty($ids)) {
-            return ['success' => false, 'message' => 'กรุณาเลือกผู้ใช้'];
+            return ['success' => false, 'message' => 'โปรดเลือกผู้ใช้'];
         }
 
         // Remove current user from the list

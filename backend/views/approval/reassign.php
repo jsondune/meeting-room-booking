@@ -96,7 +96,7 @@ $this->params['breadcrumbs'][] = 'ส่งต่อ';
                                 </tr>
                                 <tr>
                                     <td class="text-muted">จำนวนผู้เข้าร่วม:</td>
-                                    <td><?= $model->attendee_count ?> คน</td>
+                                    <td><?= $model->attendees_count ?> คน</td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted">สร้างเมื่อ:</td>

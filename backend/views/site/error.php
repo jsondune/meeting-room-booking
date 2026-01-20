@@ -39,11 +39,11 @@ $icon = $errorIcons[$statusCode] ?? 'bi-exclamation-triangle';
             <?php if ($statusCode === 404): ?>
                 <p class="text-muted">ไม่พบหน้าที่คุณต้องการ หน้านี้อาจถูกย้ายหรือลบไปแล้ว</p>
             <?php elseif ($statusCode === 403): ?>
-                <p class="text-muted">คุณไม่มีสิทธิ์เข้าถึงหน้านี้ กรุณาติดต่อผู้ดูแลระบบ</p>
+                <p class="text-muted">คุณไม่มีสิทธิ์เข้าถึงหน้านี้ โปรดติดต่อผู้ดูแลระบบ</p>
             <?php elseif ($statusCode === 401): ?>
-                <p class="text-muted">กรุณาเข้าสู่ระบบเพื่อเข้าถึงหน้านี้</p>
+                <p class="text-muted">โปรดเข้าสู่ระบบเพื่อเข้าถึงหน้านี้</p>
             <?php else: ?>
-                <p class="text-muted">เกิดข้อผิดพลาดขึ้น กรุณาลองใหม่อีกครั้งหรือติดต่อผู้ดูแลระบบ</p>
+                <p class="text-muted">เกิดข้อผิดพลาดขึ้น โปรดลองใหม่อีกครั้งหรือติดต่อผู้ดูแลระบบ</p>
             <?php endif; ?>
         </div>
         

@@ -24,12 +24,9 @@ class EmailTemplate extends ActiveRecord
             ['template_key', 'match', 'pattern' => '/^[a-z0-9_]+$/'],
             ['name', 'string', 'max' => 100],
             ['subject', 'string', 'max' => 255],
-            [['body_html', 'body_text', 'description'], 'string'],
-            ['category', 'string', 'max' => 50],
+            [['body_html', 'body_text', 'variables'], 'string'],
             ['is_active', 'boolean'],
-            ['is_system', 'boolean'],
             ['is_active', 'default', 'value' => true],
-            ['is_system', 'default', 'value' => false],
         ];
     }
 
@@ -42,11 +39,8 @@ class EmailTemplate extends ActiveRecord
             'subject' => 'หัวเรื่อง',
             'body_html' => 'เนื้อหา HTML',
             'body_text' => 'เนื้อหา Text',
-            'category' => 'หมวดหมู่',
-            'description' => 'คำอธิบาย',
+            'variables' => 'ตัวแปร',
             'is_active' => 'ใช้งาน',
-            'is_system' => 'เทมเพลตระบบ',
-            'created_at' => 'สร้างเมื่อ',
             'updated_at' => 'แก้ไขเมื่อ',
         ];
     }
@@ -112,7 +106,7 @@ class EmailTemplate extends ActiveRecord
             'site_url' => 'URL เว็บไซต์',
             'approval_link' => 'ลิงก์อนุมัติ',
             'rejection_reason' => 'เหตุผลปฏิเสธ',
-            'cancel_reason' => 'เหตุผลยกเลิก',
+            'cancellation_reason' => 'เหตุผลยกเลิก',
             'qr_code_url' => 'URL QR Code',
         ];
     }
@@ -161,20 +155,5 @@ class EmailTemplate extends ActiveRecord
         }
 
         return $message->send();
-    }
-
-    /**
-     * Get category badge
-     */
-    public function getCategoryBadge()
-    {
-        $badges = [
-            'booking' => '<span class="badge bg-primary">การจอง</span>',
-            'approval' => '<span class="badge bg-success">การอนุมัติ</span>',
-            'notification' => '<span class="badge bg-info">แจ้งเตือน</span>',
-            'user' => '<span class="badge bg-warning text-dark">ผู้ใช้</span>',
-            'system' => '<span class="badge bg-secondary">ระบบ</span>',
-        ];
-        return $badges[$this->category] ?? '<span class="badge bg-secondary">' . $this->category . '</span>';
     }
 }

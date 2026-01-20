@@ -106,9 +106,7 @@ class LoginHistory extends ActiveRecord
      * @param string|null $failureReason
      * @return bool
      */
-    // DUBE-DEBUG
-    // public static function record($userId, $username, $status = 'success', $method = 'password', $failureReason = null)
-    public static function logAttempt($userId, $username, $status = 'success', $method = 'password', $failureReason = null)
+    public static function record($userId, $username, $status = 'success', $method = 'password', $failureReason = null)
     {
         try {
             $history = new static();
@@ -124,6 +122,22 @@ class LoginHistory extends ActiveRecord
             Yii::error('Failed to record login history: ' . $e->getMessage());
             return false;
         }
+    }
+
+    /**
+     * Alias for record() with different parameter order
+     * Used by backend SiteController
+     * 
+     * @param int|null $userId
+     * @param string $username
+     * @param string $method 'password', 'google', 'azure', 'thaid'
+     * @param string $status 'success', 'failed', 'locked'
+     * @param string|null $failureReason
+     * @return bool
+     */
+    public static function logAttempt($userId, $username, $method, $status, $failureReason = null)
+    {
+        return static::record($userId, $username, $status, $method, $failureReason);
     }
 
     /**

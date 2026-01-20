@@ -32,6 +32,10 @@ $categoryIcons = [
     'communication' => 'bi-telephone',
     'other' => 'bi-box',
 ];
+
+// Get category info safely
+$categoryCode = $model->category ? $model->category->code : null;
+$categoryName = $model->category ? $model->category->name_th : '-';
 ?>
 
 <div class="equipment-view">
@@ -76,8 +80,8 @@ $categoryIcons = [
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4">
-                            <?php if ($model->image): ?>
-                                <img src="<?= $model->image ?>" alt="<?= Html::encode($model->name_th) ?>" 
+                            <?php if ($model->hasImage()): ?>
+                                <img src="<?= Html::encode($model->imageUrl) ?>" alt="<?= Html::encode($model->name_th) ?>" 
                                      class="img-fluid rounded" style="max-height: 250px; object-fit: cover;">
                             <?php else: ?>
                                 <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 200px;">
@@ -98,8 +102,8 @@ $categoryIcons = [
                                     <td class="text-muted">หมวดหมู่</td>
                                     <td>
                                         <span class="badge bg-light text-dark">
-                                            <i class="bi <?= $categoryIcons[$model->category] ?? 'bi-box' ?> me-1"></i>
-                                            <?= Html::encode($categories[$model->category] ?? $model->category) ?>
+                                            <i class="bi <?= $categoryIcons[$categoryCode] ?? 'bi-box' ?> me-1"></i>
+                                            <?= Html::encode($categoryName) ?>
                                         </span>
                                     </td>
                                 </tr>

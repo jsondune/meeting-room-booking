@@ -245,9 +245,9 @@ class SeedController extends Controller
             ['name' => 'กองบริหารงานทั่วไป', 'code' => 'ADMIN', 'description' => 'General Administration Division'],
             ['name' => 'สำนักงานเลขานุการ', 'code' => 'SEC', 'description' => 'Secretariat Office'],
             ['name' => 'กองพัฒนาการศึกษา', 'code' => 'EDU', 'description' => 'Educational Development Division'],
-            ['name' => 'กองวิชาการ', 'code' => 'ACAD', 'description' => 'Academic Division'],
+            ['name' => 'กองวิชาการ', 'code' => 'ACAD', 'description' => 'Academic Affairs Division'],
             ['name' => 'กองกิจการนักศึกษา', 'code' => 'STUD', 'description' => 'Student Affairs Division'],
-            ['name' => 'ศูนย์วิจัยและนวัตกรรม', 'code' => 'RIC', 'description' => 'Research and Innovation Center'],
+            ['name' => 'กองวิจัยและพัฒนานวัตกรรม', 'code' => 'RIC', 'description' => 'Research and Innovation Division'],
         ];
         
         foreach ($departments as $dept) {
@@ -384,30 +384,53 @@ class SeedController extends Controller
     protected function seedEquipment()
     {
         $this->stdout("  Seeding equipment...\n");
-        
+        // 
+        // category: 
+        // `id`, `code`, `name_th`, `name_en`, `icon`, `description`, `sort_order`, `is_active`, `created_at`
+        // 1, PROJECTOR, เครื่องฉาย, Projector, fa-video, NULL, 1, 1, 2026-01-17 23:25:04
+        // 2, DISPLAY, จอแสดงผล, Display, fa-tv, NULL, 2, 1, 2026-01-17 23:25:04
+        // 3, COMPUTER, คอมพิวเตอร์, Computer, fa-laptop, NULL, 3, 1, 2026-01-17, 23:25:04
+        // 4, AUDIO, ระบบเสียง, Audio System, fa-volume-up, NULL, 4, 1, 2026-01-17, 23:25:04
+        // 5, VIDEO_CONF, ระบบประชุมทางไกล, Video Conference, fa-video-camera, NULL, 5, 1, 2026-01-17, 23:25:04
+        // 6, OTHER, อุปกรณ์อื่นๆ, Other Equipment, fa-cogs, NULL, 99, 1, 2026-01-17, 23:25:00        
+        // equipments:
+        // `id`, `equipment_code`, `category_id`, `name_th`, `name_en`, 
+        // `brand`, `model`, `serial_number`, `building_id`, `storage_location`, 
+        // `total_quantity`, `available_quantity`, `is_portable`, 
+        // `hourly_rate`, `daily_rate`, `last_maintenance_date`, `next_maintenance_date`, 
+        // `condition_status`, `description`, `usage_instructions`, `specifications`, 
+        // `image`, `status`, `created_by`, `created_at`, `updated_at`
         $equipment = [
-            ['name' => 'โปรเจคเตอร์', 'description' => 'Projector EPSON EB-X51', 'quantity' => 10],
-            ['name' => 'ไมโครโฟนไร้สาย', 'description' => 'ไมโครโฟนไร้สาย Shure', 'quantity' => 20],
-            ['name' => 'ไวท์บอร์ด', 'description' => 'ไวท์บอร์ด 120x180 ซม.', 'quantity' => 15],
-            ['name' => 'จอ LED 65 นิ้ว', 'description' => 'Samsung Smart TV 65"', 'quantity' => 5],
-            ['name' => 'ระบบประชุมทางไกล', 'description' => 'Cisco WebEx Room Kit', 'quantity' => 3],
-            ['name' => 'เครื่องเสียง', 'description' => 'ชุดเครื่องเสียงพร้อมลำโพง', 'quantity' => 8],
-            ['name' => 'กล้องวิดีโอ', 'description' => 'กล้อง PTZ สำหรับประชุมออนไลน์', 'quantity' => 5],
-            ['name' => 'โน้ตบุ๊ค', 'description' => 'Notebook สำหรับนำเสนอ', 'quantity' => 10],
-            ['name' => 'Flipchart', 'description' => 'กระดาษ Flipchart พร้อมขาตั้ง', 'quantity' => 12],
-            ['name' => 'ปลั๊กไฟพ่วง', 'description' => 'ปลั๊กพ่วง 6 ช่อง', 'quantity' => 30],
+            ['equipment_code' => 'LCD01', 'name_th' => 'โปรเจคเตอร์', 'name_en' => 'Projector', 'category_id' => '1', 'icon' => 'bi-projector', 'description' => 'Projector EPSON EB-X51', 'total_quantity' => 20, 'available_quantity' => 10],
+            ['equipment_code' => 'LED01', 'name_th' => 'จอ LED 65 นิ้ว', 'name_en' => 'LED Screen', 'category_id' => '1', 'icon' => 'bi-display', 'description' => 'ไมโครโฟนไร้สาย Shure', 'total_quantity' => 20, 'available_quantity' => 5],
+            ['equipment_code' => 'WHB01', 'name_th' => 'ไวท์บอร์ด', 'name_en' => 'Whiteboard', 'category_id' => '1', 'icon' => 'bi-easel', 'description' => 'ไวท์บอร์ด 120x180 ซม.', 'total_quantity' => 15, 'available_quantity' => 15],
+            ['equipment_code' => 'CNF01', 'name_th' => 'ระบบประชุมทางไกล', 'name_en' => 'Cisco WebEx Room Kit', 'category_id' => '3', 'icon' => 'bi-camera-video', 'description' => 'กล้อง Video Conference สำหรับประชุมออนไลน์', 'total_quantity' => 1, 'available_quantity' => 1],
+            ['equipment_code' => 'MIC01', 'name_th' => 'ไมโครโฟน', 'name_en' => 'Microphone', 'category_id' => '4', 'icon' => 'bi-mic', 'description' => 'ไมโครโฟนไร้สาย Shure', 'total_quantity' => 15, 'available_quantity' => 10],
+            ['equipment_code' => 'SPK01', 'name_th' => 'ลำโพง', 'name_en' => 'Speaker', 'category_id' => '4', 'icon' => 'bi-speaker', 'description' => 'Sound Bar speaker', 'total_quantity' => 5, 'available_quantity' => 5],
+            ['equipment_code' => 'LTP01', 'name_th' => 'โน้ตบุ๊ค', 'name_en' => 'Laptop', 'category_id' => '6', 'icon' => 'bi-laptop', 'description' => 'Notebook สำหรับนำเสนอ', 'total_quantity' => 35, 'available_quantity' => 35],
+            ['equipment_code' => 'DCM01', 'name_th' => 'เครื่องฉายแผ่นใส', 'name_en' => 'Document Camera', 'category_id' => '6', 'icon' => 'bi-file-slides', 'description' => 'Projector EPSON EB-X51', 'total_quantity' => 20, 'available_quantity' => 10],
+            ['equipment_code' => 'SND01', 'name_th' => 'ระบบเสียง', 'name_en' => 'Sound System', 'category_id' => '4', 'icon' => 'bi-volume-up', 'description' => 'ชุดเครื่องเสียงพร้อมลำโพง', 'total_quantity' => 5, 'available_quantity' => 2],
+            ['equipment_code' => 'CAM01', 'name_th' => 'กล้องถ่ายภาพ', 'name_en' => 'Camera', 'category_id' => '6', 'icon' => 'bi-camera', 'description' => 'Camera', 'total_quantity' => 15, 'available_quantity' => 10],
+            ['equipment_code' => 'TEA01', 'name_th' => 'ชุดน้ำชา/กาแฟ', 'name_en' => 'Tea/Coffee Set', 'category_id' => '6', 'icon' => 'bi-cup-hot', 'description' => 'ชุดน้ำชา/กาแฟ', 'total_quantity' => 20, 'available_quantity' => 10],
+            ['equipment_code' => 'WF001', 'name_th' => 'WiFi', 'name_en' => 'WiFi', 'category_id' => '6', 'icon' => 'bi-wifi', 'description' => 'Pocket WiFI', 'total_quantity' => 30, 'available_quantity' => 10],     
+            ['equipment_code' => 'FC001', 'name_th' => 'Flipchart', 'name_en' => 'Flipchart', 'category_id' => '6', 'icon' => 'bi-flipchart', 'description' => 'กระดาษ Flipchart พร้อมขาตั้ง', 'total_quantity' => 5, 'available_quantity' => 5],  
+            ['equipment_code' => 'EO001', 'name_th' => 'ปลั๊กไฟพ่วง', 'name_en' => 'Electric Outlet', 'category_id' => '6', 'icon' => 'bi-wifi', 'description' => 'ปลั๊กพ่วง 6 ช่อง', 'total_quantity' => 40, 'available_quantity' => 40],   
         ];
         
         foreach ($equipment as $equip) {
-            $model = Equipment::findOne(['name' => $equip['name']]);
+            $model = Equipment::findOne(['name_th' => $equip['name_th']]);
             if (!$model) {
                 $model = new Equipment();
             }
-            $model->name = $equip['name'];
+            $model->equipment_code = $equip['equipment_code'];
+            $model->name_th = $equip['name_th'];
+            $model->name_en = $equip['name_en'];
+            $model->category_id = $equip['category_id'];
+            $model->icon = $equip['icon'];
             $model->description = $equip['description'];
-            $model->total_quantity = $equip['quantity'];
-            $model->available_quantity = $equip['quantity'];
-            $model->status = Equipment::STATUS_ACTIVE;
+            $model->total_quantity = $equip['total_quantity'];
+            $model->available_quantity = $equip['available_quantity'];
+            $model->status = Equipment::STATUS_AVAILABLE;
             $model->save(false);
         }
         
@@ -698,7 +721,7 @@ class SeedController extends Controller
                 'type' => 'booking_confirmation',
                 'name' => 'Booking Confirmation',
                 'subject' => 'ยืนยันการจองห้องประชุม - {room_name}',
-                'body' => '<p>เรียน {user_name}</p><p>การจองห้องประชุมของท่านได้รับการบันทึกเรียบร้อยแล้ว</p><p><strong>รายละเอียด:</strong><br>ห้อง: {room_name}<br>วันที่: {date}<br>เวลา: {start_time} - {end_time}<br>หัวข้อ: {title}</p><p>กรุณารอการอนุมัติจากผู้มีอำนาจ</p>',
+                'body' => '<p>เรียน {user_name}</p><p>การจองห้องประชุมของท่านได้รับการบันทึกเรียบร้อยแล้ว</p><p><strong>รายละเอียด:</strong><br>ห้อง: {room_name}<br>วันที่: {date}<br>เวลา: {start_time} - {end_time}<br>หัวข้อ: {title}</p><p>โปรดรอการอนุมัติจากผู้มีอำนาจ</p>',
             ],
             [
                 'type' => 'booking_approved',
@@ -710,7 +733,7 @@ class SeedController extends Controller
                 'type' => 'booking_rejected',
                 'name' => 'Booking Rejected',
                 'subject' => 'ปฏิเสธการจองห้องประชุม - {room_name}',
-                'body' => '<p>เรียน {user_name}</p><p>การจองห้องประชุมของท่าน<strong>ไม่ได้รับการอนุมัติ</strong></p><p><strong>เหตุผล:</strong> {reject_reason}</p><p>กรุณาติดต่อผู้ดูแลระบบหากมีข้อสงสัย</p>',
+                'body' => '<p>เรียน {user_name}</p><p>การจองห้องประชุมของท่าน<strong>ไม่ได้รับการอนุมัติ</strong></p><p><strong>เหตุผล:</strong> {reject_reason}</p><p>โปรดติดต่อผู้ดูแลระบบหากมีข้อสงสัย</p>',
             ],
             [
                 'type' => 'booking_reminder',
@@ -722,7 +745,7 @@ class SeedController extends Controller
                 'type' => 'welcome',
                 'name' => 'Welcome Email',
                 'subject' => 'ยินดีต้อนรับสู่ระบบจองห้องประชุม',
-                'body' => '<p>เรียน {user_name}</p><p>ยินดีต้อนรับสู่ระบบจองห้องประชุม BiZCO</p><p>ท่านสามารถเข้าใช้งานระบบได้ที่: {login_url}</p><p>หากมีข้อสงสัยกรุณาติดต่อ: {admin_email}</p>',
+                'body' => '<p>เรียน {user_name}</p><p>ยินดีต้อนรับสู่ระบบจองห้องประชุม BiZCO</p><p>ท่านสามารถเข้าใช้งานระบบได้ที่: {login_url}</p><p>หากมีข้อสงสัยโปรดติดต่อ: {admin_email}</p>',
             ],
         ];
         

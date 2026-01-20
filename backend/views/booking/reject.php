@@ -73,8 +73,8 @@ $this->params['breadcrumbs'][] = 'ปฏิเสธการจอง';
                             <strong>เหตุผลในการปฏิเสธ</strong> <span class="text-danger">*</span>
                         </label>
                         <textarea name="reason" id="reason" class="form-control" rows="4" 
-                                  placeholder="กรุณาระบุเหตุผลในการปฏิเสธการจอง..." required></textarea>
-                        <div class="form-text">กรุณาระบุเหตุผลอย่างชัดเจนเพื่อให้ผู้จองทราบ</div>
+                                  placeholder="โปรดระบุเหตุผลในการปฏิเสธการจอง..." required></textarea>
+                        <div class="form-text">โปรดระบุเหตุผลอย่างชัดเจนเพื่อให้ผู้จองทราบ</div>
                     </div>
 
                     <!-- Quick Reasons -->
@@ -94,7 +94,7 @@ $this->params['breadcrumbs'][] = 'ปฏิเสธการจอง';
                                 ซ่อมบำรุง
                             </button>
                             <button type="button" class="btn btn-outline-secondary btn-sm quick-reason" 
-                                    data-reason="ข้อมูลการจองไม่ครบถ้วน กรุณาจองใหม่">
+                                    data-reason="ข้อมูลการจองไม่ครบถ้วน โปรดจองใหม่">
                                 ข้อมูลไม่ครบ
                             </button>
                             <button type="button" class="btn btn-outline-secondary btn-sm quick-reason" 
@@ -136,7 +136,7 @@ $('.quick-reason').on('click', function() {
 $('#reject-form').on('submit', function(e) {
     if ($('#reason').val().trim() === '') {
         e.preventDefault();
-        alert('กรุณาระบุเหตุผลในการปฏิเสธ');
+        alert('โปรดระบุเหตุผลในการปฏิเสธ');
         return false;
     }
     

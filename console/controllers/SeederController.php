@@ -217,25 +217,33 @@ class SeederController extends Controller
     {
         $this->stdout("Seeding equipment...\n", Console::FG_YELLOW);
         
+        // `id`, `equipment_code`, `category_id`, `name_th`, `name_en`, 
+        // `brand`, `model`, `serial_number`, `building_id`, `storage_location`, 
+        // `total_quantity`, `available_quantity`, `is_portable`, 
+        // `hourly_rate`, `daily_rate`, `last_maintenance_date`, `next_maintenance_date`, 
+        // `condition_status`, `description`, `usage_instructions`, `specifications`, 
+        // `image`, `status`, `created_by`, `created_at`, `updated_at`        
         $equipment = [
-            ['name' => 'โปรเจคเตอร์', 'name_en' => 'Projector', 'icon' => 'bi-projector', 'quantity' => 10],
-            ['name' => 'จอ LED', 'name_en' => 'LED Screen', 'icon' => 'bi-display', 'quantity' => 5],
-            ['name' => 'ไวท์บอร์ด', 'name_en' => 'Whiteboard', 'icon' => 'bi-easel', 'quantity' => 15],
-            ['name' => 'ระบบประชุมทางไกล', 'name_en' => 'Video Conference', 'icon' => 'bi-camera-video', 'quantity' => 5],
-            ['name' => 'ไมโครโฟน', 'name_en' => 'Microphone', 'icon' => 'bi-mic', 'quantity' => 20],
-            ['name' => 'ลำโพง', 'name_en' => 'Speaker', 'icon' => 'bi-speaker', 'quantity' => 10],
-            ['name' => 'โน้ตบุ๊ค', 'name_en' => 'Laptop', 'icon' => 'bi-laptop', 'quantity' => 8],
-            ['name' => 'เครื่องฉายแผ่นใส', 'name_en' => 'Document Camera', 'icon' => 'bi-file-slides', 'quantity' => 5],
-            ['name' => 'ระบบเสียง', 'name_en' => 'Sound System', 'icon' => 'bi-volume-up', 'quantity' => 5],
-            ['name' => 'กล้องถ่ายภาพ', 'name_en' => 'Camera', 'icon' => 'bi-camera', 'quantity' => 3],
-            ['name' => 'ชุดน้ำชา/กาแฟ', 'name_en' => 'Tea/Coffee Set', 'icon' => 'bi-cup-hot', 'quantity' => 10],
-            ['name' => 'WiFi', 'name_en' => 'WiFi', 'icon' => 'bi-wifi', 'quantity' => 1],
+            ['name_th' => 'โปรเจคเตอร์', 'name_en' => 'Projector', 'icon' => 'bi-projector', 'description' => 'Projector EPSON EB-X51', 'total_quantity' => 20, 'available_quantity' => 10],
+            ['name_th' => 'จอ LED 65 นิ้ว', 'name_en' => 'LED Screen', 'icon' => 'bi-display', 'description' => 'ไมโครโฟนไร้สาย Shure', 'total_quantity' => 20, 'available_quantity' => 5],
+            ['name_th' => 'ไวท์บอร์ด', 'name_en' => 'Whiteboard', 'icon' => 'bi-easel', 'description' => 'ไวท์บอร์ด 120x180 ซม.', 'total_quantity' => 15, 'available_quantity' => 15],
+            ['name_th' => 'ระบบประชุมทางไกล', 'name_en' => 'Cisco WebEx Room Kit', 'icon' => 'bi-camera-video', 'description' => 'กล้อง Video Conference สำหรับประชุมออนไลน์', 'total_quantity' => 1, 'quantavailable_quantityity' => 1],
+            ['name_th' => 'ไมโครโฟน', 'name_en' => 'Microphone', 'icon' => 'bi-mic', 'description' => 'ไมโครโฟนไร้สาย Shure', 'total_quantity' => 15, 'available_quantity' => 10],
+            ['name_th' => 'ลำโพง', 'name_en' => 'Speaker', 'icon' => 'bi-speaker', 'description' => 'Sound Bar speaker', 'total_quantity' => 5, 'available_quantity' => 5],
+            ['name_th' => 'โน้ตบุ๊ค', 'name_en' => 'Laptop', 'icon' => 'bi-laptop', 'description' => 'Notebook สำหรับนำเสนอ', 'total_quantity' => 35, 'available_quantity' => 35],
+            ['name_th' => 'เครื่องฉายแผ่นใส', 'name_en' => 'Document Camera', 'icon' => 'bi-file-slides', 'description' => 'Projector EPSON EB-X51', 'total_quantity' => 20, 'available_quantity' => 10],
+            ['name_th' => 'ระบบเสียง', 'name_en' => 'Sound System', 'icon' => 'bi-volume-up', 'description' => 'ชุดเครื่องเสียงพร้อมลำโพง', 'total_quantity' => 5, 'available_quantity' => 2],
+            ['name_th' => 'กล้องถ่ายภาพ', 'name_en' => 'Camera', 'icon' => 'bi-camera', 'description' => 'Camera', 'total_quantity' => 15, 'available_quantity' => 10],
+            ['name_th' => 'ชุดน้ำชา/กาแฟ', 'name_en' => 'Tea/Coffee Set', 'icon' => 'bi-cup-hot', 'description' => 'ชุดน้ำชา/กาแฟ', 'total_quantity' => 20, 'available_quantity' => 10],
+            ['name_th' => 'WiFi', 'name_en' => 'WiFi', 'icon' => 'bi-wifi', 'description' => 'Pocket WiFI', 'total_quantity' => 30, 'available_quantity' => 10],     
+            ['name_th' => 'Flipchart', 'name_en' => 'Flipchart', 'icon' => 'bi-flipchart', 'description' => 'กระดาษ Flipchart พร้อมขาตั้ง', 'total_quantity' => 5, 'available_quantity' => 5],  
+            ['name_th' => 'ปลั๊กไฟพ่วง', 'name_en' => 'Electric Outlet', 'icon' => 'bi-wifi', 'description' => 'ปลั๊กพ่วง 6 ช่อง', 'total_quantity' => 40, 'available_quantity' => 40],   
         ];
         
         $count = 0;
         foreach ($equipment as $data) {
-            $exists = Yii::$app->db->createCommand("SELECT id FROM {{%equipment}} WHERE name = :name")
-                ->bindValue(':name', $data['name'])
+            $exists = Yii::$app->db->createCommand("SELECT id FROM {{%equipment}} WHERE name_th = :name_th")
+                ->bindValue(':name', $data['name_th'])
                 ->queryScalar();
             
             if (!$exists) {

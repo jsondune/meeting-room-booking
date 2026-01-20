@@ -609,7 +609,7 @@ class CalendarController extends BaseController
                 'room_id' => $booking->room_id,
                 'room_name' => $booking->room ? $booking->room->name_th : null,
                 'status' => $booking->status,
-                'attendee_count' => $booking->attendee_count,
+                'attendees_count' => $booking->attendees_count,
             ],
         ];
 
@@ -641,7 +641,7 @@ class CalendarController extends BaseController
                 'id' => $booking->user->id,
                 'name' => $booking->user->full_name,
             ] : null,
-            'attendee_count' => $booking->attendee_count,
+            'attendees_count' => $booking->attendees_count,
         ];
     }
 

@@ -331,7 +331,7 @@ class RoomController extends Controller
         $roomIds = array_filter(array_map('intval', $roomIds));
 
         if (empty($roomIds)) {
-            Yii::$app->session->setFlash('warning', 'กรุณาเลือกห้องประชุมที่ต้องการเปรียบเทียบ');
+            Yii::$app->session->setFlash('warning', 'โปรดเลือกห้องประชุมที่ต้องการเปรียบเทียบ');
             return $this->redirect(['index']);
         }
 

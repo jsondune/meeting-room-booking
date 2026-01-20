@@ -50,7 +50,7 @@ $logoUrl = Yii::$app->params['logoUrl'] ?? '';
                             </p>
                             
                             <p style="color: #6b7280; font-size: 15px; margin: 0 0 25px; line-height: 1.6;">
-                                กรุณายืนยันอีเมลของคุณโดยคลิกปุ่มด้านล่าง เพื่อเริ่มใช้งานระบบได้อย่างเต็มรูปแบบ
+                                โปรดยืนยันอีเมลของคุณโดยคลิกปุ่มด้านล่าง เพื่อเริ่มใช้งานระบบได้อย่างเต็มรูปแบบ
                             </p>
                             
                             <!-- Verify Button -->
@@ -78,7 +78,7 @@ $logoUrl = Yii::$app->params['logoUrl'] ?? '';
                             <!-- Alternative Link -->
                             <div style="background-color: #f9fafb; border-radius: 8px; padding: 20px; margin: 25px 0;">
                                 <p style="color: #6b7280; font-size: 13px; margin: 0 0 10px;">
-                                    หากปุ่มด้านบนไม่ทำงาน กรุณาคัดลอกลิงก์นี้ไปวางในเบราว์เซอร์:
+                                    หากปุ่มด้านบนไม่ทำงาน โปรดคัดลอกลิงก์นี้ไปวางในเบราว์เซอร์:
                                 </p>
                                 <p style="color: #059669; font-size: 12px; margin: 0; word-break: break-all; background-color: #d1fae5; padding: 10px; border-radius: 4px;">
                                     <?= Html::encode($verifyLink) ?>
@@ -107,7 +107,7 @@ $logoUrl = Yii::$app->params['logoUrl'] ?? '';
                             </div>
                             
                             <p style="color: #9ca3af; font-size: 13px; margin: 25px 0 0; line-height: 1.6;">
-                                หากคุณไม่ได้สมัครใช้งานระบบนี้ กรุณาเพิกเฉยอีเมลนี้
+                                หากคุณไม่ได้สมัครใช้งานระบบนี้ โปรดเพิกเฉยอีเมลนี้
                             </p>
                         </td>
                     </tr>
@@ -119,7 +119,7 @@ $logoUrl = Yii::$app->params['logoUrl'] ?? '';
                                 ระบบจองห้องประชุม | Meeting Room Booking System
                             </p>
                             <p style="color: #9ca3af; font-size: 11px; margin: 0;">
-                                อีเมลนี้ถูกส่งอัตโนมัติ กรุณาอย่าตอบกลับ
+                                อีเมลนี้ถูกส่งอัตโนมัติ โปรดอย่าตอบกลับ
                             </p>
                         </td>
                     </tr>

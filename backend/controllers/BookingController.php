@@ -104,7 +104,7 @@ class BookingController extends BaseController
         $model->user_id = $this->getUserId();
         $model->department_id = $this->getUser()->department_id;
         $model->status = 'pending';
-        $model->booking_type = 'internal';
+        $model->meeting_type = 'internal';
 
         if ($model->load(Yii::$app->request->post())) {
             // Set attendees from request
@@ -339,7 +339,7 @@ class BookingController extends BaseController
         $ids = Yii::$app->request->post('ids', []);
         
         if (empty($ids)) {
-            $this->setFlash('error', 'กรุณาเลือกการจองที่ต้องการอนุมัติ');
+            $this->setFlash('error', 'โปรดเลือกการจองที่ต้องการอนุมัติ');
             return $this->redirect(['index']);
         }
 
@@ -366,7 +366,7 @@ class BookingController extends BaseController
         $reason = Yii::$app->request->post('reason', 'ปฏิเสธโดยผู้ดูแลระบบ');
         
         if (empty($ids)) {
-            $this->setFlash('error', 'กรุณาเลือกการจองที่ต้องการปฏิเสธ');
+            $this->setFlash('error', 'โปรดเลือกการจองที่ต้องการปฏิเสธ');
             return $this->redirect(['index']);
         }
 
@@ -406,7 +406,7 @@ class BookingController extends BaseController
         $ids = Yii::$app->request->post('ids', []);
         
         if (empty($ids)) {
-            $this->setFlash('error', 'กรุณาเลือกการจองที่ต้องการลบ');
+            $this->setFlash('error', 'โปรดเลือกการจองที่ต้องการลบ');
             return $this->redirect(['index']);
         }
 
@@ -591,7 +591,7 @@ class BookingController extends BaseController
             'booking_date' => ['label' => 'วันที่', 'attribute' => 'booking_date'],
             'start_time' => ['label' => 'เวลาเริ่ม', 'attribute' => 'start_time'],
             'end_time' => ['label' => 'เวลาสิ้นสุด', 'attribute' => 'end_time'],
-            'attendee_count' => ['label' => 'จำนวนผู้เข้าร่วม', 'attribute' => 'attendee_count'],
+            'attendees_count' => ['label' => 'จำนวนผู้เข้าร่วม', 'attribute' => 'attendees_count'],
             'status' => [
                 'label' => 'สถานะ',
                 'value' => function ($row) {

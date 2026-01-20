@@ -115,7 +115,7 @@ class LoginForm extends Model
 
             // Check if account is locked
             if ($this->isAccountLocked()) {
-                $this->addError($attribute, 'บัญชีถูกล็อคชั่วคราว กรุณาลองใหม่ภายหลัง');
+                $this->addError($attribute, 'บัญชีถูกล็อคชั่วคราว โปรดลองใหม่ภายหลัง');
                 return;
             }
 
@@ -127,7 +127,7 @@ class LoginForm extends Model
 
             // Check if user is active
             if ($user->status != User::STATUS_ACTIVE) {
-                $this->addError($attribute, 'บัญชีผู้ใช้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ');
+                $this->addError($attribute, 'บัญชีผู้ใช้ถูกระงับการใช้งาน โปรดติดต่อผู้ดูแลระบบ');
                 return;
             }
 

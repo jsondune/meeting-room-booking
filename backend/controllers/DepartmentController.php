@@ -130,7 +130,7 @@ class DepartmentController extends BaseController
             'query' => User::find()->where(['department_id' => $id, 'status' => User::STATUS_ACTIVE]),
             'pagination' => ['pageSize' => 20],
             'sort' => [
-                'defaultOrder' => ['fullname' => SORT_ASC],
+                'defaultOrder' => ['first_name' => SORT_ASC],
             ],
         ]);
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 19, 2026 at 09:38 PM
+-- Generation Time: Jan 21, 2026 at 03:08 AM
 -- Server version: 12.1.2-MariaDB
 -- PHP Version: 8.5.0
 
@@ -126,7 +126,15 @@ INSERT INTO `audit_log` (`id`, `user_id`, `username`, `ip_address`, `user_agent`
 (56, NULL, NULL, '127.0.0.1', 'Console', 'create', 'common\\models\\Booking', '23', NULL, '{\"id\":23,\"booking_code\":\"BK26010023\",\"room_id\":6,\"user_id\":4,\"department_id\":null,\"booking_date\":null,\"start_time\":\"2026-01-21 16:00:00\",\"end_time\":\"2026-01-21 20:00:00\",\"duration_minutes\":240,\"meeting_title\":\"ประชุมทีมงาน\",\"meeting_description\":\"การจองตัวอย่างสำหรับทดสอบระบบ\",\"meeting_type\":null,\"attendees_count\":7,\"external_attendees\":null,\"contact_person\":null,\"contact_phone\":null,\"contact_email\":null,\"is_recurring\":null,\"recurrence_pattern\":null,\"recurrence_end_date\":null,\"parent_booking_id\":null,\"status\":\"approved\",\"approved_by\":null,\"approved_at\":\"2026-01-18 03:38:13\",\"rejection_reason\":null,\"cancelled_by\":null,\"cancelled_at\":null,\"cancellation_reason\":null,\"total_room_cost\":0,\"total_equipment_cost\":null,\"total_cost\":0,\"special_requests\":null,\"internal_notes\":null,\"check_in_at\":null,\"check_out_at\":null,\"created_by\":null,\"updated_by\":null,\"created_at\":{\"expression\":\"NOW()\",\"params\":[]},\"updated_at\":{\"expression\":\"NOW()\",\"params\":[]}}', NULL, 'Booking: BK26010023', '2026-01-17 20:38:13'),
 (57, NULL, NULL, '127.0.0.1', 'Console', 'create', 'common\\models\\Booking', '24', NULL, '{\"id\":24,\"booking_code\":\"BK26010024\",\"room_id\":5,\"user_id\":5,\"department_id\":null,\"booking_date\":null,\"start_time\":\"2026-02-09 15:00:00\",\"end_time\":\"2026-02-09 16:00:00\",\"duration_minutes\":60,\"meeting_title\":\"ประชุมทีมงาน\",\"meeting_description\":\"การจองตัวอย่างสำหรับทดสอบระบบ\",\"meeting_type\":null,\"attendees_count\":7,\"external_attendees\":null,\"contact_person\":null,\"contact_phone\":null,\"contact_email\":null,\"is_recurring\":null,\"recurrence_pattern\":null,\"recurrence_end_date\":null,\"parent_booking_id\":null,\"status\":\"approved\",\"approved_by\":null,\"approved_at\":\"2026-01-18 03:38:13\",\"rejection_reason\":null,\"cancelled_by\":null,\"cancelled_at\":null,\"cancellation_reason\":null,\"total_room_cost\":0,\"total_equipment_cost\":null,\"total_cost\":0,\"special_requests\":null,\"internal_notes\":null,\"check_in_at\":null,\"check_out_at\":null,\"created_by\":null,\"updated_by\":null,\"created_at\":{\"expression\":\"NOW()\",\"params\":[]},\"updated_at\":{\"expression\":\"NOW()\",\"params\":[]}}', NULL, 'Booking: BK26010024', '2026-01-17 20:38:13'),
 (58, 1, 'admin', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'create', 'common\\models\\Booking', '25', NULL, '{\"id\":25,\"booking_code\":\"BK26010025\",\"room_id\":\"5\",\"user_id\":1,\"department_id\":1,\"booking_date\":\"2026-01-19\",\"start_time\":\"09:00\",\"end_time\":\"16:30\",\"duration_minutes\":450,\"meeting_title\":\"ประชุมประจำเดือนกองดิจิทัล\",\"meeting_description\":\"ประชุมประจำเดือนกองดิจิทัล ครั้งที่ 1\\/2569\",\"meeting_type\":\"internal\",\"attendees_count\":\"15\",\"external_attendees\":null,\"contact_person\":\"สมชาย\",\"contact_phone\":null,\"contact_email\":null,\"is_recurring\":false,\"recurrence_pattern\":null,\"recurrence_end_date\":null,\"parent_booking_id\":null,\"status\":\"approved\",\"approved_by\":null,\"approved_at\":\"2026-01-18 09:07:33\",\"rejection_reason\":null,\"cancelled_by\":null,\"cancelled_at\":null,\"cancel_reason\":null,\"total_room_cost\":0,\"total_equipment_cost\":0,\"total_cost\":0,\"special_requests\":\"\",\"internal_notes\":null,\"check_in_at\":null,\"check_out_at\":null,\"created_by\":1,\"updated_by\":1,\"created_at\":{\"expression\":\"NOW()\",\"params\":[]},\"updated_at\":{\"expression\":\"NOW()\",\"params\":[]}}', 'http://www.mrb.test/frontend/web/booking/create', 'Booking: BK26010025', '2026-01-18 02:07:34'),
-(59, 1, 'admin', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'update', 'common\\models\\Booking', '25', NULL, '{\"id\":25,\"booking_code\":\"BK26010025\",\"room_id\":\"5\",\"user_id\":1,\"department_id\":1,\"booking_date\":\"2026-01-19\",\"start_time\":\"09:00\",\"end_time\":\"16:30\",\"duration_minutes\":450,\"meeting_title\":\"ประชุมประจำเดือนกองดิจิทัล\",\"meeting_description\":\"ประชุมประจำเดือนกองดิจิทัล ครั้งที่ 1\\/2569\",\"meeting_type\":\"internal\",\"attendees_count\":\"15\",\"external_attendees\":null,\"contact_person\":\"สมชาย\",\"contact_phone\":null,\"contact_email\":null,\"is_recurring\":false,\"recurrence_pattern\":null,\"recurrence_end_date\":null,\"parent_booking_id\":null,\"status\":\"approved\",\"approved_by\":null,\"approved_at\":\"2026-01-18 09:07:33\",\"rejection_reason\":null,\"cancelled_by\":null,\"cancelled_at\":null,\"cancel_reason\":null,\"total_room_cost\":0,\"total_equipment_cost\":0,\"total_cost\":0,\"special_requests\":\"\",\"internal_notes\":null,\"check_in_at\":null,\"check_out_at\":null,\"created_by\":1,\"updated_by\":1,\"created_at\":{\"expression\":\"NOW()\",\"params\":[]},\"updated_at\":{\"expression\":\"NOW()\",\"params\":[]}}', 'http://www.mrb.test/frontend/web/booking/create', 'Booking: BK26010025', '2026-01-18 02:07:34');
+(59, 1, 'admin', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'update', 'common\\models\\Booking', '25', NULL, '{\"id\":25,\"booking_code\":\"BK26010025\",\"room_id\":\"5\",\"user_id\":1,\"department_id\":1,\"booking_date\":\"2026-01-19\",\"start_time\":\"09:00\",\"end_time\":\"16:30\",\"duration_minutes\":450,\"meeting_title\":\"ประชุมประจำเดือนกองดิจิทัล\",\"meeting_description\":\"ประชุมประจำเดือนกองดิจิทัล ครั้งที่ 1\\/2569\",\"meeting_type\":\"internal\",\"attendees_count\":\"15\",\"external_attendees\":null,\"contact_person\":\"สมชาย\",\"contact_phone\":null,\"contact_email\":null,\"is_recurring\":false,\"recurrence_pattern\":null,\"recurrence_end_date\":null,\"parent_booking_id\":null,\"status\":\"approved\",\"approved_by\":null,\"approved_at\":\"2026-01-18 09:07:33\",\"rejection_reason\":null,\"cancelled_by\":null,\"cancelled_at\":null,\"cancel_reason\":null,\"total_room_cost\":0,\"total_equipment_cost\":0,\"total_cost\":0,\"special_requests\":\"\",\"internal_notes\":null,\"check_in_at\":null,\"check_out_at\":null,\"created_by\":1,\"updated_by\":1,\"created_at\":{\"expression\":\"NOW()\",\"params\":[]},\"updated_at\":{\"expression\":\"NOW()\",\"params\":[]}}', 'http://www.mrb.test/frontend/web/booking/create', 'Booking: BK26010025', '2026-01-18 02:07:34'),
+(60, NULL, NULL, '127.0.0.1', 'Console', 'create', 'common\\models\\Booking', '26', NULL, '{\"id\":26,\"booking_code\":\"BK26010026\",\"booking_title\":null,\"room_id\":3,\"user_id\":5,\"department_id\":null,\"booking_date\":null,\"start_time\":\"2026-02-02 10:00:00\",\"end_time\":\"2026-02-02 11:00:00\",\"duration_minutes\":60,\"meeting_title\":\"ประชุมติดตามงาน\",\"meeting_description\":\"การจองตัวอย่างสำหรับทดสอบระบบ\",\"meeting_type\":null,\"attendees_count\":34,\"external_attendees\":null,\"contact_person\":null,\"contact_phone\":null,\"contact_email\":null,\"is_recurring\":null,\"recurrence_pattern\":null,\"recurrence_end_date\":null,\"parent_booking_id\":null,\"status\":\"approved\",\"approved_by\":null,\"approved_at\":\"2026-01-20 00:26:13\",\"rejection_reason\":null,\"cancelled_by\":null,\"cancelled_at\":null,\"cancel_reason\":null,\"total_room_cost\":0,\"total_equipment_cost\":null,\"total_cost\":0,\"special_requests\":null,\"internal_notes\":null,\"check_in_at\":null,\"check_out_at\":null,\"created_by\":null,\"updated_by\":null,\"created_at\":{\"expression\":\"NOW()\",\"params\":[]},\"updated_at\":{\"expression\":\"NOW()\",\"params\":[]}}', NULL, 'Booking: BK26010026', '2026-01-19 17:26:13'),
+(61, NULL, NULL, '127.0.0.1', 'Console', 'create', 'common\\models\\Booking', '27', NULL, '{\"id\":27,\"booking_code\":\"BK26010027\",\"booking_title\":null,\"room_id\":1,\"user_id\":5,\"department_id\":null,\"booking_date\":null,\"start_time\":\"2026-02-17 16:00:00\",\"end_time\":\"2026-02-17 18:00:00\",\"duration_minutes\":120,\"meeting_title\":\"ประชุมวิชาการ\",\"meeting_description\":\"การจองตัวอย่างสำหรับทดสอบระบบ\",\"meeting_type\":null,\"attendees_count\":34,\"external_attendees\":null,\"contact_person\":null,\"contact_phone\":null,\"contact_email\":null,\"is_recurring\":null,\"recurrence_pattern\":null,\"recurrence_end_date\":null,\"parent_booking_id\":null,\"status\":\"approved\",\"approved_by\":null,\"approved_at\":\"2026-01-20 00:26:13\",\"rejection_reason\":null,\"cancelled_by\":null,\"cancelled_at\":null,\"cancel_reason\":null,\"total_room_cost\":0,\"total_equipment_cost\":null,\"total_cost\":0,\"special_requests\":null,\"internal_notes\":null,\"check_in_at\":null,\"check_out_at\":null,\"created_by\":null,\"updated_by\":null,\"created_at\":{\"expression\":\"NOW()\",\"params\":[]},\"updated_at\":{\"expression\":\"NOW()\",\"params\":[]}}', NULL, 'Booking: BK26010027', '2026-01-19 17:26:13'),
+(62, NULL, NULL, '127.0.0.1', 'Console', 'create', 'common\\models\\Booking', '28', NULL, '{\"id\":28,\"booking_code\":\"BK26010028\",\"booking_title\":null,\"room_id\":3,\"user_id\":6,\"department_id\":null,\"booking_date\":null,\"start_time\":\"2026-01-22 13:00:00\",\"end_time\":\"2026-01-22 16:00:00\",\"duration_minutes\":180,\"meeting_title\":\"อบรมเชิงปฏิบัติการ\",\"meeting_description\":\"การจองตัวอย่างสำหรับทดสอบระบบ\",\"meeting_type\":null,\"attendees_count\":6,\"external_attendees\":null,\"contact_person\":null,\"contact_phone\":null,\"contact_email\":null,\"is_recurring\":null,\"recurrence_pattern\":null,\"recurrence_end_date\":null,\"parent_booking_id\":null,\"status\":\"approved\",\"approved_by\":null,\"approved_at\":\"2026-01-09 01:26:13\",\"rejection_reason\":null,\"cancelled_by\":null,\"cancelled_at\":null,\"cancel_reason\":null,\"total_room_cost\":0,\"total_equipment_cost\":null,\"total_cost\":0,\"special_requests\":null,\"internal_notes\":null,\"check_in_at\":null,\"check_out_at\":null,\"created_by\":null,\"updated_by\":null,\"created_at\":{\"expression\":\"NOW()\",\"params\":[]},\"updated_at\":{\"expression\":\"NOW()\",\"params\":[]}}', NULL, 'Booking: BK26010028', '2026-01-19 17:26:13'),
+(63, NULL, NULL, '127.0.0.1', 'Console', 'create', 'common\\models\\Booking', '29', NULL, '{\"id\":29,\"booking_code\":\"BK26010029\",\"booking_title\":null,\"room_id\":7,\"user_id\":5,\"department_id\":null,\"booking_date\":null,\"start_time\":\"2026-02-03 9:00:00\",\"end_time\":\"2026-02-03 10:00:00\",\"duration_minutes\":60,\"meeting_title\":\"ประชุมคณะกรรมการ\",\"meeting_description\":\"การจองตัวอย่างสำหรับทดสอบระบบ\",\"meeting_type\":null,\"attendees_count\":7,\"external_attendees\":null,\"contact_person\":null,\"contact_phone\":null,\"contact_email\":null,\"is_recurring\":null,\"recurrence_pattern\":null,\"recurrence_end_date\":null,\"parent_booking_id\":null,\"status\":\"approved\",\"approved_by\":null,\"approved_at\":\"2026-01-15 01:26:13\",\"rejection_reason\":null,\"cancelled_by\":null,\"cancelled_at\":null,\"cancel_reason\":null,\"total_room_cost\":0,\"total_equipment_cost\":null,\"total_cost\":0,\"special_requests\":null,\"internal_notes\":null,\"check_in_at\":null,\"check_out_at\":null,\"created_by\":null,\"updated_by\":null,\"created_at\":{\"expression\":\"NOW()\",\"params\":[]},\"updated_at\":{\"expression\":\"NOW()\",\"params\":[]}}', NULL, 'Booking: BK26010029', '2026-01-19 17:26:13'),
+(64, NULL, NULL, '127.0.0.1', 'Console', 'create', 'common\\models\\Booking', '30', NULL, '{\"id\":30,\"booking_code\":\"BK26010030\",\"booking_title\":null,\"room_id\":4,\"user_id\":5,\"department_id\":null,\"booking_date\":null,\"start_time\":\"2026-02-17 8:00:00\",\"end_time\":\"2026-02-17 9:00:00\",\"duration_minutes\":60,\"meeting_title\":\"ประชุมวิชาการ\",\"meeting_description\":\"การจองตัวอย่างสำหรับทดสอบระบบ\",\"meeting_type\":null,\"attendees_count\":26,\"external_attendees\":null,\"contact_person\":null,\"contact_phone\":null,\"contact_email\":null,\"is_recurring\":null,\"recurrence_pattern\":null,\"recurrence_end_date\":null,\"parent_booking_id\":null,\"status\":\"approved\",\"approved_by\":null,\"approved_at\":\"2026-01-17 01:26:13\",\"rejection_reason\":null,\"cancelled_by\":null,\"cancelled_at\":null,\"cancel_reason\":null,\"total_room_cost\":0,\"total_equipment_cost\":null,\"total_cost\":0,\"special_requests\":null,\"internal_notes\":null,\"check_in_at\":null,\"check_out_at\":null,\"created_by\":null,\"updated_by\":null,\"created_at\":{\"expression\":\"NOW()\",\"params\":[]},\"updated_at\":{\"expression\":\"NOW()\",\"params\":[]}}', NULL, 'Booking: BK26010030', '2026-01-19 17:26:13'),
+(65, 1, 'admin', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'update', 'common\\models\\User', '1', '{\"last_login_at\":\"2026-01-18 00:08:28\"}', '{\"id\":1,\"username\":\"admin\",\"email\":\"admin@example.com\",\"password_hash\":\"$2y$13$PA\\/wjsKQMoWuuvqQlB35yu2ELLjanSFOpSu1XLO29\\/BM6N6TOcNKK\",\"auth_key\":\"JoSb1NFibHQ7G6AnT9JH_MUjxxX2GKF9\",\"password_reset_token\":null,\"verification_token\":null,\"email_verified\":1,\"email_verified_at\":null,\"title\":null,\"full_name\":\"ผู้ดูแลระบบ\",\"first_name\":\"System\",\"last_name\":\"Administrator\",\"address\":null,\"phone\":\"02-712-7000\",\"avatar\":\"\\/uploads\\/avatars\\/avatar_1_1768669043.jpg\",\"department_id\":1,\"position\":\"\",\"azure_id\":null,\"google_id\":null,\"thaid_id\":null,\"facebook_id\":null,\"two_factor_secret\":null,\"two_factor_enabled\":0,\"backup_codes\":null,\"failed_login_attempts\":0,\"locked_until\":null,\"password_changed_at\":\"2026-01-17 23:25:05\",\"last_login_at\":\"2026-01-20 00:46:33\",\"last_login_ip\":\"127.0.0.1\",\"status\":10,\"role\":\"admin\",\"created_at\":\"2026-01-17 23:25:05\",\"updated_at\":{\"expression\":\"NOW()\",\"params\":[]},\"deleted_at\":null}', 'http://frontend.mrb.test/login', NULL, '2026-01-19 17:46:33'),
+(66, 1, 'admin', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'update', 'common\\models\\User', '1', '{\"last_login_at\":\"2026-01-20 00:46:33\"}', '{\"id\":1,\"username\":\"admin\",\"email\":\"admin@example.com\",\"password_hash\":\"$2y$13$PA\\/wjsKQMoWuuvqQlB35yu2ELLjanSFOpSu1XLO29\\/BM6N6TOcNKK\",\"auth_key\":\"JoSb1NFibHQ7G6AnT9JH_MUjxxX2GKF9\",\"password_reset_token\":null,\"verification_token\":null,\"email_verified\":1,\"email_verified_at\":null,\"title\":null,\"full_name\":\"ผู้ดูแลระบบ\",\"first_name\":\"System\",\"last_name\":\"Administrator\",\"address\":null,\"phone\":\"02-712-7000\",\"avatar\":\"\\/uploads\\/avatars\\/avatar_1_1768669043.jpg\",\"department_id\":1,\"position\":\"\",\"azure_id\":null,\"google_id\":null,\"thaid_id\":null,\"facebook_id\":null,\"two_factor_secret\":null,\"two_factor_enabled\":0,\"backup_codes\":null,\"failed_login_attempts\":0,\"locked_until\":null,\"password_changed_at\":\"2026-01-17 23:25:05\",\"last_login_at\":\"2026-01-20 01:22:41\",\"last_login_ip\":\"127.0.0.1\",\"status\":10,\"role\":\"admin\",\"created_at\":\"2026-01-17 23:25:05\",\"updated_at\":{\"expression\":\"NOW()\",\"params\":[]},\"deleted_at\":null}', 'http://backend.mrb.test/login', NULL, '2026-01-19 18:22:41'),
+(67, 1, 'admin', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'update', 'common\\models\\User', '1', '{\"avatar\":\"\\/uploads\\/avatars\\/avatar_1_1768669043.jpg\",\"department_id\":1,\"status\":10,\"updated_at\":\"2026-01-20 01:22:41\"}', '{\"id\":1,\"username\":\"admin\",\"email\":\"admin@example.com\",\"password_hash\":\"$2y$13$PA\\/wjsKQMoWuuvqQlB35yu2ELLjanSFOpSu1XLO29\\/BM6N6TOcNKK\",\"auth_key\":\"JoSb1NFibHQ7G6AnT9JH_MUjxxX2GKF9\",\"password_reset_token\":null,\"verification_token\":null,\"email_verified\":1,\"email_verified_at\":null,\"title\":null,\"full_name\":\"ผู้ดูแลระบบ\",\"first_name\":\"System\",\"last_name\":\"Administrator\",\"address\":null,\"phone\":\"02-712-7000\",\"avatar\":\"\\/uploads\\/avatars\\/avatar_1_1768924595.jpg\",\"department_id\":\"1\",\"position\":\"\",\"azure_id\":null,\"google_id\":null,\"thaid_id\":null,\"facebook_id\":null,\"two_factor_secret\":null,\"two_factor_enabled\":0,\"backup_codes\":null,\"failed_login_attempts\":0,\"locked_until\":null,\"password_changed_at\":\"2026-01-17 23:25:05\",\"last_login_at\":\"2026-01-20 01:22:41\",\"last_login_ip\":\"127.0.0.1\",\"status\":\"10\",\"role\":\"admin\",\"created_at\":\"2026-01-17 23:25:05\",\"updated_at\":{\"expression\":\"NOW()\",\"params\":[]},\"deleted_at\":null}', 'http://www.mrb.test/backend/web/user/1/update', NULL, '2026-01-20 15:56:35');
 
 -- --------------------------------------------------------
 
@@ -258,7 +266,12 @@ INSERT INTO `booking` (`id`, `booking_code`, `booking_title`, `room_id`, `user_i
 (22, 'BK26010022', NULL, 6, 6, NULL, NULL, '09:00:00', '10:00:00', 60, 'ประชุมทีมงาน', 'การจองตัวอย่างสำหรับทดสอบระบบ', NULL, 9, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'approved', NULL, '2026-01-17 20:38:13', NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-17 20:38:13', '2026-01-17 20:38:13'),
 (23, 'BK26010023', NULL, 6, 4, NULL, NULL, '16:00:00', '20:00:00', 240, 'ประชุมทีมงาน', 'การจองตัวอย่างสำหรับทดสอบระบบ', NULL, 7, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'approved', NULL, '2026-01-17 20:38:13', NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-17 20:38:13', '2026-01-17 20:38:13'),
 (24, 'BK26010024', NULL, 5, 5, NULL, NULL, '15:00:00', '16:00:00', 60, 'ประชุมทีมงาน', 'การจองตัวอย่างสำหรับทดสอบระบบ', NULL, 7, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'approved', NULL, '2026-01-17 20:38:13', NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-17 20:38:13', '2026-01-17 20:38:13'),
-(25, 'BK26010025', NULL, 5, 1, 1, '2026-01-19', '09:00:00', '16:30:00', 450, 'ประชุมประจำเดือนกองดิจิทัล', 'ประชุมประจำเดือนกองดิจิทัล ครั้งที่ 1/2569', 'internal', 15, NULL, 'สมชาย', NULL, NULL, 0, NULL, NULL, NULL, 'approved', NULL, '2026-01-18 02:07:33', NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, '', NULL, NULL, NULL, 1, 1, '2026-01-18 02:07:33', '2026-01-18 02:07:33');
+(25, 'BK26010025', NULL, 5, 1, 1, '2026-01-19', '09:00:00', '16:30:00', 450, 'ประชุมประจำเดือนกองดิจิทัล', 'ประชุมประจำเดือนกองดิจิทัล ครั้งที่ 1/2569', 'internal', 15, NULL, 'สมชาย', NULL, NULL, 0, NULL, NULL, NULL, 'approved', NULL, '2026-01-18 02:07:33', NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, '', NULL, NULL, NULL, 1, 1, '2026-01-18 02:07:33', '2026-01-18 02:07:33'),
+(26, 'BK26010026', NULL, 3, 5, NULL, NULL, '10:00:00', '11:00:00', 60, 'ประชุมติดตามงาน', 'การจองตัวอย่างสำหรับทดสอบระบบ', NULL, 34, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'approved', NULL, '2026-01-19 17:26:13', NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-19 17:26:13', '2026-01-19 17:26:13'),
+(27, 'BK26010027', NULL, 1, 5, NULL, NULL, '16:00:00', '18:00:00', 120, 'ประชุมวิชาการ', 'การจองตัวอย่างสำหรับทดสอบระบบ', NULL, 34, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'approved', NULL, '2026-01-19 17:26:13', NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-19 17:26:13', '2026-01-19 17:26:13'),
+(28, 'BK26010028', NULL, 3, 6, NULL, NULL, '13:00:00', '16:00:00', 180, 'อบรมเชิงปฏิบัติการ', 'การจองตัวอย่างสำหรับทดสอบระบบ', NULL, 6, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'approved', NULL, '2026-01-08 18:26:13', NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-19 17:26:13', '2026-01-19 17:26:13'),
+(29, 'BK26010029', NULL, 7, 5, NULL, NULL, '09:00:00', '10:00:00', 60, 'ประชุมคณะกรรมการ', 'การจองตัวอย่างสำหรับทดสอบระบบ', NULL, 7, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'approved', NULL, '2026-01-14 18:26:13', NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-19 17:26:13', '2026-01-19 17:26:13'),
+(30, 'BK26010030', NULL, 4, 5, NULL, NULL, '08:00:00', '09:00:00', 60, 'ประชุมวิชาการ', 'การจองตัวอย่างสำหรับทดสอบระบบ', NULL, 26, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 'approved', NULL, '2026-01-16 18:26:13', NULL, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-19 17:26:13', '2026-01-19 17:26:13');
 
 -- --------------------------------------------------------
 
@@ -404,13 +417,14 @@ CREATE TABLE `equipment` (
   `category_id` int(11) UNSIGNED NOT NULL,
   `name_th` varchar(255) NOT NULL,
   `name_en` varchar(255) DEFAULT NULL,
+  `icon` varchar(50) DEFAULT NULL COMMENT 'ไอคอน',
   `brand` varchar(100) DEFAULT NULL,
   `model` varchar(100) DEFAULT NULL,
   `serial_number` varchar(100) DEFAULT NULL,
   `building_id` int(11) UNSIGNED DEFAULT NULL,
   `storage_location` varchar(255) DEFAULT NULL,
-  `total_quantity` int(11) UNSIGNED NOT NULL DEFAULT 1,
-  `available_quantity` int(11) UNSIGNED NOT NULL DEFAULT 1,
+  `total_quantity` int(11) UNSIGNED DEFAULT 1,
+  `available_quantity` int(11) UNSIGNED DEFAULT 1,
   `is_portable` tinyint(1) DEFAULT 1 COMMENT 'Can be moved to different rooms',
   `hourly_rate` decimal(10,2) DEFAULT 0.00,
   `daily_rate` decimal(10,2) DEFAULT 0.00,
@@ -426,6 +440,26 @@ CREATE TABLE `equipment` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `equipment`
+--
+
+INSERT INTO `equipment` (`id`, `equipment_code`, `category_id`, `name_th`, `name_en`, `icon`, `brand`, `model`, `serial_number`, `building_id`, `storage_location`, `total_quantity`, `available_quantity`, `is_portable`, `hourly_rate`, `daily_rate`, `last_maintenance_date`, `next_maintenance_date`, `condition_status`, `description`, `usage_instructions`, `specifications`, `image`, `status`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 'PRJEPS001', 1, 'โปรเจคเตอร์', 'LCD Projector', 'bi-projector', 'EPSON', 'EB-X51', '', NULL, NULL, 20, 10, 1, 0.00, 0.00, NULL, NULL, 'good', 'Projector EPSON EB-X51', NULL, '', '/uploads/equipment/eq_1768937250_JPgoUH0h.jpg', 1, NULL, '2026-01-20 17:43:15', '2026-01-20 19:27:30'),
+(2, 'LED65001', 1, 'จอ LED 65 นิ้ว', '4K Smart TV / Display 65 inch', 'bi-display', '', '', '', NULL, NULL, 20, 5, 1, 0.00, 0.00, NULL, NULL, 'good', '4K Smart TV / Display จอ LED 65 นิ้ว', NULL, '', '/uploads/equipment/eq_1768936805_joLDvdCI.jpg', 1, NULL, '2026-01-20 17:43:15', '2026-01-20 19:20:05'),
+(3, 'BRDWB001', 1, 'ไวท์บอร์ด ขนาด 120x180ซม.', 'Whiteboard 120x180cm', 'bi-easel', '', '', '', NULL, NULL, 15, 15, 1, 0.00, 0.00, NULL, NULL, 'good', 'ไวท์บอร์ด 120x180 ซม.\r\nWhiteboard 120x180cm', NULL, '', '/uploads/equipment/eq_1768937094_KvC3Z1T4.jpg', 1, NULL, '2026-01-20 17:43:15', '2026-01-20 19:45:48'),
+(4, 'CAMVID001', 3, 'ระบบประชุมทางไกล Cisco WebEx', 'Cisco WebEx Room Kit', 'bi-camera-video', '', '', '', NULL, NULL, 1, 1, 1, 0.00, 0.00, NULL, NULL, 'good', 'กล้อง Video Conference สำหรับประชุมออนไลน์\r\nCisco WebEx Room Kit', NULL, '', '/uploads/equipment/eq_1768938720_eACFDaZb.jpg', 1, NULL, '2026-01-20 17:44:16', '2026-01-20 19:52:00'),
+(5, 'MICSHU001', 4, 'ไมโครโฟนไร้สาย Shure', 'Microphone,Shure Wireless', 'bi-mic', '', '', '', NULL, NULL, 15, 10, 1, 0.00, 0.00, NULL, NULL, 'good', 'ไมโครโฟนไร้สาย Shure\r\nMicrophone,Shure Wireless', NULL, '', '/uploads/equipment/eq_1768937183_kSFoDof4.jpg', 1, NULL, '2026-01-20 17:44:16', '2026-01-20 19:26:23'),
+(6, 'SPKGEN001', 4, 'ลำโพงห้องประชุม', 'Conference Speaker', 'bi-speaker', '', '', '', NULL, NULL, 5, 5, 1, 0.00, 0.00, NULL, NULL, 'good', 'ลำโพงห้องประชุม\r\nConference Speaker', NULL, '', '/uploads/equipment/eq_1768939100_Jy-AA7MM.jpg', 1, NULL, '2026-01-20 17:44:16', '2026-01-20 19:58:20'),
+(7, 'LTP01', 6, 'โน้ตบุ๊ค', 'Laptop', 'bi-laptop', '', '', '', NULL, NULL, 35, 35, 1, 0.00, 0.00, NULL, NULL, 'good', 'Notebook สำหรับนำเสนอ', NULL, '', '/uploads/equipment/eq_1768938009_08abnbdY.avif', 1, NULL, '2026-01-20 17:44:16', '2026-01-20 19:40:09'),
+(8, 'DCM01', 6, 'เครื่องฉายแผ่นใส', 'Document Camera', 'bi-file-slides', '', '', '', NULL, NULL, 20, 10, 1, 0.00, 0.00, NULL, NULL, 'good', 'Projector EPSON EB-X51', NULL, '', '/uploads/equipment/eq_1768938279_FZikfr-W.jpg', 1, NULL, '2026-01-20 17:44:16', '2026-01-20 19:44:39'),
+(9, 'SNDSYS001', 4, 'ระบบเสียง', 'Sound System', 'bi-volume-up', '', '', '', NULL, NULL, 5, 2, 1, 0.00, 0.00, NULL, NULL, 'good', 'ชุดเครื่องเสียงพร้อมลำโพง\r\nเครื่องเสียง (Sound System)', 'ชุดเครื่องเสียงพร้อมลำโพง\r\nเครื่องเสียง (Sound System)', '', '/uploads/equipment/eq_1768938774_IBKzvivr.avif', 1, NULL, '2026-01-20 17:44:16', '2026-01-20 20:05:43'),
+(10, 'CAMDIG001', 6, 'กล้องถ่ายรูป (Digital)', 'Camera', 'bi-camera', '', '', '', NULL, NULL, 15, 10, 1, 0.00, 0.00, NULL, NULL, 'good', 'กล้องถ่ายรูป (Digital)', NULL, '', '/uploads/equipment/eq_1768939203_8N4bQT_j.jpg', 1, NULL, '2026-01-20 17:44:16', '2026-01-20 20:02:07'),
+(11, 'CUTCUP001', 6, 'ชุดน้ำชา/กาแฟ', 'Tea/Coffee Cup,Catering Set', 'bi-cup-hot', '', '', '', NULL, NULL, 20, 10, 1, 0.00, 0.00, NULL, NULL, 'good', 'ชุดน้ำชา/กาแฟ\r\nTea/Coffee Cup,Catering Set', NULL, '', '/uploads/equipment/eq_1768939419_3JkbQPEZ.jpg', 1, NULL, '2026-01-20 17:44:16', '2026-01-20 20:03:39'),
+(12, 'NETWIF001', 6, 'WiFi', 'WiFi', 'bi-wifi', '', '', '', NULL, NULL, 30, 10, 1, 0.00, 0.00, NULL, NULL, 'good', 'Pocket WiFI', NULL, '', '/uploads/equipment/eq_1768938254_dID7AwTd.jpg', 1, NULL, '2026-01-20 17:44:16', '2026-01-20 20:04:12'),
+(13, 'BRDFC001', 6, 'Flipchart', 'Flipchart', 'bi-flipchart', '', '', '', NULL, NULL, 5, 5, 1, 0.00, 0.00, NULL, NULL, 'good', 'กระดาษ Flipchart พร้อมขาตั้ง', NULL, '', '/uploads/equipment/eq_1768933529_T8Vvj16-.jpg', 1, NULL, '2026-01-20 17:44:16', '2026-01-20 19:55:56'),
+(14, 'POWEXT001', 6, 'ปลั๊กไฟพ่วง', 'Electric Outlet', 'bi-wifi', '', '', '', NULL, NULL, 40, 40, 1, 0.00, 0.00, NULL, NULL, 'good', 'ปลั๊กพ่วง 6 ช่อง', NULL, '', '/uploads/equipment/eq_1768939635_56JuhKau.jpg', 1, NULL, '2026-01-20 17:44:16', '2026-01-20 20:07:15');
 
 -- --------------------------------------------------------
 
@@ -464,14 +498,85 @@ INSERT INTO `equipment_category` (`id`, `code`, `name_th`, `name_en`, `icon`, `d
 --
 
 CREATE TABLE `holiday` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `holiday_date` date NOT NULL,
-  `name_th` varchar(255) NOT NULL,
-  `name_en` varchar(255) DEFAULT NULL,
+  `id` int(10) UNSIGNED NOT NULL COMMENT 'ID',
+  `holiday_date` date NOT NULL COMMENT 'วันที่',
+  `year` int(3) UNSIGNED DEFAULT NULL COMMENT 'ปี พ.ศ.',
+  `name_th` varchar(255) NOT NULL COMMENT 'ชื่อวันหยุด',
+  `name_en` varchar(255) DEFAULT NULL COMMENT 'ชื่อวันหยุด (EN)',
+  `description` varchar(255) DEFAULT NULL COMMENT 'รายละเอียด',
   `holiday_type` varchar(50) DEFAULT 'public' COMMENT 'public, organization, special',
-  `is_recurring` tinyint(1) DEFAULT 0,
-  `created_at` timestamp NULL DEFAULT current_timestamp()
+  `is_recurring` tinyint(1) DEFAULT 0 COMMENT 'เกิดซ้ำทุกปี',
+  `is_active` int(3) UNSIGNED NOT NULL COMMENT 'สถานะ',
+  `created_at` timestamp NULL DEFAULT current_timestamp() COMMENT 'สร้างเมื่อ'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `holiday`
+--
+
+INSERT INTO `holiday` (`id`, `holiday_date`, `year`, `name_th`, `name_en`, `description`, `holiday_type`, `is_recurring`, `is_active`, `created_at`) VALUES
+(1, '2025-01-01', 2025, 'วันขึ้นปีใหม่', 'New Year\'s Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(2, '2025-02-12', 2025, 'วันมาฆบูชา', 'Makha Bucha Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(3, '2025-04-06', 2025, 'วันจักรี', 'Chakri Memorial Day', NULL, '1', 1, 0, '2026-01-20 11:52:02'),
+(4, '2025-04-13', 2025, 'วันสงกรานต์', 'Songkran Festival', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(5, '2025-04-14', 2025, 'วันสงกรานต์', 'Songkran Festival', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(6, '2025-04-15', 2025, 'วันสงกรานต์', 'Songkran Festival', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(7, '2025-05-01', 2025, 'วันแรงงานแห่งชาติ', 'National Labour Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(8, '2025-05-04', 2025, 'วันฉัตรมงคล', 'Coronation Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(9, '2025-05-11', 2025, 'วันวิสาขบูชา', 'Visakha Bucha Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(10, '2025-05-12', 2025, 'วันชดเชยวันวิสาขบูชา', 'Visakha Bucha Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(11, '2025-06-03', 2025, 'วันเฉลิมพระชนมพรรษา สมเด็จพระนางเจ้าฯ พระบรมราชินี', 'Queen\'s Birthday', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(12, '2025-07-10', 2025, 'วันอาสาฬหบูชา', 'Asalha Puja Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(13, '2025-07-11', 2025, 'วันเข้าพรรษา', 'Buddhist Lent Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(14, '2025-07-28', 2025, 'วันเฉลิมพระชนมพรรษา พระบาทสมเด็จพระเจ้าอยู่หัว', 'King\'s Birthday', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(15, '2025-08-12', 2025, 'วันเฉลิมพระชนมพรรษา สมเด็จพระนางเจ้าสิริกิติ์ฯ / วันแม่แห่งชาติ', 'Queen Mother\'s Birthday', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(16, '2025-10-13', 2025, 'วันคล้ายวันสวรรคต พระบาทสมเด็จพระบรมชนกาธิเบศร', 'King Bhumibol Memorial Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(17, '2025-10-23', 2025, 'วันปิยมหาราช', 'Chulalongkorn Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(18, '2025-12-05', 2025, 'วันคล้ายวันพระราชสมภพ รัชกาลที่ 9 / วันพ่อแห่งชาติ', 'King Bhumibol\'s Birthday', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(19, '2025-12-10', 2025, 'วันรัฐธรรมนูญ', 'Constitution Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(20, '2025-12-31', 2025, 'วันสิ้นปี', 'New Year\'s Eve', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(21, '2026-01-01', 2026, 'วันขึ้นปีใหม่', 'New Year\'s Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(22, '2026-01-02', 2026, 'วันชดเชยวันขึ้นปีใหม่', 'New Year\'s Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(23, '2026-03-01', 2026, 'วันมาฆบูชา', 'Makha Bucha Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(24, '2026-03-02', 2026, 'วันชดเชยวันมาฆบูชา', 'Makha Bucha Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(25, '2026-04-06', 2026, 'วันจักรี', 'Chakri Memorial Day', NULL, '1', NULL, 0, '2026-01-20 11:52:02'),
+(26, '2026-04-13', 2026, 'วันสงกรานต์', 'Songkran Festival', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(27, '2026-04-14', 2026, 'วันสงกรานต์', 'Songkran Festival', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(28, '2026-04-15', 2026, 'วันสงกรานต์', 'Songkran Festival', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(29, '2026-05-01', 2026, 'วันแรงงานแห่งชาติ', 'National Labour Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(30, '2026-05-04', 2026, 'วันฉัตรมงคล', 'Coronation Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(31, '2026-05-31', 2026, 'วันวิสาขบูชา', 'Visakha Bucha Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(32, '2026-06-01', 2026, 'วันชดเชยวันวิสาขบูชา', 'Asalha Puja Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(33, '2026-06-03', 2026, 'วันเฉลิมพระชนมพรรษา สมเด็จพระนางเจ้าฯ พระบรมราชินี', 'Queen\'s Birthday', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(34, '2026-06-28', 2026, 'วันอาสาฬหบูชา', 'Asalha Puja Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(35, '2026-06-29', 2026, 'วันเข้าพรรษา', 'Buddhist Lent Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(36, '2026-07-28', 2026, 'วันเฉลิมพระชนมพรรษา พระบาทสมเด็จพระเจ้าอยู่หัว', 'King\'s Birthday', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(37, '2026-08-12', 2026, 'วันเฉลิมพระชนมพรรษา สมเด็จพระนางเจ้าสิริกิติ์ฯ / วันแม่แห่งชาติ', 'Queen Mother\'s Birthday', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(38, '2026-10-13', 2026, 'วันคล้ายวันสวรรคต พระบาทสมเด็จพระบรมชนกาธิเบศร', 'King Bhumibol Memorial Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(39, '2026-10-23', 2026, 'วันปิยมหาราช', 'Chulalongkorn Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(40, '2026-12-05', 2026, 'วันคล้ายวันพระราชสมภพ รัชกาลที่ 9 / วันพ่อแห่งชาติ', 'King Bhumibol\'s Birthday', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(41, '2026-12-10', 2026, 'วันรัฐธรรมนูญ', 'Constitution Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(42, '2026-12-31', 2026, 'วันสิ้นปี', 'New Year\'s Eve', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(43, '2027-01-01', 2027, 'วันขึ้นปีใหม่', 'New Year\'s Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(44, '2027-02-18', 2027, 'วันมาฆบูชา', 'Makha Bucha Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(45, '2027-04-06', 2027, 'วันจักรี', 'Chakri Memorial Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(46, '2027-04-13', 2027, 'วันสงกรานต์', 'Songkran Festival', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(47, '2027-04-14', 2027, 'วันสงกรานต์', 'Songkran Festival', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(48, '2027-04-15', 2027, 'วันสงกรานต์', 'Songkran Festival', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(49, '2027-05-01', 2027, 'วันแรงงานแห่งชาติ', 'National Labour Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(50, '2027-05-04', 2027, 'วันฉัตรมงคล', 'Coronation Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(51, '2027-05-20', 2027, 'วันวิสาขบูชา', 'Visakha Bucha Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(52, '2027-06-03', 2027, 'วันเฉลิมพระชนมพรรษา สมเด็จพระนางเจ้าฯ พระบรมราชินี', 'Queen\'s Birthday', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(53, '2027-07-18', 2027, 'วันอาสาฬหบูชา', 'Asalha Puja Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(54, '2027-07-19', 2027, 'วันเข้าพรรษา', 'Buddhist Lent Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(55, '2027-07-28', 2027, 'วันเฉลิมพระชนมพรรษา พระบาทสมเด็จพระเจ้าอยู่หัว', 'King\'s Birthday', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(56, '2027-08-12', 2027, 'วันเฉลิมพระชนมพรรษา สมเด็จพระนางเจ้าสิริกิติ์ฯ / วันแม่แห่งชาติ', 'Queen Mother\'s Birthday', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(57, '2027-10-13', 2027, 'วันคล้ายวันสวรรคต พระบาทสมเด็จพระบรมชนกาธิเบศร', 'King Bhumibol Memorial Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(58, '2027-10-23', 2027, 'วันปิยมหาราช', 'Chulalongkorn Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(59, '2027-12-05', 2027, 'วันคล้ายวันพระราชสมภพ รัชกาลที่ 9 / วันพ่อแห่งชาติ', 'King Bhumibol\'s Birthday', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(60, '2027-12-06', 2027, 'วันชดเชยวันพ่อแห่งชาติ', 'King Bhumibol\'s Birthday', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(61, '2027-12-10', 2027, 'วันรัฐธรรมนูญ', 'Constitution Day', NULL, '1', 0, 0, '2026-01-20 11:52:02'),
+(62, '2027-12-31', 2027, 'วันสิ้นปี', 'New Year\'s Eve', '', 'national', 0, 0, '2026-01-20 11:52:02');
 
 -- --------------------------------------------------------
 
@@ -498,7 +603,8 @@ CREATE TABLE `login_history` (
 INSERT INTO `login_history` (`id`, `user_id`, `username`, `ip_address`, `user_agent`, `login_method`, `login_status`, `failure_reason`, `created_at`) VALUES
 (1, 1, 'admin', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'password', 'success', NULL, '2026-01-17 16:46:30'),
 (2, 1, 'admin', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'password', 'failed', 'Invalid credentials', '2026-01-17 17:08:02'),
-(3, 1, 'admin', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'password', 'success', NULL, '2026-01-17 17:08:28');
+(3, 1, 'admin', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'password', 'success', NULL, '2026-01-17 17:08:28'),
+(4, 1, 'admin', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'password', 'success', NULL, '2026-01-19 18:22:41');
 
 -- --------------------------------------------------------
 
@@ -634,7 +740,12 @@ INSERT INTO `notification` (`id`, `user_id`, `type`, `title`, `message`, `data`,
 (23, 4, 'booking_created', 'การจองห้องประชุมสำเร็จ', 'การจอง BK26010023 - ประชุมทีมงาน ได้รับการบันทึกแล้ว', '{\"booking_id\":23}', '/booking/view?id=23', 0, NULL, 0, '2026-01-17 20:38:13'),
 (24, 5, 'booking_created', 'การจองห้องประชุมสำเร็จ', 'การจอง BK26010024 - ประชุมทีมงาน ได้รับการบันทึกแล้ว', '{\"booking_id\":24}', '/booking/view?id=24', 0, NULL, 0, '2026-01-17 20:38:13'),
 (25, 1, 'booking_created', 'การจองห้องประชุมสำเร็จ', 'การจอง BK26010025 - ประชุมประจำเดือนกองดิจิทัล ได้รับการบันทึกแล้ว', '{\"booking_id\":25}', '/booking/view?id=25', 0, NULL, 0, '2026-01-18 02:07:34'),
-(26, 1, 'booking_created', 'การจองห้องประชุมสำเร็จ', 'การจอง BK26010025 - ประชุมประจำเดือนกองดิจิทัล ได้รับการบันทึกแล้ว', '{\"booking_id\":25}', '/booking/view?id=25', 0, NULL, 0, '2026-01-18 02:07:34');
+(26, 1, 'booking_created', 'การจองห้องประชุมสำเร็จ', 'การจอง BK26010025 - ประชุมประจำเดือนกองดิจิทัล ได้รับการบันทึกแล้ว', '{\"booking_id\":25}', '/booking/view?id=25', 0, NULL, 0, '2026-01-18 02:07:34'),
+(27, 5, 'booking_created', 'การจองห้องประชุมสำเร็จ', 'การจอง BK26010026 - ประชุมติดตามงาน ได้รับการบันทึกแล้ว', '{\"booking_id\":26}', '/booking/view?id=26', 0, NULL, 0, '2026-01-19 17:26:13'),
+(28, 5, 'booking_created', 'การจองห้องประชุมสำเร็จ', 'การจอง BK26010027 - ประชุมวิชาการ ได้รับการบันทึกแล้ว', '{\"booking_id\":27}', '/booking/view?id=27', 0, NULL, 0, '2026-01-19 17:26:13'),
+(29, 6, 'booking_created', 'การจองห้องประชุมสำเร็จ', 'การจอง BK26010028 - อบรมเชิงปฏิบัติการ ได้รับการบันทึกแล้ว', '{\"booking_id\":28}', '/booking/view?id=28', 0, NULL, 0, '2026-01-19 17:26:13'),
+(30, 5, 'booking_created', 'การจองห้องประชุมสำเร็จ', 'การจอง BK26010029 - ประชุมคณะกรรมการ ได้รับการบันทึกแล้ว', '{\"booking_id\":29}', '/booking/view?id=29', 0, NULL, 0, '2026-01-19 17:26:13'),
+(31, 5, 'booking_created', 'การจองห้องประชุมสำเร็จ', 'การจอง BK26010030 - ประชุมวิชาการ ได้รับการบันทึกแล้ว', '{\"booking_id\":30}', '/booking/view?id=30', 0, NULL, 0, '2026-01-19 17:26:13');
 
 -- --------------------------------------------------------
 
@@ -770,7 +881,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `auth_key`, `password_reset_token`, `verification_token`, `email_verified`, `email_verified_at`, `title`, `full_name`, `first_name`, `last_name`, `address`, `phone`, `avatar`, `department_id`, `position`, `azure_id`, `google_id`, `thaid_id`, `facebook_id`, `two_factor_secret`, `two_factor_enabled`, `backup_codes`, `failed_login_attempts`, `locked_until`, `password_changed_at`, `last_login_at`, `last_login_ip`, `status`, `role`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'admin', 'admin@example.com', '$2y$13$PA/wjsKQMoWuuvqQlB35yu2ELLjanSFOpSu1XLO29/BM6N6TOcNKK', 'JoSb1NFibHQ7G6AnT9JH_MUjxxX2GKF9', NULL, NULL, 1, NULL, NULL, 'ผู้ดูแลระบบ', 'System', 'Administrator', NULL, '02-712-7000', '/uploads/avatars/avatar_1_1768669043.jpg', 1, '', NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, NULL, '2026-01-17 16:25:05', '2026-01-17 17:08:28', '127.0.0.1', 10, 'admin', '2026-01-17 16:25:05', '2026-01-17 20:11:31', NULL),
+(1, 'admin', 'admin@example.com', '$2y$13$PA/wjsKQMoWuuvqQlB35yu2ELLjanSFOpSu1XLO29/BM6N6TOcNKK', 'JoSb1NFibHQ7G6AnT9JH_MUjxxX2GKF9', NULL, NULL, 1, NULL, NULL, 'ผู้ดูแลระบบ', 'System', 'Administrator', NULL, '02-712-7000', '/uploads/avatars/avatar_1_1768924595.jpg', 1, '', NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, NULL, '2026-01-17 16:25:05', '2026-01-19 18:22:41', '127.0.0.1', 10, 'admin', '2026-01-17 16:25:05', '2026-01-20 15:56:35', NULL),
 (2, 'superadmin', 'superadmin@bizco.co.th', '$2y$13$55LQK3f/1iMrdG39XbcbQOVw0VXTaFs51XFIxAnsY4sP7iVqiQRX2', 'f_JcOO8kWxLNUrBMW2PTQmio0fRcFnQQ', NULL, NULL, 1, NULL, NULL, 'ผู้ดูแลระบบสูงสุด', NULL, NULL, NULL, '02-712-7000', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, NULL, '2026-01-17 20:11:31', NULL, NULL, 10, 'superadmin', '2026-01-17 20:11:31', '2026-01-17 20:11:31', NULL),
 (3, 'approver', 'approver@bizco.co.th', '$2y$13$rN54cKpJ423OrK62X3PwY..UifEZMeRHC6xl8U5AS7ieJTy8N0WoO', 'HPdZlxarFjbYXHEb1engDE4zkYs0l1yz', NULL, NULL, 1, NULL, NULL, 'ผู้อนุมัติ', NULL, NULL, NULL, '02-712-7000', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, NULL, '2026-01-17 20:11:31', NULL, NULL, 10, 'approver', '2026-01-17 20:11:31', '2026-01-17 20:11:31', NULL),
 (4, 'user1', 'user1@bizco.co.th', '$2y$13$kn7iUbGbzym0nGDoBLBryeuHzna/PZmKP4Gy9dUKCco0PRAsbzb1e', '_k_2Ah4nADRHSjTQuNqp5UWNQBBK9DvJ', NULL, NULL, 1, NULL, NULL, 'สมชาย ใจดี', NULL, NULL, NULL, '02-712-7000', NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, NULL, '2026-01-17 20:11:31', NULL, NULL, 10, 'user', '2026-01-17 20:11:31', '2026-01-17 20:11:31', NULL),
@@ -1050,13 +1161,13 @@ ALTER TABLE `attachment`
 -- AUTO_INCREMENT for table `audit_log`
 --
 ALTER TABLE `audit_log`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `booking_attendee`
@@ -1092,7 +1203,7 @@ ALTER TABLE `email_template`
 -- AUTO_INCREMENT for table `equipment`
 --
 ALTER TABLE `equipment`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `equipment_category`
@@ -1104,13 +1215,13 @@ ALTER TABLE `equipment_category`
 -- AUTO_INCREMENT for table `holiday`
 --
 ALTER TABLE `holiday`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT for table `login_history`
 --
 ALTER TABLE `login_history`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `meeting_room`
@@ -1122,7 +1233,7 @@ ALTER TABLE `meeting_room`
 -- AUTO_INCREMENT for table `notification`
 --
 ALTER TABLE `notification`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `room_equipment`

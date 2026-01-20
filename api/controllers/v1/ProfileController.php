@@ -115,7 +115,7 @@ class ProfileController extends BaseController
         $avatarFile = UploadedFile::getInstanceByName('avatar');
 
         if (!$avatarFile) {
-            return $this->error('กรุณาเลือกไฟล์รูปภาพ', 400);
+            return $this->error('โปรดเลือกไฟล์รูปภาพ', 400);
         }
 
         // Validate file type
@@ -288,7 +288,7 @@ class ProfileController extends BaseController
         return $this->success([
             'secret' => $secret,
             'qr_code_url' => $qrCodeUrl,
-        ], 'กรุณาสแกน QR Code และยืนยันรหัส');
+        ], 'โปรดสแกน QR Code และยืนยันรหัส');
     }
 
     /**
@@ -304,11 +304,11 @@ class ProfileController extends BaseController
         $code = Yii::$app->request->post('code');
 
         if (!$model->two_factor_secret) {
-            return $this->error('กรุณาเริ่มต้นการตั้งค่า 2FA ก่อน', 400);
+            return $this->error('โปรดเริ่มต้นการตั้งค่า 2FA ก่อน', 400);
         }
 
         if (empty($code)) {
-            return $this->error('กรุณาระบุรหัสยืนยัน', 400);
+            return $this->error('โปรดระบุรหัสยืนยัน', 400);
         }
 
         $ga = new \PHPGangsta_GoogleAuthenticator();
@@ -362,7 +362,7 @@ class ProfileController extends BaseController
         $confirmation = Yii::$app->request->post('confirmation');
 
         if ($confirmation !== 'DELETE') {
-            return $this->error('กรุณาพิมพ์ DELETE เพื่อยืนยัน', 400);
+            return $this->error('โปรดพิมพ์ DELETE เพื่อยืนยัน', 400);
         }
 
         $transaction = Yii::$app->db->beginTransaction();

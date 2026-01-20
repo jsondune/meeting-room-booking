@@ -217,7 +217,7 @@ $reminderText = [
         
         <div class="email-footer">
             <p>ระบบจองห้องประชุม - Meeting Room Booking System</p>
-            <p>อีเมลนี้ส่งโดยอัตโนมัติ กรุณาอย่าตอบกลับ</p>
+            <p>อีเมลนี้ส่งโดยอัตโนมัติ โปรดอย่าตอบกลับ</p>
         </div>
     </div>
 </body>

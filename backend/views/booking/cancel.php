@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = 'ยกเลิกการจอง';
                                     <strong>ผู้จอง:</strong> <?= Html::encode($model->user->full_name ?? '-') ?>
                                 </p>
                                 <p class="mb-2">
-                                    <strong>จำนวนผู้เข้าร่วม:</strong> <?= $model->attendee_count ?> คน
+                                    <strong>จำนวนผู้เข้าร่วม:</strong> <?= $model->attendees_count ?> คน
                                 </p>
                             </div>
                         </div>

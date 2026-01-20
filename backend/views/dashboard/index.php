@@ -397,7 +397,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.btn-reject').forEach(btn => {
         btn.addEventListener('click', function() {
             const bookingId = this.dataset.id;
-            const reason = prompt('กรุณาระบุเหตุผลในการปฏิเสธ:');
+            const reason = prompt('โปรดระบุเหตุผลในการปฏิเสธ:');
             if (reason !== null) {
                 window.location.href = '<?= Url::to(['booking/reject']) ?>?id=' + bookingId + '&reason=' + encodeURIComponent(reason);
             }

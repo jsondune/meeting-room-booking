@@ -282,7 +282,7 @@ class NotificationSettingsController extends Controller
         if (!$oauth && $enabled) {
             return [
                 'success' => false,
-                'message' => 'กรุณาเชื่อมต่อบัญชี ' . ucfirst($provider) . ' ก่อน',
+                'message' => 'โปรดเชื่อมต่อบัญชี ' . ucfirst($provider) . ' ก่อน',
                 'require_oauth' => true,
             ];
         }

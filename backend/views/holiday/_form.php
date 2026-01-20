@@ -10,7 +10,7 @@ use common\models\Holiday;
 
     <div class="row">
         <div class="col-md-6">
-            <?= $form->field($model, 'date')->input('date') ?>
+            <?= $form->field($model, 'holiday_date')->input('date') ?>
         </div>
         <div class="col-md-6">
             <?= $form->field($model, 'holiday_type')->dropDownList(Holiday::getTypeOptions(), ['prompt' => '-- เลือกประเภท --']) ?>

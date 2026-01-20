@@ -179,12 +179,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                     ],
                     [
-                        'attribute' => 'attendee_count',
+                        'attribute' => 'attendees_count',
                         'label' => 'จำนวนคน',
                         'format' => 'raw',
                         'value' => function ($model) {
                             $room = $model->room;
-                            $attendees = $model->attendee_count ?? 0;
+                            $attendees = $model->attendees_count ?? 0;
                             $capacity = $room ? $room->capacity : 0;
                             $class = $attendees > $capacity ? 'text-danger' : '';
                             return '<span class="' . $class . '">' . $attendees . '</span>' . ($capacity ? ' / ' . $capacity : '');
@@ -264,7 +264,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <p class="text-muted mb-3">คุณกำลังจะปฏิเสธ <strong id="reject-count">0</strong> รายการ</p>
                     <div class="mb-3">
                         <label for="bulk-reject-reason" class="form-label">เหตุผลในการปฏิเสธ <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="bulk-reject-reason" name="reason" rows="3" required placeholder="กรุณาระบุเหตุผลในการปฏิเสธ..."></textarea>
+                        <textarea class="form-control" id="bulk-reject-reason" name="reason" rows="3" required placeholder="โปรดระบุเหตุผลในการปฏิเสธ..."></textarea>
                     </div>
                     <div class="d-flex flex-wrap gap-2">
                         <button type="button" class="btn btn-sm btn-outline-secondary quick-reason" data-reason="ห้องประชุมไม่ว่าง">ห้องไม่ว่าง</button>
@@ -311,7 +311,7 @@ $('#btn-bulk-approve').on('click', function() {
     });
     
     if (ids.length === 0) {
-        alert('กรุณาเลือกรายการที่ต้องการอนุมัติ');
+        alert('โปรดเลือกรายการที่ต้องการอนุมัติ');
         return;
     }
     
@@ -330,7 +330,7 @@ $('#btn-bulk-approve').on('click', function() {
             location.reload();
         },
         error: function() {
-            alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            alert('เกิดข้อผิดพลาด โปรดลองใหม่อีกครั้ง');
         }
     });
 });

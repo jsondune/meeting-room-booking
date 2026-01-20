@@ -630,7 +630,7 @@ tail -f /var/www/booking/frontend/runtime/logs/app.log
 
 ## Support
 
-หากพบปัญหาหรือต้องการความช่วยเหลือ กรุณาติดต่อ:
+หากพบปัญหาหรือต้องการความช่วยเหลือ โปรดติดต่อ:
 
 - **Email**: dtai@bizco.co.th
 - **Phone**: 02-590-1000

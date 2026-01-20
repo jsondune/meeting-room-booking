@@ -163,11 +163,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                     ],
                     [
-                        'attribute' => 'attendee_count',
+                        'attribute' => 'attendees_count',
                         'label' => 'ผู้เข้าร่วม',
                         'format' => 'raw',
                         'value' => function ($model) {
-                            return '<span class="badge bg-secondary">' . $model->attendee_count . ' คน</span>';
+                            return '<span class="badge bg-secondary">' . $model->attendees_count . ' คน</span>';
                         },
                         'headerOptions' => ['style' => 'width: 90px; text-align: center;'],
                         'contentOptions' => ['class' => 'text-center'],
@@ -262,7 +262,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>กรุณาระบุเหตุผลในการปฏิเสธการจอง <span id="selected-count">0</span> รายการ</p>
+                <p>โปรดระบุเหตุผลในการปฏิเสธการจอง <span id="selected-count">0</span> รายการ</p>
                 <div class="mb-3">
                     <label for="bulk-reason" class="form-label">เหตุผล</label>
                     <textarea class="form-control" id="bulk-reason" rows="3" placeholder="ระบุเหตุผลในการปฏิเสธ..."></textarea>
@@ -302,7 +302,7 @@ $('#bulk-approve-btn').on('click', function() {
     });
     
     if (ids.length === 0) {
-        alert('กรุณาเลือกการจองที่ต้องการอนุมัติ');
+        alert('โปรดเลือกการจองที่ต้องการอนุมัติ');
         return;
     }
     
@@ -319,7 +319,7 @@ $('#bulk-approve-btn').on('click', function() {
 $('#bulk-reject-btn').on('click', function() {
     var checked = $('.booking-checkbox:checked').length;
     if (checked === 0) {
-        alert('กรุณาเลือกการจองที่ต้องการปฏิเสธ');
+        alert('โปรดเลือกการจองที่ต้องการปฏิเสธ');
         return;
     }
     $('#bulkRejectModal').modal('show');

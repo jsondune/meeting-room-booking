@@ -471,7 +471,7 @@ document.getElementById('submitReview').addEventListener('click', function() {
     const comment = document.getElementById('reviewComment').value;
     
     if (rating < 1) {
-        alert('กรุณาให้คะแนน');
+        alert('โปรดให้คะแนน');
         return;
     }
     

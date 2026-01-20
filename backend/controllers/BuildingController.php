@@ -303,7 +303,7 @@ class BuildingController extends BaseController
         $ids = Yii::$app->request->post('ids', []);
 
         if (empty($ids)) {
-            return ['success' => false, 'message' => 'กรุณาเลือกรายการ'];
+            return ['success' => false, 'message' => 'โปรดเลือกรายการ'];
         }
 
         $count = 0;

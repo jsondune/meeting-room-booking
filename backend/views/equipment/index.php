@@ -177,8 +177,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?php foreach ($dataProvider->models as $model): ?>
                                 <tr>
                                     <td>
-                                        <?php if ($model->image): ?>
-                                            <img src="<?= $model->image ?>" alt="<?= Html::encode($model->name_th) ?>" 
+                                        <?php if ($model->hasImage()): ?>
+                                            <img src="<?= Html::encode($model->imageUrl) ?>" alt="<?= Html::encode($model->name_th) ?>" 
                                                  class="rounded" style="width: 60px; height: 45px; object-fit: cover;">
                                         <?php else: ?>
                                             <div class="bg-light rounded d-flex align-items-center justify-content-center" 
@@ -201,11 +201,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                             'communication' => 'bi-telephone',
                                             'other' => 'bi-box',
                                         ];
-                                        $icon = $categoryIcons[$model->category] ?? 'bi-box';
+                                        $categoryCode = $model->category ? $model->category->code : null;
+                                        $icon = $categoryIcons[$categoryCode] ?? 'bi-box';
                                         ?>
                                         <span class="badge bg-light text-dark">
                                             <i class="bi <?= $icon ?> me-1"></i>
-                                            <?= Html::encode($categories[$model->category] ?? $model->category) ?>
+                                            <?= Html::encode($model->category ? $model->category->name_th : '-') ?>
                                         </span>
                                     </td>
                                     <td>

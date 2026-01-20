@@ -158,8 +158,8 @@ $this->title = 'จัดการการจอง';
                                 <div class="text-muted small text-truncate" style="max-width: 200px;">
                                     <?= Html::encode($booking->title) ?>
                                 </div>
-                                <?php if ($booking->booking_type != 'internal'): ?>
-                                    <span class="badge bg-info"><?= ucfirst($booking->booking_type) ?></span>
+                                <?php if ($booking->meeting_type != 'internal'): ?>
+                                    <span class="badge bg-info"><?= ucfirst($booking->meeting_type) ?></span>
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -189,7 +189,7 @@ $this->title = 'จัดการการจอง';
                             </td>
                             <td class="text-center">
                                 <span class="badge bg-light text-dark">
-                                    <i class="bi bi-people me-1"></i><?= $booking->attendee_count ?: 0 ?>
+                                    <i class="bi bi-people me-1"></i><?= $booking->attendees_count ?: 0 ?>
                                 </span>
                             </td>
                             <td class="text-center">
@@ -308,7 +308,7 @@ $this->title = 'จัดการการจอง';
                     <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>" value="<?= Yii::$app->request->csrfToken ?>">
                     <div class="mb-3">
                         <label class="form-label">เหตุผลในการปฏิเสธ <span class="text-danger">*</span></label>
-                        <textarea name="reason" class="form-control" rows="3" required placeholder="กรุณาระบุเหตุผล..."></textarea>
+                        <textarea name="reason" class="form-control" rows="3" required placeholder="โปรดระบุเหตุผล..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -335,7 +335,7 @@ $this->title = 'จัดการการจอง';
                     <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>" value="<?= Yii::$app->request->csrfToken ?>">
                     <div class="mb-3">
                         <label class="form-label">เหตุผลในการยกเลิก <span class="text-danger">*</span></label>
-                        <textarea name="reason" class="form-control" rows="3" required placeholder="กรุณาระบุเหตุผล..."></textarea>
+                        <textarea name="reason" class="form-control" rows="3" required placeholder="โปรดระบุเหตุผล..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

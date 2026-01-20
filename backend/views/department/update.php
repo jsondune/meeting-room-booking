@@ -5,9 +5,9 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\Department $model */
 
-$this->title = 'แก้ไขหน่วยงาน: ' . $model->name;
+$this->title = 'แก้ไขหน่วยงาน: ' . $model->name_th;
 $this->params['breadcrumbs'][] = ['label' => 'จัดการหน่วยงาน', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->name_th, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'แก้ไข';
 ?>
 

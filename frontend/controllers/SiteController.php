@@ -230,7 +230,7 @@ class SiteController extends Controller
             if ($model->sendEmail(Yii::$app->params['adminEmail'])) {
                 Yii::$app->session->setFlash('success', 'ขอบคุณสำหรับการติดต่อ เราจะตอบกลับโดยเร็วที่สุด');
             } else {
-                Yii::$app->session->setFlash('error', 'เกิดข้อผิดพลาดในการส่งอีเมล กรุณาลองใหม่อีกครั้ง');
+                Yii::$app->session->setFlash('error', 'เกิดข้อผิดพลาดในการส่งอีเมล โปรดลองใหม่อีกครั้ง');
             }
 
             return $this->refresh();
@@ -266,7 +266,7 @@ class SiteController extends Controller
 
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
-            Yii::$app->session->setFlash('success', 'ลงทะเบียนสำเร็จ กรุณาตรวจสอบอีเมลเพื่อยืนยันบัญชี');
+            Yii::$app->session->setFlash('success', 'ลงทะเบียนสำเร็จ โปรดตรวจสอบอีเมลเพื่อยืนยันบัญชี');
             return $this->redirect(['login']);
         }
 
@@ -287,7 +287,7 @@ class SiteController extends Controller
         $model = new PasswordResetRequestForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-                Yii::$app->session->setFlash('success', 'กรุณาตรวจสอบอีเมลสำหรับคำแนะนำในการรีเซ็ตรหัสผ่าน');
+                Yii::$app->session->setFlash('success', 'โปรดตรวจสอบอีเมลสำหรับคำแนะนำในการรีเซ็ตรหัสผ่าน');
                 return $this->redirect(['login']);
             }
 
@@ -462,7 +462,7 @@ class SiteController extends Controller
         if (!$roomId || !$date || !$startTime || !$endTime) {
             return [
                 'success' => false,
-                'message' => 'กรุณาระบุข้อมูลให้ครบถ้วน',
+                'message' => 'โปรดระบุข้อมูลให้ครบถ้วน',
             ];
         }
 

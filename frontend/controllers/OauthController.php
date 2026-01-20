@@ -143,7 +143,7 @@ class OauthController extends Controller
             
         } catch (\Exception $e) {
             Yii::error("OAuth callback error: " . $e->getMessage(), 'oauth');
-            Yii::$app->session->setFlash('error', 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ กรุณาลองใหม่อีกครั้ง');
+            Yii::$app->session->setFlash('error', 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ โปรดลองใหม่อีกครั้ง');
             return $this->redirect(['/site/login']);
         }
     }
@@ -156,13 +156,13 @@ class OauthController extends Controller
         $user = $client->authenticate($code, $state);
         
         if (!$user) {
-            Yii::$app->session->setFlash('error', 'ไม่สามารถยืนยันตัวตนได้ กรุณาลองใหม่อีกครั้ง');
+            Yii::$app->session->setFlash('error', 'ไม่สามารถยืนยันตัวตนได้ โปรดลองใหม่อีกครั้ง');
             return $this->redirect(['/site/login']);
         }
         
         // Check if user is active
         if ($user->status !== \common\models\User::STATUS_ACTIVE) {
-            Yii::$app->session->setFlash('error', 'บัญชีของคุณถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ');
+            Yii::$app->session->setFlash('error', 'บัญชีของคุณถูกระงับการใช้งาน โปรดติดต่อผู้ดูแลระบบ');
             return $this->redirect(['/site/login']);
         }
         
@@ -184,7 +184,7 @@ class OauthController extends Controller
             return $this->redirect($returnUrl);
         }
         
-        Yii::$app->session->setFlash('error', 'ไม่สามารถเข้าสู่ระบบได้ กรุณาลองใหม่อีกครั้ง');
+        Yii::$app->session->setFlash('error', 'ไม่สามารถเข้าสู่ระบบได้ โปรดลองใหม่อีกครั้ง');
         return $this->redirect(['/site/login']);
     }
     
@@ -206,7 +206,7 @@ class OauthController extends Controller
             
         } catch (\Exception $e) {
             Yii::error("OAuth connect error: " . $e->getMessage(), 'oauth');
-            Yii::$app->session->setFlash('error', 'ไม่สามารถเชื่อมต่อบัญชีได้ กรุณาลองใหม่อีกครั้ง');
+            Yii::$app->session->setFlash('error', 'ไม่สามารถเชื่อมต่อบัญชีได้ โปรดลองใหม่อีกครั้ง');
             return $this->redirect(['/profile/connections']);
         }
         
@@ -282,7 +282,7 @@ class OauthController extends Controller
         
         // If only one connection and no password, don't allow disconnect
         if (count($connections) <= 1 && empty($user->password_hash)) {
-            Yii::$app->session->setFlash('error', 'ไม่สามารถยกเลิกการเชื่อมต่อได้ เนื่องจากไม่มีวิธีเข้าสู่ระบบอื่น กรุณาตั้งรหัสผ่านก่อน');
+            Yii::$app->session->setFlash('error', 'ไม่สามารถยกเลิกการเชื่อมต่อได้ เนื่องจากไม่มีวิธีเข้าสู่ระบบอื่น โปรดตั้งรหัสผ่านก่อน');
             return $this->redirect(['/profile/connections']);
         }
         
@@ -301,14 +301,14 @@ class OauthController extends Controller
     protected function getErrorMessage(string $error, ?string $description): string
     {
         $messages = [
-            'access_denied' => 'คุณปฏิเสธการเข้าถึง กรุณาลองใหม่และอนุญาตการเข้าถึง',
-            'invalid_request' => 'คำขอไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง',
-            'unauthorized_client' => 'แอปพลิเคชันไม่ได้รับอนุญาต กรุณาติดต่อผู้ดูแลระบบ',
-            'invalid_scope' => 'สิทธิ์การเข้าถึงไม่ถูกต้อง กรุณาติดต่อผู้ดูแลระบบ',
-            'server_error' => 'เกิดข้อผิดพลาดที่เซิร์ฟเวอร์ กรุณาลองใหม่ภายหลัง',
-            'temporarily_unavailable' => 'บริการไม่พร้อมใช้งานชั่วคราว กรุณาลองใหม่ภายหลัง',
+            'access_denied' => 'คุณปฏิเสธการเข้าถึง โปรดลองใหม่และอนุญาตการเข้าถึง',
+            'invalid_request' => 'คำขอไม่ถูกต้อง โปรดลองใหม่อีกครั้ง',
+            'unauthorized_client' => 'แอปพลิเคชันไม่ได้รับอนุญาต โปรดติดต่อผู้ดูแลระบบ',
+            'invalid_scope' => 'สิทธิ์การเข้าถึงไม่ถูกต้อง โปรดติดต่อผู้ดูแลระบบ',
+            'server_error' => 'เกิดข้อผิดพลาดที่เซิร์ฟเวอร์ โปรดลองใหม่ภายหลัง',
+            'temporarily_unavailable' => 'บริการไม่พร้อมใช้งานชั่วคราว โปรดลองใหม่ภายหลัง',
         ];
         
-        return $messages[$error] ?? ($description ?: 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+        return $messages[$error] ?? ($description ?: 'เกิดข้อผิดพลาด โปรดลองใหม่อีกครั้ง');
     }
 }

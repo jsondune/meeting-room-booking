@@ -658,9 +658,14 @@ function updateBookingSummary() {
     var attendees = $('#booking-attendee_count').val();
     
     if (date) {
-        var dateObj = new Date(date);
-        var options = { year: 'numeric', month: 'long', day: 'numeric' };
-        $('#summary-date').text(dateObj.toLocaleDateString('th-TH', options));
+        // Use ThaiDate helper if available, otherwise fallback
+        if (typeof ThaiDate !== 'undefined') {
+            $('#summary-date').text(ThaiDate.format(date, 'long'));
+        } else {
+            var dateObj = new Date(date);
+            var options = { year: 'numeric', month: 'long', day: 'numeric' };
+            $('#summary-date').text(dateObj.toLocaleDateString('th-TH', options));
+        }
     }
     
     if (startTime && endTime) {

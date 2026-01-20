@@ -1,0 +1,237 @@
+# Meeting Room Booking System - Docker Compose Configuration
+# Production-ready multi-container setup
+#
+# @author Digital Technology & AI Division
+# @version 1.0.0
+#
+# Usage:
+#   Development: docker-compose up -d
+#   Production:  docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+version: '3.8'
+
+services:
+  # ========================================
+  # Web Server (Nginx)
+  # ========================================
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: booking-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www/meeting-room-booking:ro
+      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./deploy/ssl:/etc/nginx/ssl:ro
+      - nginx-logs:/var/log/nginx
+    depends_on:
+      - php-fpm
+    networks:
+      - booking-network
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ========================================
+  # PHP-FPM Application
+  # ========================================
+  php-fpm:
+    build:
+      context: ./deploy/docker
+      dockerfile: Dockerfile.php
+    container_name: booking-php
+    restart: unless-stopped
+    environment:
+      - PHP_MEMORY_LIMIT=256M
+      - PHP_MAX_EXECUTION_TIME=300
+      - PHP_UPLOAD_MAX_FILESIZE=20M
+      - PHP_POST_MAX_SIZE=25M
+    env_file:
+      - .env
+    volumes:
+      - ./:/var/www/meeting-room-booking
+      - php-sessions:/var/lib/php/sessions
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - booking-network
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm-healthcheck || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ========================================
+  # MySQL Database
+  # ========================================
+  mysql:
+    image: mysql:8.0
+    container_name: booking-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_secret}
+      MYSQL_DATABASE: ${DB_DATABASE:-meeting_room_booking}
+      MYSQL_USER: ${DB_USERNAME:-booking_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-booking_secret}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./deploy/mysql/init:/docker-entrypoint-initdb.d:ro
+      - ./deploy/mysql/conf.d:/etc/mysql/conf.d:ro
+    ports:
+      - "3306:3306"
+    networks:
+      - booking-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root_secret}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  # ========================================
+  # Redis Cache
+  # ========================================
+  redis:
+    image: redis:7-alpine
+    container_name: booking-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - booking-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ========================================
+  # Queue Worker
+  # ========================================
+  queue-worker:
+    build:
+      context: ./deploy/docker
+      dockerfile: Dockerfile.php
+    container_name: booking-queue
+    restart: unless-stopped
+    command: php /var/www/meeting-room-booking/yii queue/listen --verbose=1
+    env_file:
+      - .env
+    volumes:
+      - ./:/var/www/meeting-room-booking
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - booking-network
+
+  # ========================================
+  # Scheduler (Cron)
+  # ========================================
+  scheduler:
+    build:
+      context: ./deploy/docker
+      dockerfile: Dockerfile.php
+    container_name: booking-scheduler
+    restart: unless-stopped
+    command: >
+      sh -c "while true; do
+        php /var/www/meeting-room-booking/yii send-reminders/run;
+        php /var/www/meeting-room-booking/yii auto-complete/run;
+        php /var/www/meeting-room-booking/yii auto-cancel/run;
+        sleep 60;
+      done"
+    env_file:
+      - .env
+    volumes:
+      - ./:/var/www/meeting-room-booking
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - booking-network
+
+  # ========================================
+  # phpMyAdmin (Development only)
+  # ========================================
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: booking-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_ROOT_PASSWORD:-root_secret}
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - booking-network
+    profiles:
+      - dev
+
+  # ========================================
+  # Mailhog (Development only)
+  # ========================================
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: booking-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - booking-network
+    profiles:
+      - dev
+
+  # ========================================
+  # Redis Commander (Development only)
+  # ========================================
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: booking-redis-commander
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - booking-network
+    profiles:
+      - dev
+
+# ========================================
+# Networks
+# ========================================
+networks:
+  booking-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
+
+# ========================================
+# Volumes
+# ========================================
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local
+  php-sessions:
+    driver: local
+  nginx-logs:
+    driver: local

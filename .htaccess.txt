@@ -1,0 +1,8 @@
+Options -Indexes
+RewriteEngine on
+
+# Redirect to frontend/web
+RewriteCond %{REQUEST_URI} !^/frontend/web
+RewriteCond %{REQUEST_URI} !^/backend/web
+RewriteCond %{REQUEST_URI} !^/api/web
+RewriteRule ^(.*)$ /frontend/web/$1 [L]

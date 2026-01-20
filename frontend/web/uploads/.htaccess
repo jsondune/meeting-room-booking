@@ -1,0 +1,14 @@
+# Allow access to uploaded files
+Options -Indexes
+
+# Deny access to PHP files
+<FilesMatch "\.php$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Allow image files
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|svg)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>

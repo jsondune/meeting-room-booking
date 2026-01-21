@@ -3,7 +3,11 @@
 ไฟล์: room_image_feature.zip
 
 📁 วิธี Copy ไฟล์
-ไฟล์ใน ZIPวางที่RoomController.phpbackend/controllers/RoomController.php_form.phpbackend/views/room/_form.phpMeetingRoom.phpcommon/models/MeetingRoom.phpRoomImage.phpcommon/models/RoomImage.php
+ไฟล์ใน ZIP               วางที่
+RoomController.php      backend/controllers/RoomController.php
+_form.php               backend/views/room/_form.php
+MeetingRoom.php         common/models/MeetingRoom.php
+RoomImage.php           common/models/RoomImage.php
 
 📂 สร้าง Folder
 backend/web/uploads/rooms/
@@ -11,7 +15,12 @@ backend/web/uploads/rooms/
 รัน SQL ใน room_image.sql ถ้ายังไม่มี table room_image
 
 ✅ ความสามารถ
-Featureรายละเอียดอัปโหลดสูงสุด 5 รูป (JPG, PNG, GIF, WEBP ≤ 2MB)Previewแสดงตัวอย่างก่อนอัปโหลดลบรูปคลิกปุ่มถังขยะ ลบเมื่อกด Saveรูปหลักคลิกที่รูปเพื่อตั้งเป็น PrimaryThumbnailรูปหลักแสดงในรายการห้อง
+Feature                 รายละเอียด
+อัปโหลดสูงสุด 5 รูป        (JPG, PNG, GIF, WEBP ≤ 2MB)
+Preview                 แสดงตัวอย่างก่อนอัปโหลด 
+ลบรูป                    คลิกปุ่มถังขยะ ลบเมื่อกด Save
+รูปหลัก                   คลิกที่รูปเพื่อตั้งเป็น Primary 
+Thumbnail               รูปหลักแสดงในรายการห้อง
 
 🎨 UI Preview
 ┌─────────────────────────────────────────┐

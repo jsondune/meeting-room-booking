@@ -1,9 +1,9 @@
--- ตรวจสอบว่า table room_image มีอยู่หรือไม่
--- ถ้าไม่มีให้รัน SQL นี้
+-- Building Image Table
+-- สร้าง Table สำหรับเก็บรูปภาพอาคาร
 
-CREATE TABLE IF NOT EXISTS `room_image` (
+CREATE TABLE IF NOT EXISTS `building_image` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `room_id` int(11) NOT NULL,
+  `building_id` int(11) NOT NULL,
   `filename` varchar(255) NOT NULL,
   `original_name` varchar(255) NOT NULL,
   `file_path` varchar(500) NOT NULL,
@@ -16,9 +16,7 @@ CREATE TABLE IF NOT EXISTS `room_image` (
   `sort_order` int(11) DEFAULT 0,
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_room_image_room_id` (`room_id`)
+  KEY `idx_building_image_building_id` (`building_id`),
+  KEY `idx_building_image_is_primary` (`is_primary`),
+  CONSTRAINT `fk_building_image_building` FOREIGN KEY (`building_id`) REFERENCES `building` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- เพิ่ม Foreign Key (ถ้าต้องการ)
--- ALTER TABLE `room_image` ADD CONSTRAINT `fk_room_image_room` 
---   FOREIGN KEY (`room_id`) REFERENCES `meeting_room` (`id`) ON DELETE CASCADE;

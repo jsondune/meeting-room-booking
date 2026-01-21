@@ -1,6 +1,6 @@
 <?php
 /**
- * Room Image Model
+ * Building Image Model
  */
 
 namespace common\models;
@@ -8,18 +8,18 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 
-class RoomImage extends ActiveRecord
+class BuildingImage extends ActiveRecord
 {
     public static function tableName()
     {
-        return '{{%room_image}}';
+        return '{{%building_image}}';
     }
 
     public function rules()
     {
         return [
-            [['room_id', 'filename', 'original_name', 'file_path'], 'required'],
-            ['room_id', 'integer'],
+            [['building_id', 'filename', 'original_name', 'file_path'], 'required'],
+            ['building_id', 'integer'],
             [['filename', 'original_name', 'alt_text'], 'string', 'max' => 255],
             ['file_path', 'string', 'max' => 500],
             ['mime_type', 'string', 'max' => 100],
@@ -34,7 +34,7 @@ class RoomImage extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'room_id' => 'ห้องประชุม',
+            'building_id' => 'อาคาร',
             'filename' => 'ชื่อไฟล์',
             'original_name' => 'ชื่อไฟล์เดิม',
             'file_path' => 'ตำแหน่งไฟล์',
@@ -49,14 +49,16 @@ class RoomImage extends ActiveRecord
         ];
     }
 
-    public function getRoom()
+    public function getBuilding()
     {
-        return $this->hasOne(MeetingRoom::class, ['id' => 'room_id']);
+        return $this->hasOne(Building::class, ['id' => 'building_id']);
     }
 
     public function getUrl()
     {
-        return Yii::getAlias('@web/' . $this->file_path);
+        // file_path is like: uploads/buildings/5/filename.jpg
+        // Return relative URL from web root
+        return '/' . $this->file_path;
     }
     
     public function getFullUrl()
@@ -66,7 +68,6 @@ class RoomImage extends ActiveRecord
     
     public function getThumbnailUrl($width = 200, $height = 150)
     {
-        // Return original URL - implement thumbnail generation if needed
         return $this->getUrl();
     }
     

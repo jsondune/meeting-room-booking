@@ -8,6 +8,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use yii\data\ActiveDataProvider;
 use common\models\Building;
+use common\models\BuildingImage;
 use common\models\MeetingRoom;
 use common\models\AuditLog;
 
@@ -195,23 +196,69 @@ class BuildingController extends BaseController
         $oldValues = $model->attributes;
 
         if ($model->load(Yii::$app->request->post())) {
-            // Handle image upload
-            $imageFile = UploadedFile::getInstance($model, 'imageFile');
-            if ($imageFile) {
-                $imagePath = $this->uploadImage($imageFile, 'building');
-                if ($imagePath) {
-                    // Delete old image
-                    if ($model->image) {
-                        $this->deleteImage($model->image);
+            // Handle delete images
+            $deleteImages = Yii::$app->request->post('deleteImages', []);
+            if (!empty($deleteImages)) {
+                foreach ($deleteImages as $imageId) {
+                    $image = BuildingImage::findOne(['id' => $imageId, 'building_id' => $model->id]);
+                    if ($image) {
+                        // Delete physical file
+                        $filePath = Yii::getAlias('@backend/web/' . $image->file_path);
+                        $filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+                        if (file_exists($filePath)) {
+                            @unlink($filePath);
+                        }
+                        $image->delete();
                     }
-                    $model->image = $imagePath;
+                }
+                
+                // After deleting, check if there's still a primary image
+                $hasPrimary = BuildingImage::find()->where(['building_id' => $model->id, 'is_primary' => 1])->exists();
+                if (!$hasPrimary) {
+                    // Set first remaining image as primary
+                    $firstImage = BuildingImage::find()->where(['building_id' => $model->id])->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC])->one();
+                    if ($firstImage) {
+                        $firstImage->is_primary = 1;
+                        $firstImage->save(false);
+                    }
                 }
             }
 
+            // Handle set primary image
+            $primaryImageId = Yii::$app->request->post('primaryImage');
+            if ($primaryImageId) {
+                // Check if the selected primary image still exists (not deleted)
+                $primaryExists = BuildingImage::find()->where(['id' => $primaryImageId, 'building_id' => $model->id])->exists();
+                if ($primaryExists) {
+                    // Reset all to non-primary
+                    BuildingImage::updateAll(['is_primary' => 0], ['building_id' => $model->id]);
+                    // Set new primary
+                    BuildingImage::updateAll(['is_primary' => 1], ['id' => $primaryImageId, 'building_id' => $model->id]);
+                }
+            }
+
+            // Handle image uploads (max 5 total)
+            $model->imageFiles = UploadedFile::getInstances($model, 'imageFiles');
+            
             if ($model->save()) {
+                // Upload new images (check limit)
+                if ($model->imageFiles && count($model->imageFiles) > 0) {
+                    $existingCount = BuildingImage::find()->where(['building_id' => $model->id])->count();
+                    $maxAllowed = 5 - $existingCount;
+                    
+                    if ($maxAllowed > 0) {
+                        // Limit files to upload
+                        $filesToUpload = array_slice($model->imageFiles, 0, $maxAllowed);
+                        $model->imageFiles = $filesToUpload;
+                        $model->uploadImages();
+                    }
+                }
+
                 AuditLog::log('update', Building::class, $model->id, $oldValues, $model->attributes, 'Updated building: ' . $model->name_th);
                 Yii::$app->session->setFlash('success', 'แก้ไขข้อมูลอาคารสำเร็จ');
                 return $this->redirect(['view', 'id' => $model->id]);
+            } else {
+                Yii::$app->session->setFlash('error', 'บันทึกไม่สำเร็จ กรุณาตรวจสอบข้อมูล');
             }
         }
 
@@ -303,7 +350,7 @@ class BuildingController extends BaseController
         $ids = Yii::$app->request->post('ids', []);
 
         if (empty($ids)) {
-            return ['success' => false, 'message' => 'โปรดเลือกรายการ'];
+            return ['success' => false, 'message' => 'กรุณาเลือกรายการ'];
         }
 
         $count = 0;

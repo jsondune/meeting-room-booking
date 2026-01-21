@@ -215,11 +215,23 @@ class RoomController extends BaseController
                     $image = RoomImage::findOne(['id' => $imageId, 'room_id' => $model->id]);
                     if ($image) {
                         // Delete physical file
-                        $filePath = Yii::getAlias('@webroot/' . $image->file_path);
+                        $filePath = Yii::getAlias('@backend/web/' . $image->file_path);
+                        $filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
                         if (file_exists($filePath)) {
                             @unlink($filePath);
                         }
                         $image->delete();
+                    }
+                }
+                
+                // After deleting, check if there's still a primary image
+                $hasPrimary = RoomImage::find()->where(['room_id' => $model->id, 'is_primary' => 1])->exists();
+                if (!$hasPrimary) {
+                    // Set first remaining image as primary
+                    $firstImage = RoomImage::find()->where(['room_id' => $model->id])->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC])->one();
+                    if ($firstImage) {
+                        $firstImage->is_primary = 1;
+                        $firstImage->save(false);
                     }
                 }
             }
@@ -227,10 +239,14 @@ class RoomController extends BaseController
             // Handle set primary image
             $primaryImageId = Yii::$app->request->post('primaryImage');
             if ($primaryImageId) {
-                // Reset all to non-primary
-                RoomImage::updateAll(['is_primary' => 0], ['room_id' => $model->id]);
-                // Set new primary
-                RoomImage::updateAll(['is_primary' => 1], ['id' => $primaryImageId, 'room_id' => $model->id]);
+                // Check if the selected primary image still exists (not deleted)
+                $primaryExists = RoomImage::find()->where(['id' => $primaryImageId, 'room_id' => $model->id])->exists();
+                if ($primaryExists) {
+                    // Reset all to non-primary
+                    RoomImage::updateAll(['is_primary' => 0], ['room_id' => $model->id]);
+                    // Set new primary
+                    RoomImage::updateAll(['is_primary' => 1], ['id' => $primaryImageId, 'room_id' => $model->id]);
+                }
             }
 
             // Handle image uploads (max 5 total)
@@ -238,7 +254,7 @@ class RoomController extends BaseController
             
             if ($model->save()) {
                 // Upload new images (check limit)
-                if ($model->imageFiles) {
+                if ($model->imageFiles && count($model->imageFiles) > 0) {
                     $existingCount = RoomImage::find()->where(['room_id' => $model->id])->count();
                     $maxAllowed = 5 - $existingCount;
                     
@@ -254,8 +270,10 @@ class RoomController extends BaseController
                 $equipment = Yii::$app->request->post('equipment', []);
                 $model->saveEquipment($equipment);
 
-                $this->setFlash('success', 'อัปเดตข้อมูลห้องประชุมเรียบร้อยแล้ว');
+                Yii::$app->session->setFlash('success', 'อัปเดตข้อมูลห้องประชุมเรียบร้อยแล้ว');
                 return $this->redirect(['view', 'id' => $model->id]);
+            } else {
+                Yii::$app->session->setFlash('error', 'บันทึกไม่สำเร็จ กรุณาตรวจสอบข้อมูล');
             }
         }
 

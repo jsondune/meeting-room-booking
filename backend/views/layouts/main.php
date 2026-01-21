@@ -30,6 +30,8 @@ $unreadNotifications = Yii::$app->user->isGuest ? 0 : Notification::getUnreadCou
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4f46e5;
@@ -188,6 +190,17 @@ $unreadNotifications = Yii::$app->user->isGuest ? 0 : Notification::getUnreadCou
             border: none;
             background: none;
             cursor: pointer;
+        }
+        
+        .user-dropdown .dropdown-toggle::after {
+            display: inline-block;
+            margin-left: 0.255em;
+            vertical-align: 0.255em;
+            content: "";
+            border-top: 0.3em solid;
+            border-right: 0.3em solid transparent;
+            border-bottom: 0;
+            border-left: 0.3em solid transparent;
         }
         
         .user-dropdown .user-avatar {
@@ -477,21 +490,28 @@ $unreadNotifications = Yii::$app->user->isGuest ? 0 : Notification::getUnreadCou
         <div class="header-actions">
             <!-- Notifications -->
             <div class="dropdown">
-                <button class="notification-btn" data-bs-toggle="dropdown">
+                <button type="button" class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false" id="notificationDropdown">
                     <i class="bi bi-bell fs-5"></i>
                     <?php if ($unreadNotifications > 0): ?>
-                        <span class="badge bg-danger"><?= $unreadNotifications ?></span>
+                        <span class="badge bg-danger" id="notificationBadge"><?= $unreadNotifications ?></span>
+                    <?php else: ?>
+                        <span class="badge bg-danger d-none" id="notificationBadge">0</span>
                     <?php endif; ?>
                 </button>
-                <div class="dropdown-menu dropdown-menu-end p-0" style="width: 320px; max-height: 400px; overflow-y: auto;">
-                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
-                        <strong>การแจ้งเตือน</strong>
-                        <a href="<?= Yii::$app->urlManager->createUrl(['notification/index']) ?>" class="text-decoration-none small">ดูทั้งหมด</a>
+                <div class="dropdown-menu dropdown-menu-end p-0" style="width: 360px; max-height: 450px;" aria-labelledby="notificationDropdown">
+                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light">
+                        <strong><i class="bi bi-bell me-2"></i>การแจ้งเตือน</strong>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-link text-decoration-none p-0 me-2" id="markAllReadBtn" title="อ่านทั้งหมด">
+                                <i class="bi bi-check-all"></i>
+                            </button>
+                            <a href="<?= Yii::$app->urlManager->createUrl(['notification/index']) ?>" class="text-decoration-none small">ดูทั้งหมด</a>
+                        </div>
                     </div>
-                    <div id="notificationList">
-                        <div class="p-3 text-center text-muted">
-                            <i class="bi bi-bell-slash fs-1 d-block mb-2"></i>
-                            ไม่มีการแจ้งเตือนใหม่
+                    <div id="notificationList" style="max-height: 350px; overflow-y: auto;">
+                        <div class="p-4 text-center text-muted">
+                            <div class="spinner-border spinner-border-sm mb-2" role="status"></div>
+                            <div>กำลังโหลด...</div>
                         </div>
                     </div>
                 </div>
@@ -499,7 +519,7 @@ $unreadNotifications = Yii::$app->user->isGuest ? 0 : Notification::getUnreadCou
             
             <!-- User Dropdown -->
             <div class="dropdown user-dropdown">
-                <button class="dropdown-toggle" data-bs-toggle="dropdown">
+                <button type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="userDropdown">
                     <div class="user-avatar">
                         <?= Yii::$app->user->isGuest ? 'G' : strtoupper(substr(Yii::$app->user->identity->username, 0, 1)) ?>
                     </div>
@@ -512,7 +532,19 @@ $unreadNotifications = Yii::$app->user->isGuest ? 0 : Notification::getUnreadCou
                         </div>
                     </div>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end">
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li class="dropdown-header">
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar me-2" style="width: 40px; height: 40px; font-size: 1rem;">
+                                <?= Yii::$app->user->isGuest ? 'G' : strtoupper(substr(Yii::$app->user->identity->username, 0, 1)) ?>
+                            </div>
+                            <div>
+                                <div class="fw-semibold"><?= Yii::$app->user->isGuest ? 'Guest' : Html::encode(Yii::$app->user->identity->displayName ?: Yii::$app->user->identity->username) ?></div>
+                                <small class="text-muted"><?= Yii::$app->user->isGuest ? '' : Html::encode(Yii::$app->user->identity->email) ?></small>
+                            </div>
+                        </div>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="<?= Yii::$app->urlManager->createUrl(['site/profile']) ?>"><i class="bi bi-person me-2"></i>โปรไฟล์</a></li>
                     <li><a class="dropdown-item" href="<?= Yii::$app->urlManager->createUrl(['site/change-password']) ?>"><i class="bi bi-key me-2"></i>เปลี่ยนรหัสผ่าน</a></li>
                     <li><hr class="dropdown-divider"></li>
@@ -545,17 +577,143 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebarToggle = document.getElementById('sidebarToggle');
     const sidebarOverlay = document.getElementById('sidebarOverlay');
     
-    sidebarToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('show');
-        sidebarOverlay.classList.toggle('show');
-    });
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('show');
+            sidebarOverlay.classList.toggle('show');
+        });
+    }
     
-    sidebarOverlay.addEventListener('click', function() {
-        sidebar.classList.remove('show');
-        sidebarOverlay.classList.remove('show');
-    });
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', function() {
+            sidebar.classList.remove('show');
+            sidebarOverlay.classList.remove('show');
+        });
+    }
+
+    // Notification System
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    const notificationList = document.getElementById('notificationList');
+    const notificationBadge = document.getElementById('notificationBadge');
+    const markAllReadBtn = document.getElementById('markAllReadBtn');
+    
+    let notificationsLoaded = false;
+    
+    // Load notifications when dropdown opens
+    if (notificationDropdown) {
+        notificationDropdown.addEventListener('show.bs.dropdown', function() {
+            if (!notificationsLoaded) {
+                loadNotifications();
+            }
+        });
+    }
+    
+    function loadNotifications() {
+        fetch('<?= Yii::$app->urlManager->createUrl(['notification/recent']) ?>')
+            .then(response => response.json())
+            .then(data => {
+                notificationsLoaded = true;
+                
+                if (data.items && data.items.length > 0) {
+                    let html = '';
+                    data.items.forEach(item => {
+                        html += `
+                            <a href="${item.link || '#'}" class="list-group-item list-group-item-action ${!item.is_read ? 'bg-light' : ''}" 
+                               data-notification-id="${item.id}" onclick="markAsRead(${item.id})">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-shrink-0 me-2">
+                                        <span class="rounded-circle bg-${item.color}-subtle text-${item.color} p-2 d-inline-flex">
+                                            <i class="bi ${item.icon}"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <div class="d-flex justify-content-between">
+                                            <strong class="text-truncate ${!item.is_read ? 'fw-bold' : ''}" style="font-size: 0.875rem;">
+                                                ${item.title}
+                                            </strong>
+                                            ${!item.is_read ? '<span class="badge bg-primary ms-1">ใหม่</span>' : ''}
+                                        </div>
+                                        <p class="mb-0 text-muted small text-truncate">${item.message || ''}</p>
+                                        <small class="text-muted">${item.created_at}</small>
+                                    </div>
+                                </div>
+                            </a>
+                        `;
+                    });
+                    notificationList.innerHTML = `<div class="list-group list-group-flush">${html}</div>`;
+                } else {
+                    notificationList.innerHTML = `
+                        <div class="p-4 text-center text-muted">
+                            <i class="bi bi-bell-slash fs-1 d-block mb-2"></i>
+                            <div>ไม่มีการแจ้งเตือนใหม่</div>
+                        </div>
+                    `;
+                }
+                
+                // Update badge
+                if (data.count > 0) {
+                    notificationBadge.textContent = data.count;
+                    notificationBadge.classList.remove('d-none');
+                } else {
+                    notificationBadge.classList.add('d-none');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading notifications:', error);
+                notificationList.innerHTML = `
+                    <div class="p-4 text-center text-muted">
+                        <i class="bi bi-exclamation-circle fs-1 d-block mb-2"></i>
+                        <div>ไม่สามารถโหลดการแจ้งเตือนได้</div>
+                    </div>
+                `;
+            });
+    }
+    
+    // Mark single notification as read
+    window.markAsRead = function(id) {
+        fetch('<?= Yii::$app->urlManager->createUrl(['notification/mark-read']) ?>?id=' + id, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-Token': '<?= Yii::$app->request->csrfToken ?>',
+            }
+        }).then(() => {
+            // Update badge count
+            const currentCount = parseInt(notificationBadge.textContent) || 0;
+            if (currentCount > 1) {
+                notificationBadge.textContent = currentCount - 1;
+            } else {
+                notificationBadge.classList.add('d-none');
+            }
+        });
+    };
+    
+    // Mark all as read
+    if (markAllReadBtn) {
+        markAllReadBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            fetch('<?= Yii::$app->urlManager->createUrl(['notification/mark-all-read']) ?>', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-Token': '<?= Yii::$app->request->csrfToken ?>',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    notificationBadge.classList.add('d-none');
+                    notificationsLoaded = false;
+                    loadNotifications();
+                }
+            });
+        });
+    }
 });
 </script>
+
+<!-- Bootstrap 5 JS Bundle (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Thai Date Formatter -->
 <script src="<?= Yii::getAlias('@web') ?>/js/thai-date.js"></script>

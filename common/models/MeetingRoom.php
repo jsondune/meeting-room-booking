@@ -243,6 +243,19 @@ class MeetingRoom extends ActiveRecord
     /**
      * Generate room code before save
      */
+    /**
+     * Before validate - convert arrays to strings
+     */
+    public function beforeValidate()
+    {
+        // Convert available_days array to comma-separated string before validation
+        if (is_array($this->available_days)) {
+            $this->available_days = implode(',', $this->available_days);
+        }
+        
+        return parent::beforeValidate();
+    }
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -250,7 +263,7 @@ class MeetingRoom extends ActiveRecord
                 $this->room_code = $this->generateRoomCode();
             }
             
-            // Convert available_days array to comma-separated string
+            // Convert available_days array to comma-separated string (backup)
             if (is_array($this->available_days)) {
                 $this->available_days = implode(',', $this->available_days);
             }
@@ -316,13 +329,30 @@ class MeetingRoom extends ActiveRecord
      */
     public function uploadImages()
     {
-        $uploadPath = Yii::getAlias('@webroot/uploads/rooms/' . $this->id);
+        // Use @backend/web for backend uploads and normalize path for Windows
+        $basePath = Yii::getAlias('@backend/web/uploads/rooms');
+        $uploadPath = $basePath . DIRECTORY_SEPARATOR . $this->id;
+        
+        // Normalize path separators for Windows
+        $uploadPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $uploadPath);
+        
+        // Create base uploads/rooms directory first if not exists
+        $basePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $basePath);
+        if (!is_dir($basePath)) {
+            @mkdir($basePath, 0755, true);
+        }
+        
+        // Create room-specific directory
         if (!is_dir($uploadPath)) {
-            mkdir($uploadPath, 0755, true);
+            if (!@mkdir($uploadPath, 0755, true)) {
+                Yii::error('Failed to create upload directory: ' . $uploadPath);
+                return 0;
+            }
         }
         
         $existingCount = RoomImage::find()->where(['room_id' => $this->id])->count();
         $maxImages = 5;
+        $uploadedCount = 0;
         
         foreach ($this->imageFiles as $index => $file) {
             if ($existingCount >= $maxImages) {
@@ -330,22 +360,25 @@ class MeetingRoom extends ActiveRecord
             }
             
             $filename = Yii::$app->security->generateRandomString(16) . '.' . $file->extension;
-            $filePath = $uploadPath . '/' . $filename;
+            $filePath = $uploadPath . DIRECTORY_SEPARATOR . $filename;
             
             if ($file->saveAs($filePath)) {
                 $image = new RoomImage();
                 $image->room_id = $this->id;
                 $image->filename = $filename;
                 $image->original_name = $file->baseName . '.' . $file->extension;
+                // Store with forward slashes for web URL
                 $image->file_path = 'uploads/rooms/' . $this->id . '/' . $filename;
                 $image->file_size = $file->size;
                 $image->mime_type = $file->type;
                 
                 // Get image dimensions
-                $imageInfo = getimagesize($filePath);
-                if ($imageInfo) {
-                    $image->image_width = $imageInfo[0];
-                    $image->image_height = $imageInfo[1];
+                if (file_exists($filePath)) {
+                    $imageInfo = @getimagesize($filePath);
+                    if ($imageInfo) {
+                        $image->image_width = $imageInfo[0];
+                        $image->image_height = $imageInfo[1];
+                    }
                 }
                 
                 // Set first image as primary if no primary exists
@@ -353,10 +386,14 @@ class MeetingRoom extends ActiveRecord
                 $image->is_primary = (!$hasPrimary && $index == 0) ? 1 : 0;
                 $image->sort_order = $existingCount + $index;
                 
-                $image->save();
-                $existingCount++;
+                if ($image->save()) {
+                    $uploadedCount++;
+                    $existingCount++;
+                }
             }
         }
+        
+        return $uploadedCount;
     }
 
     /**

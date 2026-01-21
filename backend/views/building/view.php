@@ -8,6 +8,27 @@ $this->params['breadcrumbs'][] = ['label' => 'จัดการอาคาร'
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
+<?php
+// Display flash messages
+$allowedTypes = ['success', 'error', 'danger', 'warning', 'info'];
+foreach (Yii::$app->session->getAllFlashes() as $type => $message):
+    if (strpos($type, 'debug') !== false) continue;
+    if (!in_array($type, $allowedTypes)) continue;
+    
+    $alertClass = match($type) {
+        'success' => 'alert-success',
+        'error', 'danger' => 'alert-danger',
+        'warning' => 'alert-warning',
+        'info' => 'alert-info',
+        default => 'alert-secondary'
+    };
+?>
+<div class="alert <?= $alertClass ?> alert-dismissible fade show" role="alert">
+    <?= $message ?>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<?php endforeach; ?>
+
 <div class="building-view">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">

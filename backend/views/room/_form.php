@@ -27,6 +27,28 @@ $equipmentList = Equipment::find()->where(['status' => 1])->all();
     </nav>
 </div>
 
+<?php
+// Display flash messages (filter out debug messages)
+$allowedTypes = ['success', 'error', 'danger', 'warning', 'info'];
+foreach (Yii::$app->session->getAllFlashes() as $type => $message):
+    // Skip debug messages
+    if (strpos($type, 'debug') !== false) continue;
+    if (!in_array($type, $allowedTypes)) continue;
+    
+    $alertClass = match($type) {
+        'success' => 'alert-success',
+        'error', 'danger' => 'alert-danger',
+        'warning' => 'alert-warning',
+        'info' => 'alert-info',
+        default => 'alert-secondary'
+    };
+?>
+<div class="alert <?= $alertClass ?> alert-dismissible fade show" role="alert">
+    <?= $message ?>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<?php endforeach; ?>
+
 <?php $form = ActiveForm::begin([
     'id' => 'room-form',
     'options' => ['enctype' => 'multipart/form-data', 'class' => 'needs-validation'],

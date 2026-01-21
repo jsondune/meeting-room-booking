@@ -56,7 +56,9 @@ class RoomImage extends ActiveRecord
 
     public function getUrl()
     {
-        return Yii::getAlias('@web/' . $this->file_path);
+        // file_path is like: uploads/rooms/5/filename.jpg
+        // Return relative URL from web root
+        return '/' . $this->file_path;
     }
     
     public function getFullUrl()

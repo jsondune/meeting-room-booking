@@ -15,6 +15,7 @@
  * @property string $updated_at
  * 
  * @property MeetingRoom[] $rooms
+ * @property BuildingImage[] $images
  */
 
 namespace common\models;
@@ -22,11 +23,17 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
+use yii\web\UploadedFile;
 
 class Building extends ActiveRecord
 {
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
+    
+    /**
+     * @var UploadedFile[] Image files for upload
+     */
+    public $imageFiles;
     
     /**
      * {@inheritdoc}
@@ -53,6 +60,7 @@ class Building extends ActiveRecord
             ['is_active', 'boolean'],
             ['floor_count', 'default', 'value' => 1],
             ['is_active', 'default', 'value' => true],
+            [['imageFiles'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif, webp', 'maxFiles' => 5, 'maxSize' => 2 * 1024 * 1024],
         ];
     }
 
@@ -73,6 +81,7 @@ class Building extends ActiveRecord
             'is_active' => 'ใช้งาน',
             'created_at' => 'สร้างเมื่อ',
             'updated_at' => 'แก้ไขล่าสุด',
+            'imageFiles' => 'รูปภาพอาคาร',
         ];
     }
 
@@ -92,6 +101,40 @@ class Building extends ActiveRecord
     public function getMeetingRooms()
     {
         return $this->getRooms();
+    }
+    
+    /**
+     * Get building images
+     * @return \yii\db\ActiveQuery
+     */
+    public function getImages()
+    {
+        return $this->hasMany(BuildingImage::class, ['building_id' => 'id'])->orderBy(['is_primary' => SORT_DESC, 'sort_order' => SORT_ASC]);
+    }
+    
+    /**
+     * Get primary image
+     * @return BuildingImage|null
+     */
+    public function getPrimaryImage()
+    {
+        return BuildingImage::find()
+            ->where(['building_id' => $this->id, 'is_primary' => 1])
+            ->one() 
+            ?? BuildingImage::find()
+                ->where(['building_id' => $this->id])
+                ->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC])
+                ->one();
+    }
+    
+    /**
+     * Get primary image URL
+     * @return string|null
+     */
+    public function getPrimaryImageUrl()
+    {
+        $image = $this->getPrimaryImage();
+        return $image ? $image->getUrl() : null;
     }
     
     /**
@@ -192,5 +235,78 @@ class Building extends ActiveRecord
     public function __toString()
     {
         return $this->name_th ?? '';
+    }
+    
+    /**
+     * Upload building images
+     * @return int Number of uploaded images
+     */
+    public function uploadImages()
+    {
+        // Use @backend/web for backend uploads and normalize path for Windows
+        $basePath = Yii::getAlias('@backend/web/uploads/buildings');
+        $uploadPath = $basePath . DIRECTORY_SEPARATOR . $this->id;
+        
+        // Normalize path separators for Windows
+        $uploadPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $uploadPath);
+        
+        // Create base uploads/buildings directory first if not exists
+        $basePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $basePath);
+        if (!is_dir($basePath)) {
+            @mkdir($basePath, 0755, true);
+        }
+        
+        // Create building-specific directory
+        if (!is_dir($uploadPath)) {
+            if (!@mkdir($uploadPath, 0755, true)) {
+                Yii::error('Failed to create upload directory: ' . $uploadPath);
+                return 0;
+            }
+        }
+        
+        $existingCount = BuildingImage::find()->where(['building_id' => $this->id])->count();
+        $maxImages = 5;
+        $uploadedCount = 0;
+        
+        foreach ($this->imageFiles as $index => $file) {
+            if ($existingCount >= $maxImages) {
+                break;
+            }
+            
+            $filename = Yii::$app->security->generateRandomString(16) . '.' . $file->extension;
+            $filePath = $uploadPath . DIRECTORY_SEPARATOR . $filename;
+            
+            if ($file->saveAs($filePath)) {
+                $image = new BuildingImage();
+                $image->building_id = $this->id;
+                $image->filename = $filename;
+                $image->original_name = $file->baseName . '.' . $file->extension;
+                // Store with forward slashes for web URL
+                $image->file_path = 'uploads/buildings/' . $this->id . '/' . $filename;
+                $image->file_size = $file->size;
+                $image->mime_type = $file->type;
+                
+                // Get image dimensions
+                if (file_exists($filePath)) {
+                    $imageInfo = @getimagesize($filePath);
+                    if ($imageInfo) {
+                        $image->image_width = $imageInfo[0];
+                        $image->image_height = $imageInfo[1];
+                    }
+                }
+                
+                // Set first image as primary if no primary exists
+                $hasPrimary = BuildingImage::find()->where(['building_id' => $this->id, 'is_primary' => 1])->exists();
+                $image->is_primary = (!$hasPrimary && $index == 0) ? 1 : 0;
+                $image->sort_order = $existingCount + $index;
+                
+                if ($image->save()) {
+                    $uploadedCount++;
+                    $existingCount++;
+                }
+            }
+        }
+        
+        return $uploadedCount;
     }
 }

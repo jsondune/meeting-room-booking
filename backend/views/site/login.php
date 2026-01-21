@@ -44,36 +44,35 @@ $showCaptcha = $model->isCaptchaRequired();
         <?php if ($model->isAccountLocked()): ?>
             <div class="alert alert-danger">
                 <i class="bi bi-shield-exclamation me-2"></i>
-                บัญชีถูกล็อคชั่วคราว โปรดรอสักครู่แล้วลองใหม่อีกครั้ง
+                บัญชีถูกล็อคชั่วคราว กรุณารอสักครู่แล้วลองใหม่อีกครั้ง
             </div>
         <?php endif; ?>
 
         <?php $form = ActiveForm::begin([
             'id' => 'login-form',
+            'enableClientValidation' => false,
+            'enableAjaxValidation' => false,
+            'validateOnBlur' => false,
+            'validateOnChange' => false,
             'fieldConfig' => [
                 'template' => "{input}\n{error}",
+                'errorOptions' => ['class' => 'invalid-feedback d-block text-danger small'],
             ],
         ]); ?>
 
-        <div class="form-floating mb-3">
+        <div class="mb-3">
             <?= $form->field($model, 'username')->textInput([
-                'class' => 'form-control',
+                'class' => 'form-control form-control-lg',
                 'placeholder' => 'ชื่อผู้ใช้หรืออีเมล',
                 'autofocus' => true,
             ]) ?>
-            <label for="loginform-username">
-                <i class="bi bi-person me-1"></i>ชื่อผู้ใช้หรืออีเมล
-            </label>
         </div>
 
-        <div class="form-floating mb-3">
+        <div class="mb-3">
             <?= $form->field($model, 'password')->passwordInput([
-                'class' => 'form-control',
+                'class' => 'form-control form-control-lg',
                 'placeholder' => 'รหัสผ่าน',
             ]) ?>
-            <label for="loginform-password">
-                <i class="bi bi-lock me-1"></i>รหัสผ่าน
-            </label>
         </div>
 
         <?php if ($showCaptcha): ?>

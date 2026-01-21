@@ -180,7 +180,15 @@ $this->title = $model->name_th;
                                 <td>
                                     <?php
                                     $dayNames = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
-                                    $availableDays = explode(',', $model->available_days ?: '1,2,3,4,5');
+                                    // Handle both string and array
+                                    $rawDays = $model->available_days;
+                                    if (is_array($rawDays)) {
+                                        $availableDays = $rawDays;
+                                    } elseif (is_string($rawDays) && !empty($rawDays)) {
+                                        $availableDays = explode(',', $rawDays);
+                                    } else {
+                                        $availableDays = ['1', '2', '3', '4', '5'];
+                                    }
                                     $dayList = array_map(fn($d) => $dayNames[$d] ?? '', $availableDays);
                                     echo implode(' ', $dayList);
                                     ?>
@@ -285,7 +293,7 @@ $this->title = $model->name_th;
                                         </td>
                                         <td>
                                             <small>
-                                                <?= Yii::$app->formatter->asDate($booking->booking_date) ?><br>
+                                                <?= Yii::$app->formatter->asDate($booking->booking_date, 'php:d/m/Y') ?><br>
                                                 <span class="text-muted"><?= $booking->start_time ?> - <?= $booking->end_time ?></span>
                                             </small>
                                         </td>
@@ -430,11 +438,11 @@ $this->title = $model->name_th;
                 <table class="table table-sm table-borderless mb-0">
                     <tr>
                         <td class="text-muted">สร้างเมื่อ:</td>
-                        <td><?= Yii::$app->formatter->asDatetime($model->created_at) ?></td>
+                        <td><?= Yii::$app->formatter->asDatetime($model->created_at, 'php:d/m/Y H:i') ?></td>
                     </tr>
                     <tr>
                         <td class="text-muted">แก้ไขล่าสุด:</td>
-                        <td><?= Yii::$app->formatter->asDatetime($model->updated_at) ?></td>
+                        <td><?= Yii::$app->formatter->asDatetime($model->updated_at, 'php:d/m/Y H:i') ?></td>
                     </tr>
                 </table>
             </div>

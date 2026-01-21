@@ -141,27 +141,48 @@ class EquipmentController extends BaseController
     {
         $model = $this->findModel($id);
 
-        // Get maintenance history
-        $maintenanceHistory = EquipmentMaintenance::find()
-            ->where(['equipment_id' => $id])
-            ->orderBy(['scheduled_date' => SORT_DESC])
-            ->limit(10)
-            ->all();
+        // Get maintenance history (safe - table might not exist)
+        $maintenanceHistory = [];
+        try {
+            if (Yii::$app->db->getTableSchema('{{%equipment_maintenance}}', true) !== null) {
+                $maintenanceHistory = EquipmentMaintenance::find()
+                    ->where(['equipment_id' => $id])
+                    ->orderBy(['scheduled_date' => SORT_DESC])
+                    ->limit(10)
+                    ->all();
+            }
+        } catch (\Exception $e) {
+            // Table doesn't exist, continue without maintenance history
+        }
 
-        // Get usage statistics
-        $usageStats = BookingEquipment::find()
-            ->select(['COUNT(*) as count', 'SUM(quantity) as total_quantity'])
-            ->where(['equipment_id' => $id])
-            ->asArray()
-            ->one();
+        // Get usage statistics (safe - table might not exist)
+        $usageStats = ['count' => 0, 'total_quantity' => 0];
+        try {
+            if (Yii::$app->db->getTableSchema('{{%booking_equipment}}', true) !== null) {
+                $usageStats = BookingEquipment::find()
+                    ->select(['COUNT(*) as count', 'SUM(quantity) as total_quantity'])
+                    ->where(['equipment_id' => $id])
+                    ->asArray()
+                    ->one() ?: $usageStats;
+            }
+        } catch (\Exception $e) {
+            // Table doesn't exist
+        }
 
-        // Get recent bookings
-        $recentBookings = BookingEquipment::find()
-            ->where(['equipment_id' => $id])
-            ->with('booking')
-            ->orderBy(['id' => SORT_DESC])
-            ->limit(10)
-            ->all();
+        // Get recent bookings (safe)
+        $recentBookings = [];
+        try {
+            if (Yii::$app->db->getTableSchema('{{%booking_equipment}}', true) !== null) {
+                $recentBookings = BookingEquipment::find()
+                    ->where(['equipment_id' => $id])
+                    ->with('booking')
+                    ->orderBy(['id' => SORT_DESC])
+                    ->limit(10)
+                    ->all();
+            }
+        } catch (\Exception $e) {
+            // Table doesn't exist
+        }
 
         return $this->render('view', [
             'model' => $model,

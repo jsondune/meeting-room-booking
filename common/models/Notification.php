@@ -105,15 +105,6 @@ class Notification extends ActiveRecord
     }
 
     /**
-     * Get URL (alias for link)
-     * @return string|null
-     */
-    public function getUrl()
-    {
-        return $this->link;
-    }
-
-    /**
      * Get user relation
      * @return \yii\db\ActiveQuery
      */

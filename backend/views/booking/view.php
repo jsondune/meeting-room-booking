@@ -48,7 +48,7 @@ $typeLabels = [
                     <i class="bi bi-hash me-1"></i><?= Html::encode($model->booking_code) ?>
                 </span>
                 <span class="badge bg-light text-dark">
-                    <?= $typeLabels[$model->meeting_type] ?? $model->meeting_type ?>
+                    <?= $typeLabels[$model->booking_type] ?? $model->booking_type ?>
                 </span>
             </div>
         </div>
@@ -100,7 +100,7 @@ $typeLabels = [
                                 </tr>
                                 <tr>
                                     <td class="text-muted">ประเภท:</td>
-                                    <td><?= $typeLabels[$model->meeting_type] ?? $model->meeting_type ?></td>
+                                    <td><?= $typeLabels[$model->booking_type] ?? $model->booking_type ?></td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted">ผู้จอง:</td>
@@ -118,7 +118,7 @@ $typeLabels = [
                                 </tr>
                                 <tr>
                                     <td class="text-muted">จำนวนผู้เข้าร่วม:</td>
-                                    <td><i class="bi bi-people me-1"></i><?= Html::encode($model->attendees_count) ?> คน</td>
+                                    <td><i class="bi bi-people me-1"></i><?= Html::encode($model->attendee_count) ?> คน</td>
                                 </tr>
                             </table>
                         </div>
@@ -128,7 +128,7 @@ $typeLabels = [
                                     <td class="text-muted" style="width: 140px;">วันที่:</td>
                                     <td class="fw-semibold">
                                         <i class="bi bi-calendar3 me-1"></i>
-                                        <?= Yii::$app->formatter->asDate($model->booking_date) ?>
+                                        <?= Yii::$app->formatter->asDate($model->booking_date, 'php:l j F Y') ?>
                                     </td>
                                 </tr>
                                 <tr>
@@ -182,8 +182,12 @@ $typeLabels = [
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4">
-                            <?php if (!empty($model->room->images)): ?>
-                            <img src="<?= Html::encode($model->room->images[0]) ?>" 
+                            <?php 
+                                $roomPrimaryImage = $model->room ? $model->room->getPrimaryImage() : null;
+                                $roomImageUrl = $roomPrimaryImage ? $roomPrimaryImage->getUrl() : null;
+                            ?>
+                            <?php if ($roomImageUrl): ?>
+                            <img src="<?= Html::encode($roomImageUrl) ?>" 
                                  class="img-fluid rounded" alt="<?= Html::encode($model->room->name_th) ?>">
                             <?php else: ?>
                             <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 150px;">
@@ -524,7 +528,7 @@ $typeLabels = [
                 <p>คุณต้องการไม่อนุมัติการจอง <strong><?= Html::encode($model->booking_code) ?></strong> หรือไม่?</p>
                 <div class="mb-3">
                     <label class="form-label">เหตุผลที่ไม่อนุมัติ <span class="text-danger">*</span></label>
-                    <textarea name="rejection_reason" class="form-control" rows="3" required placeholder="โปรดระบุเหตุผล..."></textarea>
+                    <textarea name="rejection_reason" class="form-control" rows="3" required placeholder="กรุณาระบุเหตุผล..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -553,7 +557,7 @@ $typeLabels = [
                 <p>คุณต้องการยกเลิกการจอง <strong><?= Html::encode($model->booking_code) ?></strong> หรือไม่?</p>
                 <div class="mb-3">
                     <label class="form-label">เหตุผลที่ยกเลิก <span class="text-danger">*</span></label>
-                    <textarea name="cancellation_reason" class="form-control" rows="3" required placeholder="โปรดระบุเหตุผล..."></textarea>
+                    <textarea name="cancellation_reason" class="form-control" rows="3" required placeholder="กรุณาระบุเหตุผล..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">

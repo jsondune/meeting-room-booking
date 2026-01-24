@@ -209,7 +209,7 @@ AppAsset::register($this);
 <header>
     <?php
     NavBar::begin([
-        'brandLabel' => '<img src="' . Yii::getAlias('@web') . '/images/logo.svg" alt="ระบบจองห้องประชุม" style="height: 36px; width: auto;">',
+        'brandLabel' => '<i class="fas fa-door-open me-2"></i>' . Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top',

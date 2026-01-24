@@ -105,10 +105,10 @@ $this->registerCss("
     <!-- Room Hero Section -->
     <div class="room-hero mb-4">
         <?php 
-        $primaryImage = $model->primaryImage;
+        $primaryImage = $model->getPrimaryImage();
         if ($primaryImage): 
         ?>
-            <img src="<?= Html::encode($primaryImage->url) ?>" 
+            <img src="<?= Html::encode($primaryImage->getUrl()) ?>" 
                  alt="<?= Html::encode($model->name) ?>" id="mainImage">
         <?php else: ?>
             <div class="room-placeholder-hero d-flex flex-column align-items-center justify-content-center text-white"
@@ -142,12 +142,12 @@ $this->registerCss("
 
     <!-- Gallery Thumbnails -->
     <?php 
-    $roomImages = $model->roomImages;
+    $roomImages = $model->getRoomImages();
     if (!empty($roomImages)): 
     ?>
     <div class="d-flex gap-2 mb-4 overflow-auto pb-2">
         <?php foreach ($roomImages as $index => $roomImage): ?>
-        <img src="<?= Html::encode($roomImage->url) ?>" 
+        <img src="<?= Html::encode($roomImage->getUrl()) ?>" 
              class="gallery-thumb <?= $index === 0 ? 'active' : '' ?>" onclick="changeMainImage(this)">
         <?php endforeach; ?>
     </div>
@@ -271,11 +271,11 @@ $this->registerCss("
                 </div>
                 <div class="card-body">
                     <ul class="list-unstyled mb-0">
-                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>โปรดรักษาความสะอาดของห้องประชุม</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>กรุณารักษาความสะอาดของห้องประชุม</li>
                         <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>ห้ามนำอาหารและเครื่องดื่มเข้ามาในห้อง</li>
-                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>โปรดปิดไฟและเครื่องปรับอากาศเมื่อใช้งานเสร็จ</li>
-                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>หากต้องการยกเลิกการจอง โปรดแจ้งล่วงหน้าอย่างน้อย 24 ชั่วโมง</li>
-                        <li class="mb-0"><i class="bi bi-check-circle text-success me-2"></i>หากอุปกรณ์ชำรุด โปรดแจ้งเจ้าหน้าที่ทันที</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>กรุณาปิดไฟและเครื่องปรับอากาศเมื่อใช้งานเสร็จ</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>หากต้องการยกเลิกการจอง กรุณาแจ้งล่วงหน้าอย่างน้อย 24 ชั่วโมง</li>
+                        <li class="mb-0"><i class="bi bi-check-circle text-success me-2"></i>หากอุปกรณ์ชำรุด กรุณาแจ้งเจ้าหน้าที่ทันที</li>
                     </ul>
                 </div>
             </div>
@@ -336,7 +336,7 @@ $this->registerCss("
                         <?php if (Yii::$app->user->isGuest): ?>
                             <div class="text-center py-4">
                                 <i class="bi bi-person-lock fs-1 text-muted d-block mb-3"></i>
-                                <p class="text-muted mb-3">โปรดเข้าสู่ระบบเพื่อจองห้องประชุม</p>
+                                <p class="text-muted mb-3">กรุณาเข้าสู่ระบบเพื่อจองห้องประชุม</p>
                                 <?= Html::a('<i class="bi bi-box-arrow-in-right me-2"></i>เข้าสู่ระบบ', ['site/login'], ['class' => 'btn btn-primary']) ?>
                             </div>
                         <?php else: ?>
@@ -515,11 +515,11 @@ document.getElementById('bookingForm')?.addEventListener('submit', function(e) {
         if (data.success) {
             window.location.href = data.redirect;
         } else {
-            alert(data.message || 'เกิดข้อผิดพลาด โปรดลองใหม่อีกครั้ง');
+            alert(data.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
         }
     })
     .catch(error => {
-        alert('เกิดข้อผิดพลาด โปรดลองใหม่อีกครั้ง');
+        alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
     });
 });
 JS);

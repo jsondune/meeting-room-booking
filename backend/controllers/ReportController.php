@@ -121,10 +121,16 @@ class ReportController extends BaseController
      */
     public function actionUsage()
     {
-        $dateFrom = Yii::$app->request->get('date_from', date('Y-m-01'));
-        $dateTo = Yii::$app->request->get('date_to', date('Y-m-t'));
+        $dateFrom = Yii::$app->request->get('start_date', date('Y-m-01'));
+        $dateTo = Yii::$app->request->get('end_date', date('Y-m-t'));
         $roomId = Yii::$app->request->get('room_id');
         $departmentId = Yii::$app->request->get('department_id');
+        $export = Yii::$app->request->get('export');
+
+        // Check if export requested
+        if ($export) {
+            return $this->exportUsageReport($export, $dateFrom, $dateTo, $roomId, $departmentId);
+        }
 
         // Room usage
         $roomUsageQuery = Booking::find()
@@ -196,12 +202,247 @@ class ReportController extends BaseController
             'dowDistribution' => $dowDistribution,
             'roomsList' => $roomsList,
             'departments' => $departments,
+            'dateRange' => [
+                'start' => $dateFrom,
+                'end' => $dateTo,
+            ],
             'filters' => [
                 'date_from' => $dateFrom,
                 'date_to' => $dateTo,
                 'room_id' => $roomId,
                 'department_id' => $departmentId,
             ],
+        ]);
+    }
+
+    /**
+     * Export usage report to PDF or Excel
+     */
+    protected function exportUsageReport($format, $dateFrom, $dateTo, $roomId = null, $departmentId = null)
+    {
+        // Get report data
+        $query = Booking::find()
+            ->with(['room', 'user', 'department'])
+            ->where(['between', 'booking_date', $dateFrom, $dateTo])
+            ->andWhere(['in', 'status', [Booking::STATUS_APPROVED, Booking::STATUS_COMPLETED, Booking::STATUS_PENDING]])
+            ->orderBy(['booking_date' => SORT_ASC, 'start_time' => SORT_ASC]);
+
+        if ($roomId) {
+            $query->andWhere(['room_id' => $roomId]);
+        }
+        if ($departmentId) {
+            $query->andWhere(['department_id' => $departmentId]);
+        }
+
+        $bookings = $query->all();
+
+        // Summary stats
+        $totalBookings = count($bookings);
+        $totalHours = 0;
+        $statusCounts = [];
+        
+        foreach ($bookings as $booking) {
+            $start = strtotime($booking->start_time);
+            $end = strtotime($booking->end_time);
+            $totalHours += ($end - $start) / 3600;
+            
+            $status = $booking->status;
+            $statusCounts[$status] = ($statusCounts[$status] ?? 0) + 1;
+        }
+
+        if ($format === 'excel') {
+            return $this->exportUsageExcel($bookings, $dateFrom, $dateTo, $totalBookings, $totalHours, $statusCounts);
+        } else {
+            return $this->exportUsagePdf($bookings, $dateFrom, $dateTo, $totalBookings, $totalHours, $statusCounts);
+        }
+    }
+
+    /**
+     * Export to Excel (CSV with UTF-8 BOM)
+     */
+    protected function exportUsageExcel($bookings, $dateFrom, $dateTo, $totalBookings, $totalHours, $statusCounts)
+    {
+        $filename = "usage-report-{$dateFrom}-to-{$dateTo}.csv";
+        
+        $handle = fopen('php://temp', 'r+');
+        
+        // BOM for UTF-8
+        fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+        
+        // Title
+        fputcsv($handle, ['รายงานการใช้งานห้องประชุม']);
+        fputcsv($handle, ["ช่วงเวลา: {$dateFrom} ถึง {$dateTo}"]);
+        fputcsv($handle, ["สร้างเมื่อ: " . date('Y-m-d H:i:s')]);
+        fputcsv($handle, []);
+        
+        // Summary
+        fputcsv($handle, ['สรุปภาพรวม']);
+        fputcsv($handle, ['การจองทั้งหมด', $totalBookings, 'รายการ']);
+        fputcsv($handle, ['ชั่วโมงใช้งานรวม', round($totalHours, 1), 'ชั่วโมง']);
+        fputcsv($handle, ['ระยะเวลาเฉลี่ย', $totalBookings > 0 ? round($totalHours / $totalBookings, 1) : 0, 'ชั่วโมง/การจอง']);
+        fputcsv($handle, []);
+        
+        // Status breakdown
+        fputcsv($handle, ['สถานะการจอง']);
+        $statusLabels = [
+            'pending' => 'รอดำเนินการ',
+            'approved' => 'อนุมัติแล้ว',
+            'rejected' => 'ปฏิเสธ',
+            'cancelled' => 'ยกเลิก',
+            'completed' => 'เสร็จสิ้น',
+        ];
+        foreach ($statusCounts as $status => $count) {
+            fputcsv($handle, [$statusLabels[$status] ?? $status, $count, 'รายการ']);
+        }
+        fputcsv($handle, []);
+        
+        // Detail data
+        fputcsv($handle, ['รายละเอียดการจอง']);
+        fputcsv($handle, ['#', 'รหัสการจอง', 'วันที่', 'เวลาเริ่ม', 'เวลาสิ้นสุด', 'ห้องประชุม', 'ผู้จอง', 'หน่วยงาน', 'หัวข้อ', 'สถานะ', 'จำนวนผู้เข้าร่วม']);
+        
+        $i = 1;
+        foreach ($bookings as $booking) {
+            fputcsv($handle, [
+                $i++,
+                $booking->booking_code,
+                $booking->booking_date,
+                substr($booking->start_time, 0, 5),
+                substr($booking->end_time, 0, 5),
+                $booking->room ? $booking->room->name_th : '-',
+                $booking->user ? $booking->user->fullname : '-',
+                $booking->department ? $booking->department->name_th : '-',
+                $booking->title,
+                $statusLabels[$booking->status] ?? $booking->status,
+                $booking->attendees_count ?? '-',
+            ]);
+        }
+        
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+        
+        return Yii::$app->response->sendContentAsFile($content, $filename, [
+            'mimeType' => 'text/csv; charset=utf-8',
+        ]);
+    }
+
+    /**
+     * Export to PDF (HTML-based)
+     */
+    protected function exportUsagePdf($bookings, $dateFrom, $dateTo, $totalBookings, $totalHours, $statusCounts)
+    {
+        $filename = "usage-report-{$dateFrom}-to-{$dateTo}.html";
+        
+        $statusLabels = [
+            'pending' => 'รอดำเนินการ',
+            'approved' => 'อนุมัติแล้ว',
+            'rejected' => 'ปฏิเสธ',
+            'cancelled' => 'ยกเลิก',
+            'completed' => 'เสร็จสิ้น',
+        ];
+        
+        $html = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>รายงานการใช้งานห้องประชุม</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap");
+        body { font-family: "Sarabun", sans-serif; font-size: 12px; margin: 20px; }
+        h1 { text-align: center; color: #333; font-size: 18px; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 20px; }
+        .summary { display: flex; justify-content: space-around; margin-bottom: 20px; }
+        .summary-box { background: #f5f5f5; padding: 15px; border-radius: 8px; text-align: center; min-width: 120px; }
+        .summary-box .value { font-size: 24px; font-weight: bold; color: #0d6efd; }
+        .summary-box .label { color: #666; font-size: 11px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: #0d6efd; color: white; padding: 10px 8px; text-align: left; font-size: 11px; }
+        td { border-bottom: 1px solid #ddd; padding: 8px; font-size: 11px; }
+        tr:hover { background: #f9f9f9; }
+        .status-pending { color: #ffc107; }
+        .status-approved { color: #198754; }
+        .status-rejected { color: #dc3545; }
+        .status-cancelled { color: #6c757d; }
+        .status-completed { color: #0dcaf0; }
+        .footer { text-align: center; margin-top: 30px; color: #999; font-size: 10px; }
+        @media print {
+            body { margin: 0; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print" style="text-align: center; margin-bottom: 20px;">
+        <button onclick="window.print()" style="padding: 10px 30px; font-size: 14px; cursor: pointer;">
+            🖨️ พิมพ์รายงาน / บันทึก PDF
+        </button>
+    </div>
+    
+    <h1>📊 รายงานการใช้งานห้องประชุม</h1>
+    <p class="subtitle">ช่วงเวลา: ' . $dateFrom . ' ถึง ' . $dateTo . '</p>
+    
+    <div class="summary">
+        <div class="summary-box">
+            <div class="value">' . number_format($totalBookings) . '</div>
+            <div class="label">การจองทั้งหมด</div>
+        </div>
+        <div class="summary-box">
+            <div class="value">' . number_format($totalHours, 1) . '</div>
+            <div class="label">ชั่วโมงใช้งาน</div>
+        </div>
+        <div class="summary-box">
+            <div class="value">' . ($totalBookings > 0 ? number_format($totalHours / $totalBookings, 1) : 0) . '</div>
+            <div class="label">ชม./การจอง</div>
+        </div>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>รหัส</th>
+                <th>วันที่</th>
+                <th>เวลา</th>
+                <th>ห้องประชุม</th>
+                <th>ผู้จอง</th>
+                <th>หน่วยงาน</th>
+                <th>หัวข้อ</th>
+                <th>สถานะ</th>
+            </tr>
+        </thead>
+        <tbody>';
+        
+        $i = 1;
+        foreach ($bookings as $booking) {
+            $statusClass = 'status-' . $booking->status;
+            $html .= '
+            <tr>
+                <td>' . $i++ . '</td>
+                <td>' . htmlspecialchars($booking->booking_code) . '</td>
+                <td>' . $booking->booking_date . '</td>
+                <td>' . substr($booking->start_time, 0, 5) . '-' . substr($booking->end_time, 0, 5) . '</td>
+                <td>' . htmlspecialchars($booking->room ? $booking->room->name_th : '-') . '</td>
+                <td>' . htmlspecialchars($booking->user ? $booking->user->fullname : '-') . '</td>
+                <td>' . htmlspecialchars($booking->department ? $booking->department->name_th : '-') . '</td>
+                <td>' . htmlspecialchars($booking->title ?: '-') . '</td>
+                <td class="' . $statusClass . '">' . ($statusLabels[$booking->status] ?? $booking->status) . '</td>
+            </tr>';
+        }
+        
+        $html .= '
+        </tbody>
+    </table>
+    
+    <div class="footer">
+        สร้างเมื่อ: ' . date('Y-m-d H:i:s') . ' | ระบบจองห้องประชุม
+    </div>
+</body>
+</html>';
+        
+        // Return as downloadable HTML (user can Print to PDF)
+        return Yii::$app->response->sendContentAsFile($html, $filename, [
+            'mimeType' => 'text/html; charset=utf-8',
+            'inline' => true, // Open in browser
         ]);
     }
 

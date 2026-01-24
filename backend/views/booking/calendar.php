@@ -6,18 +6,18 @@ use yii\helpers\Url;
 /** @var yii\web\View $this */
 /** @var array $rooms */
 /** @var array $events */
+/** @var array $holidayEvents */
+/** @var array $holidayDates */
+/** @var array $roomColors */
 
 $this->title = 'ปฏิทินการจอง';
 $this->params['breadcrumbs'][] = ['label' => 'การจองห้องประชุม', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-// Register FullCalendar JS
-$this->registerJsFile('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js', [
-    'position' => \yii\web\View::POS_HEAD
-]);
-
-// Ensure rooms is an array
+// Ensure arrays
 $roomsArray = (is_array($rooms)) ? $rooms : [];
+$roomColorsArray = (is_array($roomColors ?? null)) ? $roomColors : [];
+$holidayDatesArray = (is_array($holidayDates ?? null)) ? $holidayDates : [];
 ?>
 
 <div class="booking-calendar">
@@ -35,7 +35,8 @@ $roomsArray = (is_array($rooms)) ? $rooms : [];
     <div class="row">
         <!-- Filters Sidebar -->
         <div class="col-lg-3 mb-4">
-            <div class="card border-0 shadow-sm">
+            <!-- Filters Card -->
+            <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white border-bottom">
                     <h6 class="mb-0"><i class="bi bi-funnel me-2"></i>ตัวกรอง</h6>
                 </div>
@@ -54,7 +55,7 @@ $roomsArray = (is_array($rooms)) ? $rooms : [];
                     </div>
 
                     <!-- Status Filter -->
-                    <div class="mb-4">
+                    <div class="mb-3">
                         <label class="form-label fw-medium">สถานะ</label>
                         <div class="d-flex flex-column gap-2">
                             <div class="form-check">
@@ -77,34 +78,37 @@ $roomsArray = (is_array($rooms)) ? $rooms : [];
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Legend -->
-                    <div class="mb-3">
-                        <label class="form-label fw-medium">คำอธิบายสี</label>
-                        <div class="legend-items">
-                            <?php
-                            $colorArray = ['#3788d8', '#28a745', '#dc3545', '#ffc107', '#17a2b8', '#6f42c1', '#fd7e14', '#20c997'];
-                            $index = 0;
-                            foreach ($roomsArray as $roomId => $roomName):
-                                $color = $colorArray[$index % count($colorArray)];
-                            ?>
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="me-2" style="width:16px;height:16px;border-radius:4px;background-color:<?= $color ?>;display:inline-block;"></span>
-                                    <small><?= Html::encode($roomName) ?></small>
-                                </div>
-                            <?php
-                                $index++;
-                            endforeach;
-                            ?>
-                        </div>
+            <!-- Legend -->
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0"><i class="bi bi-palette me-2"></i>คำอธิบายสี (ตามห้อง)</h6>
+                </div>
+                <div class="card-body">
+                    <div class="legend-items" style="max-height: 200px; overflow-y: auto;">
+                        <?php foreach ($roomsArray as $roomId => $roomName): ?>
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="me-2" style="width:14px;height:14px;border-radius:3px;background-color:<?= $roomColorsArray[$roomId] ?? '#3788d8' ?>;display:inline-block;"></span>
+                                <small><?= Html::encode($roomName) ?></small>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    
+                    <hr class="my-2">
+                    <p class="text-muted small mb-2">วันพิเศษ</p>
+                    <div class="d-flex align-items-center">
+                        <span class="me-2" style="width:14px;height:14px;border-radius:3px;background:linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);border:1px solid #dc3545;display:inline-block;"></span>
+                        <small>วันหยุด</small>
                     </div>
                 </div>
             </div>
 
             <!-- Quick Stats -->
-            <div class="card border-0 shadow-sm mt-3">
+            <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom">
-                    <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>สถิติเดือนนี้</h6>
+                    <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>สถิติ</h6>
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-2">
@@ -115,9 +119,14 @@ $roomsArray = (is_array($rooms)) ? $rooms : [];
                         <span class="text-muted">รออนุมัติ</span>
                         <span class="fw-medium text-warning" id="stat-pending">0</span>
                     </div>
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">อนุมัติแล้ว</span>
                         <span class="fw-medium text-success" id="stat-approved">0</span>
+                    </div>
+                    <hr class="my-2">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">วันหยุด</span>
+                        <span class="fw-medium text-danger" id="stat-holidays"><?= count($holidayDatesArray) ?></span>
                     </div>
                 </div>
             </div>
@@ -139,21 +148,38 @@ $roomsArray = (is_array($rooms)) ? $rooms : [];
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">รายละเอียดการจอง</h5>
+                <h5 class="modal-title" id="modal-header-title">
+                    <i class="bi bi-calendar-event text-primary me-2"></i>รายละเอียดการจอง
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>รหัสการจอง:</strong> <span id="modal-code">-</span></p>
-                        <p><strong>หัวข้อ:</strong> <span id="modal-title">-</span></p>
-                        <p><strong>ห้องประชุม:</strong> <span id="modal-room">-</span></p>
-                        <p><strong>ผู้จอง:</strong> <span id="modal-user">-</span></p>
+                <!-- Booking Details -->
+                <div id="booking-details">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>รหัสการจอง:</strong> <span id="modal-code">-</span></p>
+                            <p><strong>หัวข้อ:</strong> <span id="modal-title">-</span></p>
+                            <p><strong>ห้องประชุม:</strong> <span id="modal-room">-</span></p>
+                            <p><strong>ผู้จอง:</strong> <span id="modal-user">-</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>วันที่:</strong> <span id="modal-date">-</span></p>
+                            <p><strong>เวลา:</strong> <span id="modal-time">-</span></p>
+                            <p><strong>สถานะ:</strong> <span id="modal-status">-</span></p>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <p><strong>วันที่:</strong> <span id="modal-date">-</span></p>
-                        <p><strong>เวลา:</strong> <span id="modal-time">-</span></p>
-                        <p><strong>สถานะ:</strong> <span id="modal-status">-</span></p>
+                </div>
+                
+                <!-- Holiday Details -->
+                <div id="holiday-details" style="display: none;">
+                    <div class="text-center py-4">
+                        <div class="mb-3">
+                            <i class="bi bi-calendar-heart text-danger" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="text-danger mb-2" id="holiday-name">-</h5>
+                        <p class="text-muted mb-0" id="holiday-type-label">วันหยุดราชการ</p>
+                        <p class="text-muted small mt-2" id="holiday-description"></p>
                     </div>
                 </div>
             </div>
@@ -180,13 +206,11 @@ $roomsArray = (is_array($rooms)) ? $rooms : [];
                         <select id="quick-room" class="form-select" required>
                             <option value="">-- เลือกห้องประชุม --</option>
                             <?php foreach ($roomsArray as $roomId => $roomName): ?>
-                                <option value="<?= Html::encode($roomId) ?>"><?= Html::encode($roomName) ?></option>
+                                <option value="<?= Html::encode($roomId) ?>">
+                                    <?= Html::encode($roomName) ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">หัวข้อการประชุม <span class="text-danger">*</span></label>
-                        <input type="text" id="quick-title" class="form-control" required>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -201,11 +225,11 @@ $roomsArray = (is_array($rooms)) ? $rooms : [];
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">เวลาเริ่ม <span class="text-danger">*</span></label>
-                            <input type="time" id="quick-start" class="form-control" required>
+                            <input type="time" id="quick-start" class="form-control" required value="09:00">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">เวลาสิ้นสุด <span class="text-danger">*</span></label>
-                            <input type="time" id="quick-end" class="form-control" required>
+                            <input type="time" id="quick-end" class="form-control" required value="12:00">
                         </div>
                     </div>
                 </form>
@@ -221,10 +245,17 @@ $roomsArray = (is_array($rooms)) ? $rooms : [];
 </div>
 
 <style>
+#calendar {
+    min-height: 600px;
+}
+.fc {
+    font-family: inherit;
+}
 .fc-event {
     cursor: pointer;
     border-radius: 4px;
     font-size: 0.85em;
+    padding: 2px 4px;
 }
 .fc-daygrid-event {
     white-space: normal !important;
@@ -232,25 +263,88 @@ $roomsArray = (is_array($rooms)) ? $rooms : [];
 .fc-toolbar-title {
     font-size: 1.25rem !important;
 }
+.fc-button {
+    text-transform: capitalize !important;
+}
+.fc-day-today {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+}
+.fc-daygrid-day-number {
+    font-weight: 500;
+}
+
+/* Holiday Styles */
+.fc-day-holiday {
+    background-color: #fff5f5 !important;
+}
+.fc-day-holiday .fc-daygrid-day-number {
+    color: #dc3545 !important;
+    font-weight: 600 !important;
+}
+.holiday-event {
+    opacity: 0.6;
+}
+.holiday-label {
+    border-left: 3px solid #dc3545 !important;
+    font-weight: 500;
+}
+
+/* Status border indicator */
+.fc-event.status-pending {
+    border-left: 3px solid #ffc107 !important;
+}
+.fc-event.status-approved {
+    border-left: 3px solid #28a745 !important;
+}
+.fc-event.status-completed {
+    border-left: 3px solid #17a2b8 !important;
+}
 </style>
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 
 <?php
 $eventsJson = json_encode($events ?? []);
+$holidayEventsJson = json_encode($holidayEvents ?? []);
+$holidayDatesJson = json_encode($holidayDates ?? []);
 $csrfToken = Yii::$app->request->csrfToken;
 $createUrl = Url::to(['create']);
 
 $js = <<<JS
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
-    if (!calendarEl) return;
+    if (!calendarEl) {
+        console.error('Calendar element not found');
+        return;
+    }
+    
+    if (typeof FullCalendar === 'undefined') {
+        calendarEl.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i>ไม่สามารถโหลด FullCalendar ได้ กรุณารีเฟรชหน้า</div>';
+        return;
+    }
     
     var events = {$eventsJson};
+    var holidayEvents = {$holidayEventsJson};
+    var holidayDates = {$holidayDatesJson};
+    var allEvents = events.slice();
     var currentRoomId = '';
     var checkedStatuses = ['pending', 'approved'];
+    
+    // Filter booking events only
+    var bookingEvents = events.filter(function(e) {
+        return e.extendedProps && e.extendedProps.type === 'booking';
+    });
+    
+    console.log('Loaded', bookingEvents.length, 'bookings and', Object.keys(holidayDates).length, 'holidays');
+    
+    var thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 
+                      'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
     
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'th',
+        height: 'auto',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
@@ -262,46 +356,80 @@ document.addEventListener('DOMContentLoaded', function() {
             week: 'สัปดาห์',
             list: 'รายการ'
         },
-        // Thai day header
         dayHeaderFormat: { weekday: 'short' },
-        events: events,
+        eventSources: [
+            { events: events },
+            { events: holidayEvents }
+        ],
+        eventDisplay: 'block',
         
-        // Update title to Buddhist Era
-        datesSet: function(info) {
-            var titleEl = calendarEl.querySelector('.fc-toolbar-title');
-            if (titleEl && typeof ThaiDate !== 'undefined') {
-                var viewDate = info.view.currentStart;
-                var month = ThaiDate.months[viewDate.getMonth()];
-                var year = ThaiDate.toBuddhistYear(viewDate.getFullYear());
-                titleEl.textContent = month + ' ' + year;
+        titleFormat: function(date) {
+            var d = date.date.marker;
+            var month = thaiMonths[d.getMonth()];
+            var year = d.getFullYear() + 543;
+            return month + ' ' + year;
+        },
+        
+        dayCellDidMount: function(info) {
+            var dateStr = info.date.toISOString().split('T')[0];
+            if (holidayDates[dateStr]) {
+                info.el.classList.add('fc-day-holiday');
+                info.el.title = holidayDates[dateStr].name;
+            }
+        },
+        
+        eventDidMount: function(info) {
+            var props = info.event.extendedProps || {};
+            if (props.type === 'booking' && props.status) {
+                info.el.classList.add('status-' + props.status);
+            }
+            if (props.type === 'booking') {
+                info.el.title = info.event.title + ' (' + (props.time || '') + ')';
             }
         },
         
         eventClick: function(info) {
+            info.jsEvent.preventDefault();
+            
             var event = info.event;
             var props = event.extendedProps || {};
             
-            document.getElementById('modal-code').textContent = props.booking_code || '-';
-            document.getElementById('modal-title').textContent = event.title || '-';
-            document.getElementById('modal-room').textContent = props.room || '-';
-            document.getElementById('modal-user').textContent = props.user || '-';
-            // Format date as Thai Buddhist Era
-            var dateStr = '-';
-            if (event.start) {
-                if (typeof ThaiDate !== 'undefined') {
-                    dateStr = ThaiDate.format(event.start, 'long');
-                } else {
-                    dateStr = event.start.toLocaleDateString('th-TH');
+            if (props.type === 'holiday') {
+                // Show holiday modal
+                document.getElementById('booking-details').style.display = 'none';
+                document.getElementById('holiday-details').style.display = 'block';
+                document.getElementById('modal-actions').querySelector('#modal-view-btn').style.display = 'none';
+                document.getElementById('modal-header-title').innerHTML = '<i class="bi bi-calendar-heart text-danger me-2"></i>วันหยุด';
+                document.getElementById('holiday-name').textContent = event.title.replace('🔴 ', '');
+                document.getElementById('holiday-type-label').textContent = getHolidayTypeLabel(props.holiday_type);
+                document.getElementById('holiday-description').textContent = props.description || '';
+            } else {
+                // Show booking modal
+                document.getElementById('booking-details').style.display = 'block';
+                document.getElementById('holiday-details').style.display = 'none';
+                document.getElementById('modal-actions').querySelector('#modal-view-btn').style.display = 'inline-block';
+                document.getElementById('modal-header-title').innerHTML = '<i class="bi bi-calendar-event text-primary me-2"></i>รายละเอียดการจอง';
+                
+                document.getElementById('modal-code').textContent = props.booking_code || '-';
+                document.getElementById('modal-title').textContent = event.title || '-';
+                document.getElementById('modal-room').textContent = props.room || '-';
+                document.getElementById('modal-user').textContent = props.user || '-';
+                
+                var dateStr = '-';
+                if (event.start) {
+                    var d = event.start;
+                    dateStr = d.getDate() + ' ' + thaiMonths[d.getMonth()] + ' ' + (d.getFullYear() + 543);
                 }
+                document.getElementById('modal-date').textContent = dateStr;
+                document.getElementById('modal-time').textContent = props.time || '-';
+                document.getElementById('modal-status').innerHTML = getStatusBadge(props.status);
+                document.getElementById('modal-view-btn').href = props.viewUrl || '#';
             }
-            document.getElementById('modal-date').textContent = dateStr;
-            document.getElementById('modal-time').textContent = props.time || '-';
-            document.getElementById('modal-status').innerHTML = getStatusBadge(props.status);
-            document.getElementById('modal-view-btn').href = props.viewUrl || '#';
             
             var modal = new bootstrap.Modal(document.getElementById('bookingModal'));
             modal.show();
         },
+        
         dateClick: function(info) {
             document.getElementById('quick-date').value = info.dateStr;
             var modal = new bootstrap.Modal(document.getElementById('quickCreateModal'));
@@ -310,15 +438,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     calendar.render();
-    
-    // Update stats
-    var totalEvents = events.length;
-    var pendingEvents = events.filter(function(e) { return e.extendedProps && e.extendedProps.status === 'pending'; }).length;
-    var approvedEvents = events.filter(function(e) { return e.extendedProps && e.extendedProps.status === 'approved'; }).length;
-    
-    document.getElementById('stat-total').textContent = totalEvents;
-    document.getElementById('stat-pending').textContent = pendingEvents;
-    document.getElementById('stat-approved').textContent = approvedEvents;
+    updateStats(bookingEvents);
     
     // Room filter
     document.getElementById('room-filter').addEventListener('change', function() {
@@ -338,8 +458,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     function filterEvents() {
-        var filtered = events.filter(function(event) {
+        var filtered = allEvents.filter(function(event) {
             var props = event.extendedProps || {};
+            if (props.type === 'holiday') return true;
             var roomMatch = !currentRoomId || props.room_id == currentRoomId;
             var statusMatch = checkedStatuses.includes(props.status);
             return roomMatch && statusMatch;
@@ -347,6 +468,22 @@ document.addEventListener('DOMContentLoaded', function() {
         
         calendar.removeAllEvents();
         calendar.addEventSource(filtered);
+        calendar.addEventSource(holidayEvents);
+        
+        var bookingsOnly = filtered.filter(function(e) {
+            return e.extendedProps && e.extendedProps.type === 'booking';
+        });
+        updateStats(bookingsOnly);
+    }
+    
+    function updateStats(evts) {
+        var total = evts.length;
+        var pending = evts.filter(function(e) { return e.extendedProps && e.extendedProps.status === 'pending'; }).length;
+        var approved = evts.filter(function(e) { return e.extendedProps && e.extendedProps.status === 'approved'; }).length;
+        
+        document.getElementById('stat-total').textContent = total;
+        document.getElementById('stat-pending').textContent = pending;
+        document.getElementById('stat-approved').textContent = approved;
     }
     
     function getStatusBadge(status) {
@@ -360,16 +497,32 @@ document.addEventListener('DOMContentLoaded', function() {
         return badges[status] || '<span class="badge bg-secondary">' + (status || '-') + '</span>';
     }
     
+    function getHolidayTypeLabel(type) {
+        var types = {
+            'national': 'วันหยุดราชการ',
+            'regional': 'วันหยุดภูมิภาค',
+            'organization': 'วันหยุดองค์กร',
+            'special': 'วันพิเศษ'
+        };
+        return types[type] || 'วันหยุด';
+    }
+    
     // Quick create submit
     document.getElementById('quick-submit').addEventListener('click', function() {
-        window.location.href = '{$createUrl}' + 
-            '?room_id=' + document.getElementById('quick-room').value +
-            '&date=' + document.getElementById('quick-date').value +
-            '&start=' + document.getElementById('quick-start').value +
-            '&end=' + document.getElementById('quick-end').value;
+        var roomId = document.getElementById('quick-room').value;
+        var date = document.getElementById('quick-date').value;
+        var start = document.getElementById('quick-start').value;
+        var end = document.getElementById('quick-end').value;
+        
+        if (!roomId || !date || !start || !end) {
+            alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+            return;
+        }
+        
+        window.location.href = '{$createUrl}?room_id=' + roomId + '&date=' + date + '&start=' + start + '&end=' + end;
     });
 });
 JS;
 
-$this->registerJs($js);
+$this->registerJs($js, \yii\web\View::POS_END);
 ?>

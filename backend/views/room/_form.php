@@ -141,7 +141,7 @@ foreach (Yii::$app->session->getAllFlashes() as $type => $message):
                                 ]) ?>
                             </div>
                             <div class="col-md-4">
-                                <?= $form->field($model, 'default_layout')->dropDownList([
+                                <?= $form->field($model, 'room_layout')->dropDownList([
                                     'theater' => 'โรงละคร (Theater)',
                                     'classroom' => 'ห้องเรียน (Classroom)',
                                     'u_shape' => 'รูปตัว U (U-Shape)',

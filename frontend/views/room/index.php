@@ -192,10 +192,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="card h-100 border-0 shadow-sm room-card">
                                 <div class="room-image position-relative">
                                     <?php 
-                                    $primaryImage = $room->primaryImage;
+                                    $primaryImage = $room->getPrimaryImage();
                                     if ($primaryImage): 
                                     ?>
-                                        <img src="<?= Html::encode($primaryImage->url) ?>" 
+                                        <img src="<?= Html::encode($primaryImage->getUrl()) ?>" 
                                              class="card-img-top" 
                                              alt="<?= Html::encode($room->name_th) ?>"
                                              style="height: 180px; object-fit: cover;">
@@ -207,18 +207,14 @@ $this->params['breadcrumbs'][] = $this->title;
                                         </div>
                                     <?php endif; ?>
                                     
-                                    <div class="room-badges position-absolute top-0 start-0 p-2">
-                                        <span class="badge bg-primary">
-                                            <?= Html::encode($room->room_code) ?>
-                                        </span>
-                                    </div>
+                                    <span class="badge bg-primary position-absolute" style="top: 10px; left: 10px; z-index: 10;">
+                                        <?= Html::encode($room->room_code) ?>
+                                    </span>
                                     
                                     <?php if ($room->requires_approval): ?>
-                                        <div class="position-absolute top-0 end-0 p-2">
-                                            <span class="badge bg-warning text-dark" title="ต้องได้รับอนุมัติ">
-                                                <i class="fas fa-lock"></i>
-                                            </span>
-                                        </div>
+                                        <span class="badge bg-warning text-dark position-absolute" style="top: 10px; right: 10px; z-index: 10;" title="ต้องได้รับอนุมัติ">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
                                     <?php endif; ?>
                                 </div>
                                 

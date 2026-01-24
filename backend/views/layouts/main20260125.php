@@ -203,11 +203,6 @@ $unreadNotifications = Yii::$app->user->isGuest ? 0 : Notification::getUnreadCou
             border-left: 0.3em solid transparent;
         }
         
-        .user-dropdown .dropdown-menu {
-            z-index: 1060;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        }
-        
         .user-dropdown .user-avatar {
             width: 36px;
             height: 36px;
@@ -396,11 +391,7 @@ $unreadNotifications = Yii::$app->user->isGuest ? 0 : Notification::getUnreadCou
 <!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
-        <a href="<?= Yii::$app->homeUrl ?>" style="text-decoration: none; color: inherit;">
-            <img src="<?= Yii::getAlias('@web') ?>/images/logo.svg" alt="MeetingRoom" style="height: 40px; width: auto;">
-        </a>
-        <small>ระบบจองห้องประชุม</small>
-    </div>
+        <h4><i class="bi bi-calendar-check me-2"></i>MeetingRoom</h4>
         <small>ระบบจองห้องประชุม</small>
     </div>
     
@@ -723,27 +714,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- Bootstrap 5 JS Bundle (includes Popper) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Initialize Bootstrap Dropdowns -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize all dropdowns
-    var dropdownElementList = document.querySelectorAll('[data-bs-toggle="dropdown"]');
-    dropdownElementList.forEach(function(dropdownToggleEl) {
-        new bootstrap.Dropdown(dropdownToggleEl);
-    });
-    
-    // Specifically initialize user dropdown
-    var userDropdown = document.getElementById('userDropdown');
-    if (userDropdown) {
-        userDropdown.addEventListener('click', function(e) {
-            e.preventDefault();
-            var dropdown = bootstrap.Dropdown.getOrCreateInstance(this);
-            dropdown.toggle();
-        });
-    }
-});
-</script>
 
 <!-- Thai Date Formatter -->
 <script src="<?= Yii::getAlias('@web') ?>/js/thai-date.js"></script>

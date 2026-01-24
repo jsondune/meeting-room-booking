@@ -44,9 +44,27 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-body">
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
-                'tableOptions' => ['class' => 'table table-striped table-hover mb-0'],
+                'tableOptions' => ['class' => 'table table-striped table-hover mb-0 align-middle'],
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
+                    [
+                        'label' => 'รูปภาพ',
+                        'format' => 'raw',
+                        'contentOptions' => ['style' => 'width: 80px;'],
+                        'value' => function ($model) {
+                            $primaryImage = $model->getPrimaryImage();
+                            if ($primaryImage) {
+                                return '<img src="' . $primaryImage->getUrl() . '" 
+                                        class="rounded" 
+                                        style="width: 60px; height: 45px; object-fit: cover;"
+                                        alt="' . Html::encode($model->name_th) . '">';
+                            }
+                            return '<div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                    style="width: 60px; height: 45px;">
+                                    <i class="bi bi-building text-muted"></i>
+                                </div>';
+                        },
+                    ],
                     [
                         'attribute' => 'code',
                         'format' => 'raw',

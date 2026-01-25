@@ -102,67 +102,29 @@ $selectedRoomId = Yii::$app->request->get('room_id');
                                         $roomFloor = is_array($room) ? ($room['floor'] ?? '') : ($room->floor ?? '');
                                         $roomCapacity = is_array($room) ? ($room['capacity'] ?? 0) : ($room->capacity ?? 0);
                                         $roomHourlyRate = is_array($room) ? ($room['hourly_rate'] ?? 0) : ($room->hourly_rate ?? 0);
-                                        
-                                        // Get room image
-                                        $roomImage = null;
-                                        if (!is_array($room) && method_exists($room, 'getPrimaryImage')) {
-                                            $primaryImage = $room->getPrimaryImage();
-                                            $roomImage = $primaryImage ? $primaryImage->getUrl() : null;
-                                        }
                                     ?>
-                                    <div class="col-md-6 col-lg-4">
-                                        <div class="form-check room-card border rounded overflow-hidden h-100 <?= $selectedRoomId == $roomId ? 'border-primary border-2' : '' ?>">
-                                            <input class="form-check-input position-absolute" type="radio" name="Booking[room_id]" value="<?= $roomId ?>" 
+                                    <div class="col-md-6">
+                                        <div class="form-check room-card p-3 border rounded <?= $selectedRoomId == $roomId ? 'border-primary bg-primary bg-opacity-10' : '' ?>">
+                                            <input class="form-check-input" type="radio" name="Booking[room_id]" value="<?= $roomId ?>" 
                                                    id="room<?= $roomId ?>" <?= $selectedRoomId == $roomId ? 'checked' : '' ?> required
-                                                   data-hourly-rate="<?= $roomHourlyRate ?>"
-                                                   style="top: 10px; left: 10px; z-index: 10;">
-                                            <label class="form-check-label w-100 d-block" for="room<?= $roomId ?>" style="cursor: pointer;">
-                                                <!-- Room Thumbnail -->
-                                                <div class="room-thumb position-relative" style="height: 120px; overflow: hidden;">
-                                                    <?php if ($roomImage): ?>
-                                                        <img src="<?= Html::encode($roomImage) ?>" alt="<?= Html::encode($roomName) ?>" 
-                                                             class="w-100 h-100" style="object-fit: cover;"
-                                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                        <div class="room-thumb-placeholder d-none flex-column align-items-center justify-content-center text-white w-100 h-100 position-absolute top-0"
-                                                             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                                            <i class="bi bi-door-open" style="font-size: 2rem; opacity: 0.8;"></i>
-                                                        </div>
-                                                    <?php else: ?>
-                                                        <div class="room-thumb-placeholder d-flex flex-column align-items-center justify-content-center text-white w-100 h-100"
-                                                             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                                            <i class="bi bi-door-open" style="font-size: 2rem; opacity: 0.8;"></i>
-                                                        </div>
-                                                    <?php endif; ?>
-                                                    
-                                                    <!-- Status Badge -->
-                                                    <span class="badge bg-success position-absolute" style="bottom: 8px; right: 8px;">ว่าง</span>
-                                                </div>
-                                                
-                                                <!-- Room Info -->
-                                                <div class="p-3">
-                                                    <div class="fw-semibold mb-1"><?= Html::encode($roomName) ?></div>
-                                                    <small class="text-muted d-block mb-2">
-                                                        <i class="bi bi-geo-alt me-1"></i><?= Html::encode($roomBuilding) ?> <?= $roomFloor ? 'ชั้น ' . $roomFloor : '' ?>
-                                                    </small>
-                                                    <div class="d-flex justify-content-between align-items-center small">
-                                                        <span>
+                                                   data-hourly-rate="<?= $roomHourlyRate ?>">
+                                            <label class="form-check-label w-100" for="room<?= $roomId ?>">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <div class="fw-semibold"><?= Html::encode($roomName) ?></div>
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-geo-alt me-1"></i><?= Html::encode($roomBuilding) ?> <?= $roomFloor ? 'ชั้น ' . $roomFloor : '' ?>
+                                                        </small>
+                                                        <div class="small">
                                                             <i class="bi bi-people me-1"></i><?= $roomCapacity ?> คน
-                                                        </span>
-                                                        <span class="text-primary fw-semibold">
-                                                            <?= number_format($roomHourlyRate) ?> ฿/ชม.
-                                                        </span>
+                                                            <span class="ms-2">
+                                                                <i class="bi bi-currency-exchange me-1"></i><?= number_format($roomHourlyRate) ?> ฿/ชม.
+                                                            </span>
+                                                        </div>
                                                     </div>
+                                                    <span class="badge bg-success">ว่าง</span>
                                                 </div>
                                             </label>
-                                            
-                                            <!-- View Detail Link -->
-                                            <div class="px-3 pb-3">
-                                                <a href="<?= Url::to(['room/view', 'id' => $roomId]) ?>" target="_blank" 
-                                                   class="btn btn-sm btn-outline-secondary w-100"
-                                                   onclick="event.stopPropagation();">
-                                                    <i class="bi bi-eye me-1"></i>ดูรายละเอียด
-                                                </a>
-                                            </div>
                                         </div>
                                     </div>
                                     <?php endforeach; ?>
@@ -550,33 +512,15 @@ $css = <<<CSS
 .room-card {
     cursor: pointer;
     transition: all 0.2s ease;
-    background: #fff;
 }
 
 .room-card:hover {
     border-color: var(--bs-primary) !important;
-    box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.1);
-    transform: translateY(-2px);
+    background-color: rgba(var(--bs-primary-rgb), 0.05);
 }
 
-.room-card input[type="radio"] {
-    transform: scale(1.2);
-}
-
-.room-card input:checked ~ label {
+.room-card input:checked + label {
     color: var(--bs-primary);
-}
-
-.room-card input:checked ~ label .room-thumb {
-    border-bottom: 3px solid var(--bs-primary);
-}
-
-.room-thumb img {
-    transition: transform 0.3s ease;
-}
-
-.room-card:hover .room-thumb img {
-    transform: scale(1.05);
 }
 
 .step-indicator .step-number {
@@ -804,13 +748,13 @@ $this->registerCss($css);
     });
 
     // Room card selection styling
-    document.querySelectorAll('.room-card input[type="radio"]').forEach(function(input) {
+    document.querySelectorAll('.room-card input').forEach(function(input) {
         input.addEventListener('change', function() {
             document.querySelectorAll('.room-card').forEach(function(card) {
-                card.classList.remove('border-primary', 'border-2');
+                card.classList.remove('border-primary', 'bg-primary', 'bg-opacity-10');
             });
             if (this.checked) {
-                this.closest('.room-card').classList.add('border-primary', 'border-2');
+                this.closest('.room-card').classList.add('border-primary', 'bg-primary', 'bg-opacity-10');
             }
         });
     });

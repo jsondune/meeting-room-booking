@@ -55,67 +55,53 @@ AppAsset::register($this);
         
         .auth-card {
             width: 100%;
-            max-width: 480px;
+            max-width: 450px;
             background: #fff;
             border-radius: 1rem;
             box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
             overflow: hidden;
         }
         
-        /* Wider card for signup page */
-        .auth-card.auth-card-wide {
-            max-width: 600px;
-        }
-        
-        @media (min-width: 768px) {
-            .auth-card.auth-card-wide {
-                max-width: 700px;
-            }
-        }
-        
         .auth-header {
             background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
             color: #fff;
-            padding: 1.5rem 2rem;
+            padding: 2rem;
             text-align: center;
         }
         
         .auth-header .logo {
-            font-size: 2.5rem;
-            margin-bottom: 0.75rem;
+            font-size: 3rem;
+            margin-bottom: 1rem;
         }
         
         .auth-header h1 {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
         }
         
         .auth-header p {
             margin: 0;
             opacity: 0.9;
-            font-size: 0.8rem;
+            font-size: 0.875rem;
         }
         
         .auth-body {
-            padding: 1.5rem 2rem 2rem;
+            padding: 2rem;
         }
         
         .form-label {
             font-weight: 500;
             color: #495057;
-            font-size: 0.875rem;
-            margin-bottom: 0.25rem;
         }
         
-        .form-control, .form-select {
+        .form-control {
             border-radius: 0.5rem;
-            padding: 0.625rem 0.875rem;
+            padding: 0.75rem 1rem;
             border: 1px solid #dee2e6;
-            font-size: 0.9rem;
         }
         
-        .form-control:focus, .form-select:focus {
+        .form-control:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
         }
@@ -143,12 +129,11 @@ AppAsset::register($this);
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
-            padding: 0.625rem 1rem;
+            padding: 0.75rem 1rem;
             border-radius: 0.5rem;
             font-weight: 500;
             transition: all 0.2s;
             text-decoration: none;
-            font-size: 0.875rem;
         }
         
         .btn-oauth:hover {
@@ -183,7 +168,7 @@ AppAsset::register($this);
             display: flex;
             align-items: center;
             text-align: center;
-            margin: 1rem 0;
+            margin: 1.5rem 0;
         }
         
         .divider::before,
@@ -196,7 +181,7 @@ AppAsset::register($this);
         .divider span {
             padding: 0 1rem;
             color: #6c757d;
-            font-size: 0.8rem;
+            font-size: 0.875rem;
         }
         
         .auth-footer {
@@ -241,14 +226,6 @@ AppAsset::register($this);
             border-color: var(--primary-color);
         }
         
-        .mb-3 {
-            margin-bottom: 0.75rem !important;
-        }
-        
-        .invalid-feedback {
-            font-size: 0.8rem;
-        }
-        
         @media (max-width: 575.98px) {
             .auth-card {
                 border-radius: 0;
@@ -257,10 +234,6 @@ AppAsset::register($this);
             
             .auth-wrapper {
                 padding: 0;
-            }
-            
-            .auth-body {
-                padding: 1.25rem 1.5rem 1.5rem;
             }
         }
     </style>
@@ -273,12 +246,7 @@ AppAsset::register($this);
 </a>
 
 <div class="auth-wrapper">
-    <?php
-    // Use wider card for signup page
-    $isSignupPage = strpos($this->title, 'ลงทะเบียน') !== false || strpos($this->title, 'Signup') !== false;
-    $cardClass = $isSignupPage ? 'auth-card auth-card-wide' : 'auth-card';
-    ?>
-    <div class="<?= $cardClass ?>">
+    <div class="auth-card">
         <div class="auth-header">
             <div class="logo">
                 <i class="fas fa-door-open"></i>

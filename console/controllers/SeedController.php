@@ -864,7 +864,7 @@ class SeedController extends Controller
             
             if ($status === Booking::STATUS_CANCELLED) {
                 $booking->cancelled_at = date('Y-m-d H:i:s', strtotime($booking->created_at . ' +2 hours'));
-                $booking->cancel_reason = 'ยกเลิกเนื่องจากเปลี่ยนแปลงกำหนดการ';
+                $booking->cancellation_reason = 'ยกเลิกเนื่องจากเปลี่ยนแปลงกำหนดการ';
             }
             
             if ($booking->save(false)) {

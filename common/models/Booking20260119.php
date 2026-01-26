@@ -41,7 +41,7 @@ use common\models\BookingAttendee;
  * @property string|null $rejection_reason
  * @property int|null $cancelled_by
  * @property string|null $cancelled_at
- * @property string|null $cancel_reason
+ * @property string|null $cancellation_reason
  * @property float $total_room_cost
  * @property float $total_equipment_cost
  * @property float $total_cost
@@ -203,7 +203,7 @@ class Booking extends ActiveRecord
             
             // Text fields
             [['meeting_description', 'external_attendees', 'rejection_reason', 
-              'cancel_reason', 'special_requests', 'internal_notes'], 'string'],
+              'cancellation_reason', 'special_requests', 'internal_notes'], 'string'],
             
             // Date and time fields
             ['booking_date', 'date', 'format' => 'php:Y-m-d'],
@@ -265,7 +265,7 @@ class Booking extends ActiveRecord
             'rejection_reason' => 'เหตุผลที่ปฏิเสธ',
             'cancelled_by' => 'ยกเลิกโดย',
             'cancelled_at' => 'วันที่ยกเลิก',
-            'cancel_reason' => 'เหตุผลที่ยกเลิก',
+            'cancellation_reason' => 'เหตุผลที่ยกเลิก',
             'total_room_cost' => 'ค่าใช้จ่ายห้อง',
             'total_equipment_cost' => 'ค่าใช้จ่ายอุปกรณ์',
             'total_cost' => 'ค่าใช้จ่ายรวม',
@@ -622,10 +622,10 @@ class Booking extends ActiveRecord
     public function cancel($reason, $userId = null)
     {
         $this->status = self::STATUS_CANCELLED;
-        $this->cancel_reason = $reason;
+        $this->cancellation_reason = $reason;
         $this->cancelled_by = $userId ?? (Yii::$app instanceof \yii\web\Application && Yii::$app->has('user') && !Yii::$app->user->isGuest ? Yii::$app->user->id : null);
         $this->cancelled_at = date('Y-m-d H:i:s');
-        return $this->save(false, ['status', 'cancel_reason', 'cancelled_by', 'cancelled_at']);
+        return $this->save(false, ['status', 'cancellation_reason', 'cancelled_by', 'cancelled_at']);
     }
 
     /**

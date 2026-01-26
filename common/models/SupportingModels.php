@@ -1002,7 +1002,7 @@ class EmailTemplate extends ActiveRecord
             'site_url' => 'URL เว็บไซต์',
             'approval_link' => 'ลิงก์อนุมัติ',
             'rejection_reason' => 'เหตุผลปฏิเสธ',
-            'cancel_reason' => 'เหตุผลยกเลิก',
+            'cancellation_reason' => 'เหตุผลยกเลิก',
             'qr_code_url' => 'URL QR Code',
         ];
     }

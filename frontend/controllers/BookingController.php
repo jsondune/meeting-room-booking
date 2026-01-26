@@ -392,7 +392,7 @@ class BookingController extends Controller
             return $this->redirect(['view', 'id' => $id]);
         }
 
-        $reason = Yii::$app->request->post('cancel_reason', 'ยกเลิกโดยผู้จอง');
+        $reason = Yii::$app->request->post('cancellation_reason', 'ยกเลิกโดยผู้จอง');
 
         if ($model->cancel($reason, Yii::$app->user->id)) {
             Yii::$app->session->setFlash('success', 'ยกเลิกการจองสำเร็จ');

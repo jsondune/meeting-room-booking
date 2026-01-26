@@ -286,7 +286,7 @@ class BookingTest extends Unit
         // Test cancel
         $booking->cancel('Cancelled for testing');
         $this->assertEquals(Booking::STATUS_CANCELLED, $booking->status, 'Status should be cancelled');
-        $this->assertEquals('Cancelled for testing', $booking->cancel_reason, 'Cancel reason should be set');
+        $this->assertEquals('Cancelled for testing', $booking->cancellation_reason, 'Cancel reason should be set');
         
         // Cleanup
         $booking->delete();

@@ -185,8 +185,12 @@ $selectedRoomId = Yii::$app->request->get('room_id');
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <label class="form-label">วันที่ประชุม <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control" name="Booking[booking_date]" id="bookingDate" 
-                                               min="<?= date('Y-m-d') ?>" required>
+                                        <div class="position-relative">
+                                            <input type="text" id="thaiDateDisplay" class="form-control" 
+                                                   readonly placeholder="เลือกวันที่" style="background-color: #fff; cursor: pointer;" required>
+                                            <input type="hidden" name="Booking[booking_date]" id="bookingDate" value="">
+                                            <i class="fas fa-calendar-alt position-absolute" style="right: 12px; top: 50%; transform: translateY(-50%); color: #6c757d; pointer-events: none;"></i>
+                                        </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">เวลาเริ่ม <span class="text-danger">*</span></label>
@@ -762,7 +766,8 @@ $this->registerCss($css);
             if (typeof ThaiDate !== 'undefined') {
                 document.getElementById('confirmDate').textContent = ThaiDate.format(date, 'long');
             } else {
-                document.getElementById('confirmDate').textContent = new Date(date).toLocaleDateString('th-TH', {day: 'numeric', month: 'long', year: 'numeric'});
+                // Fallback with Buddhist calendar
+                document.getElementById('confirmDate').textContent = new Date(date).toLocaleDateString('th-TH-u-ca-buddhist', {day: 'numeric', month: 'long', year: 'numeric'});
             }
         } else {
             document.getElementById('confirmDate').textContent = '-';
@@ -814,6 +819,179 @@ $this->registerCss($css);
             }
         });
     });
+
+    // Thai Date Picker for Booking
+    (function initThaiDatePicker() {
+        const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 
+                           'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+        const thaiMonthsShort = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 
+                                 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+        const thaiDaysShort = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+        
+        const displayInput = document.getElementById('thaiDateDisplay');
+        const hiddenInput = document.getElementById('bookingDate');
+        
+        if (!displayInput || !hiddenInput) return;
+        
+        let selectedDate = new Date();
+        selectedDate.setDate(selectedDate.getDate() + 1); // Default to tomorrow
+        let viewDate = new Date(selectedDate);
+        const minDate = new Date();
+        minDate.setHours(0, 0, 0, 0);
+        
+        function formatThaiDateShort(date) {
+            const day = date.getDate();
+            const month = thaiMonthsShort[date.getMonth()];
+            const year = date.getFullYear() + 543;
+            return `${day} ${month} ${year}`;
+        }
+        
+        function updateDisplay() {
+            displayInput.value = formatThaiDateShort(selectedDate);
+            hiddenInput.value = selectedDate.toISOString().split('T')[0];
+            // Trigger change event for form validation
+            hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        
+        // Create picker container
+        const pickerContainer = document.createElement('div');
+        pickerContainer.className = 'thai-datepicker-booking';
+        pickerContainer.style.cssText = `
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1050;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            padding: 1rem;
+            min-width: 280px;
+            display: none;
+        `;
+        displayInput.parentElement.style.position = 'relative';
+        displayInput.parentElement.appendChild(pickerContainer);
+        
+        function renderCalendar() {
+            const year = viewDate.getFullYear();
+            const month = viewDate.getMonth();
+            const thaiYear = year + 543;
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+            
+            let html = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="prevMonthBtn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span style="font-weight: 600;">${thaiMonths[month]} ${thaiYear}</span>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="nextMonthBtn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center;">
+            `;
+            
+            // Day headers
+            thaiDaysShort.forEach(day => {
+                html += `<div style="font-size: 0.75rem; font-weight: 600; color: #6c757d; padding: 0.25rem;">${day}</div>`;
+            });
+            
+            // Previous month days
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrevMonth - i;
+                html += `<div style="padding: 0.5rem; color: #adb5bd; font-size: 0.875rem;">${day}</div>`;
+            }
+            
+            // Current month days
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                date.setHours(0, 0, 0, 0);
+                
+                let style = 'padding: 0.5rem; border-radius: 0.25rem; font-size: 0.875rem;';
+                let classes = '';
+                
+                if (date < minDate) {
+                    style += ' color: #dee2e6; cursor: not-allowed;';
+                } else {
+                    style += ' cursor: pointer;';
+                    classes = 'date-selectable';
+                }
+                
+                if (date.toDateString() === today.toDateString()) {
+                    style += ' border: 1px solid #0d6efd;';
+                }
+                
+                if (date.toDateString() === selectedDate.toDateString()) {
+                    style += ' background-color: #0d6efd; color: #fff;';
+                }
+                
+                html += `<div class="${classes}" data-date="${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}" style="${style}">${day}</div>`;
+            }
+            
+            html += '</div>';
+            pickerContainer.innerHTML = html;
+            
+            // Bind events
+            document.getElementById('prevMonthBtn')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                viewDate.setMonth(viewDate.getMonth() - 1);
+                renderCalendar();
+            });
+            
+            document.getElementById('nextMonthBtn')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                viewDate.setMonth(viewDate.getMonth() + 1);
+                renderCalendar();
+            });
+            
+            pickerContainer.querySelectorAll('.date-selectable').forEach(el => {
+                el.addEventListener('click', function() {
+                    const dateStr = this.dataset.date;
+                    selectedDate = new Date(dateStr);
+                    updateDisplay();
+                    pickerContainer.style.display = 'none';
+                });
+                
+                el.addEventListener('mouseenter', function() {
+                    if (!this.style.backgroundColor.includes('13, 110, 253')) {
+                        this.style.backgroundColor = '#e9ecef';
+                    }
+                });
+                
+                el.addEventListener('mouseleave', function() {
+                    if (!this.style.backgroundColor.includes('13, 110, 253')) {
+                        this.style.backgroundColor = '';
+                    }
+                });
+            });
+        }
+        
+        // Toggle picker
+        displayInput.addEventListener('click', function(e) {
+            e.stopPropagation();
+            viewDate = new Date(selectedDate);
+            renderCalendar();
+            pickerContainer.style.display = pickerContainer.style.display === 'none' ? 'block' : 'none';
+        });
+        
+        // Close on outside click
+        document.addEventListener('click', function(e) {
+            if (!pickerContainer.contains(e.target) && e.target !== displayInput) {
+                pickerContainer.style.display = 'none';
+            }
+        });
+        
+        // Initial display
+        updateDisplay();
+    })();
 
     console.log('Booking form script loaded');
 })();

@@ -69,6 +69,30 @@
 - ตรวจสอบว่า OAuth configured หรือยังก่อน redirect
 - แสดง warning message ถ้า OAuth ยังไม่พร้อมใช้งาน
 
+### 12. Frontend Logo ขนาดเล็ก
+**ปัญหา:** Logo ใน navbar ขนาดเล็กเกินไป (45px)
+**แก้ไข:** เพิ่มขนาดเป็น 55px
+
+### 13. การแสดงวันที่ภาษาไทย
+**ปัญหา:** บางที่แสดงปี ค.ศ. แทนที่จะเป็น พ.ศ.
+**แก้ไข:** 
+- ThaiFormatter.php รองรับ format ต่างๆ แล้ว
+- JavaScript fallback ใช้ `th-TH-u-ca-buddhist` calendar
+- thai-date.js มี helper functions พร้อมใช้
+- แก้ไข ICU pattern `'d MMM yyyy'` ให้ทำงานถูกต้อง
+
+### 14. Booking Create - Unknown property cancellation_reason
+**ปัญหา:** Database ไม่มี column `cancellation_reason`
+**แก้ไข:** รัน SQL script เพื่อเพิ่ม column ที่หายไป
+
+### 15. Date Input แสดงปี ค.ศ. (2026) แทน พ.ศ.
+**ปัญหา:** Native HTML date input แสดงตาม browser locale ซึ่งไม่รองรับ พ.ศ.
+**แก้ไข:** 
+- สร้าง Thai Date Picker ด้วย JavaScript
+- แสดงวันที่เป็น "27 ม.ค. 2569" 
+- ใช้ hidden input เก็บค่าจริง (ISO format)
+- อัพเดทหน้า: index, room/index, booking/create
+
 ---
 
 ## 📁 ไฟล์ที่ต้อง Copy
@@ -82,6 +106,7 @@
 | ไฟล์ | วางที่ |
 |------|--------|
 | `common_SignupForm.php` | `common/models/SignupForm.php` |
+| `common_ThaiFormatter.php` | `common/components/ThaiFormatter.php` |
 
 ### Backend Controllers
 | ไฟล์ | วางที่ |
@@ -122,6 +147,7 @@
 | `frontend_AuthController.php` | `frontend/controllers/AuthController.php` |
 | `frontend_ChangePasswordForm.php` | `frontend/models/ChangePasswordForm.php` |
 | `frontend_auth_layout.php` | `frontend/views/layouts/auth.php` |
+| `frontend_index.php` | `frontend/views/site/index.php` |
 | `frontend_signup.php` | `frontend/views/site/signup.php` |
 | `frontend_calendar.php` | `frontend/views/site/calendar.php` |
 | `frontend_change-password.php` | `frontend/views/site/change-password.php` |
@@ -129,11 +155,17 @@
 | `frontend_main.php` | `frontend/views/layouts/main.php` |
 | `frontend_logo.svg` | `frontend/web/images/logo.svg` |
 | `frontend_room_index.php` | `frontend/views/room/index.php` |
+| `frontend_thai-date.js` | `frontend/web/js/thai-date.js` |
 
 ### เอกสาร Workflow
 | ไฟล์ | รายละเอียด |
 |------|-----------|
 | `REGISTRATION_WORKFLOW.md` | เอกสาร workflow การลงทะเบียนระบบ |
+
+### Database
+| ไฟล์ | รายละเอียด |
+|------|-----------|
+| `add_missing_columns.sql` | SQL เพิ่ม column ที่หายไป (cancellation_reason, cancelled_by, cancelled_at) |
 
 ---
 
@@ -142,6 +174,7 @@
 ```bash
 mkdir -p backend/web/images
 mkdir -p frontend/web/images
+mkdir -p frontend/web/js
 mkdir -p frontend/models
 ```
 
@@ -164,7 +197,19 @@ mkdir -p frontend/models
 
 ## ⚠️ หลัง Copy ไฟล์แล้ว
 
-รันคำสั่งนี้ที่ root ของโปรเจค:
+### 1. รัน SQL เพิ่ม Column (ถ้าเกิด error "Unknown property")
+```bash
+mysql -u root -p your_database < add_missing_columns.sql
+```
+
+หรือรัน SQL นี้ใน phpMyAdmin:
+```sql
+ALTER TABLE booking ADD COLUMN cancellation_reason TEXT NULL;
+ALTER TABLE booking ADD COLUMN cancelled_by INT(11) NULL;
+ALTER TABLE booking ADD COLUMN cancelled_at DATETIME NULL;
+```
+
+### 2. รัน Composer dump-autoload
 ```bash
 composer dump-autoload
 ```
@@ -187,4 +232,36 @@ composer dump-autoload
 │  📅✓  ระบบจองห้องประชุม         │
 │       Meeting Room Booking      │
 └─────────────────────────────────┘
+```
+
+---
+
+## 📅 การใช้งานวันที่ภาษาไทย (พ.ศ.)
+
+### ใน PHP (Server-side)
+```php
+// ใช้ Yii::$app->formatter (ThaiFormatter)
+echo Yii::$app->formatter->asDate($date, 'long');    // 26 มกราคม พ.ศ. 2569
+echo Yii::$app->formatter->asDate($date, 'medium');  // 26 ม.ค. 2569
+echo Yii::$app->formatter->asDate($date, 'short');   // 26/1/69
+echo Yii::$app->formatter->asDate($date, 'full');    // วันอาทิตย์ ที่ 26 มกราคม พ.ศ. 2569
+echo Yii::$app->formatter->asDatetime($date, 'long'); // 26 มกราคม พ.ศ. 2569 14:30 น.
+```
+
+### ใน JavaScript (Client-side)
+```javascript
+// ใช้ ThaiDate helper (frontend/web/js/thai-date.js)
+ThaiDate.format('2026-01-26', 'long');    // 26 มกราคม 2569
+ThaiDate.format('2026-01-26', 'medium');  // 26 ม.ค. 2569
+ThaiDate.format('2026-01-26', 'full');    // วันอาทิตย์ที่ 26 มกราคม พ.ศ. 2569
+ThaiDate.formatDatetime('2026-01-26 14:30', 'long'); // 26 มกราคม 2569 14:30 น.
+ThaiDate.today('long');                   // วันที่ปัจจุบัน
+ThaiDate.currentYear();                   // 2569
+```
+
+### ใน HTML (Auto-format)
+```html
+<!-- จะแปลงอัตโนมัติเมื่อโหลดหน้า -->
+<span data-thai-date="2026-01-26" data-format="long"></span>
+<span data-thai-datetime="2026-01-26 14:30" data-format="medium"></span>
 ```

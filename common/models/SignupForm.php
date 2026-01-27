@@ -66,7 +66,7 @@ class SignupForm extends Model
             
             // Terms agreement
             ['agree_terms', 'required', 'requiredValue' => 1, 
-                'message' => 'กรุณายอมรับเงื่อนไขการใช้งาน'],
+                'message' => 'โปรดยอมรับเงื่อนไขการใช้งาน'],
         ];
     }
 

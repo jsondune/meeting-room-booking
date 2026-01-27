@@ -701,15 +701,15 @@ $this->registerCss($css);
             console.log('Step 1 validation - Room:', roomSelected, 'Date:', date, 'Start:', startTime, 'End:', endTime);
             
             if (!roomSelected) {
-                alert('กรุณาเลือกห้องประชุม');
+                alert('โปรดเลือกห้องประชุม');
                 return false;
             }
             if (!date) {
-                alert('กรุณาเลือกวันที่');
+                alert('โปรดเลือกวันที่');
                 return false;
             }
             if (!startTime || !endTime) {
-                alert('กรุณาเลือกเวลาเริ่มและเวลาสิ้นสุด');
+                alert('โปรดเลือกเวลาเริ่มและเวลาสิ้นสุด');
                 return false;
             }
             
@@ -733,17 +733,17 @@ $this->registerCss($css);
             console.log('Step 2 validation - Topic:', topic, 'Purpose:', purpose, 'Attendees:', attendees);
             
             if (!topic.trim()) {
-                alert('กรุณาระบุหัวข้อการประชุม');
+                alert('โปรดระบุหัวข้อการประชุม');
                 document.getElementById('topic').focus();
                 return false;
             }
             if (!purpose) {
-                alert('กรุณาเลือกวัตถุประสงค์');
+                alert('โปรดเลือกวัตถุประสงค์');
                 document.getElementById('purpose').focus();
                 return false;
             }
             if (!attendees || parseInt(attendees) < 1) {
-                alert('กรุณาระบุจำนวนผู้เข้าร่วม');
+                alert('โปรดระบุจำนวนผู้เข้าร่วม');
                 document.getElementById('attendees').focus();
                 return false;
             }

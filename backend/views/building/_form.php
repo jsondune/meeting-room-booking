@@ -178,7 +178,7 @@ foreach (Yii::$app->session->getAllFlashes() as $type => $message):
                     <?php else: ?>
                     <div class="alert alert-warning mb-0">
                         <i class="bi bi-exclamation-triangle me-1"></i>
-                        ครบ 5 รูปแล้ว กรุณาลบรูปเดิมก่อนเพิ่มรูปใหม่
+                        ครบ 5 รูปแล้ว โปรดลบรูปเดิมก่อนเพิ่มรูปใหม่
                     </div>
                     <?php endif; ?>
                 </div>
@@ -195,7 +195,7 @@ foreach (Yii::$app->session->getAllFlashes() as $type => $message):
             <div class="card-body">
                 <div class="alert alert-info mb-0">
                     <i class="bi bi-info-circle me-1"></i>
-                    กรุณาบันทึกข้อมูลอาคารก่อน จากนั้นจึงอัปโหลดรูปภาพได้
+                    โปรดบันทึกข้อมูลอาคารก่อน จากนั้นจึงอัปโหลดรูปภาพได้
                 </div>
             </div>
         </div>

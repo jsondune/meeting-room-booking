@@ -397,7 +397,7 @@ class SiteController extends Controller
                 Yii::$app->session->remove('2fa_required');
                 Yii::$app->session->remove('2fa_user_id');
                 Yii::$app->user->login($user);
-                Yii::$app->session->setFlash('warning', 'คุณใช้รหัสสำรอง กรุณาสร้างรหัสสำรองใหม่');
+                Yii::$app->session->setFlash('warning', 'คุณใช้รหัสสำรอง โปรดสร้างรหัสสำรองใหม่');
                 return $this->goHome();
             }
             
@@ -467,7 +467,7 @@ class SiteController extends Controller
             LoginHistory::logAttempt(null, 'oauth_' . $provider, $provider, 'failed', $e->getMessage());
         }
 
-        Yii::$app->session->setFlash('error', 'ไม่สามารถเข้าสู่ระบบได้ กรุณาลองใหม่อีกครั้ง');
+        Yii::$app->session->setFlash('error', 'ไม่สามารถเข้าสู่ระบบได้ โปรดลองใหม่อีกครั้ง');
         return $this->redirect(['login']);
     }
 
@@ -739,7 +739,7 @@ class SiteController extends Controller
         $model = new \backend\models\ForgotPasswordForm();
 
         if ($model->load(Yii::$app->request->post()) && $model->sendEmail()) {
-            Yii::$app->session->setFlash('success', 'กรุณาตรวจสอบอีเมลของคุณสำหรับคำแนะนำในการรีเซ็ตรหัสผ่าน');
+            Yii::$app->session->setFlash('success', 'โปรดตรวจสอบอีเมลของคุณสำหรับคำแนะนำในการรีเซ็ตรหัสผ่าน');
             return $this->redirect(['login']);
         }
 

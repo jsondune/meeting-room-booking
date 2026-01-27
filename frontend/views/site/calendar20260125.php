@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Check if FullCalendar is loaded
     if (typeof FullCalendar === 'undefined') {
-        calendarEl.innerHTML = '<div class="alert alert-danger text-center py-5"><i class="bi bi-exclamation-triangle fs-1 d-block mb-3"></i>ไม่สามารถโหลดปฏิทินได้ กรุณารีเฟรชหน้า</div>';
+        calendarEl.innerHTML = '<div class="alert alert-danger text-center py-5"><i class="bi bi-exclamation-triangle fs-1 d-block mb-3"></i>ไม่สามารถโหลดปฏิทินได้ โปรดรีเฟรชหน้า</div>';
         console.error('FullCalendar not loaded');
         return;
     }

@@ -528,7 +528,7 @@ $typeLabels = [
                 <p>คุณต้องการไม่อนุมัติการจอง <strong><?= Html::encode($model->booking_code) ?></strong> หรือไม่?</p>
                 <div class="mb-3">
                     <label class="form-label">เหตุผลที่ไม่อนุมัติ <span class="text-danger">*</span></label>
-                    <textarea name="rejection_reason" class="form-control" rows="3" required placeholder="กรุณาระบุเหตุผล..."></textarea>
+                    <textarea name="rejection_reason" class="form-control" rows="3" required placeholder="โปรดระบุเหตุผล..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -557,7 +557,7 @@ $typeLabels = [
                 <p>คุณต้องการยกเลิกการจอง <strong><?= Html::encode($model->booking_code) ?></strong> หรือไม่?</p>
                 <div class="mb-3">
                     <label class="form-label">เหตุผลที่ยกเลิก <span class="text-danger">*</span></label>
-                    <textarea name="cancellation_reason" class="form-control" rows="3" required placeholder="กรุณาระบุเหตุผล..."></textarea>
+                    <textarea name="cancellation_reason" class="form-control" rows="3" required placeholder="โปรดระบุเหตุผล..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">

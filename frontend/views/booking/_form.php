@@ -736,7 +736,7 @@ $('#check-availability').on('click', function() {
     var endTime = $('#booking-end_time').val();
     
     if (!roomId || !date || !startTime || !endTime) {
-        alert('กรุณาเลือกห้อง วันที่ และเวลาก่อน');
+        alert('โปรดเลือกห้อง วันที่ และเวลาก่อน');
         return;
     }
     

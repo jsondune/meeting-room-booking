@@ -393,14 +393,14 @@ document.getElementById('image-input').addEventListener('change', function(e) {
     if (file) {
         // Validate file size (2MB max)
         if (file.size > 2 * 1024 * 1024) {
-            alert('ไฟล์มีขนาดใหญ่เกินไป กรุณาเลือกไฟล์ที่มีขนาดไม่เกิน 2MB');
+            alert('ไฟล์มีขนาดใหญ่เกินไป โปรดเลือกไฟล์ที่มีขนาดไม่เกิน 2MB');
             this.value = '';
             return;
         }
         
         // Validate file type
         if (!file.type.match('image.*')) {
-            alert('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
+            alert('โปรดเลือกไฟล์รูปภาพเท่านั้น');
             this.value = '';
             return;
         }

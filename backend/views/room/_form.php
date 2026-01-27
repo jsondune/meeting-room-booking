@@ -543,7 +543,7 @@ foreach (Yii::$app->session->getAllFlashes() as $type => $message):
                 <?php else: ?>
                 <div class="alert alert-warning mb-0">
                     <i class="bi bi-exclamation-triangle me-2"></i>
-                    ครบ 5 รูปแล้ว กรุณาลบรูปเดิมก่อนเพิ่มรูปใหม่
+                    ครบ 5 รูปแล้ว โปรดลบรูปเดิมก่อนเพิ่มรูปใหม่
                 </div>
                 <?php endif; ?>
             </div>

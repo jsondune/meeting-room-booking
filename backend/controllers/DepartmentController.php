@@ -320,7 +320,7 @@ class DepartmentController extends BaseController
         $userIds = Yii::$app->request->post('user_ids', []);
 
         if (empty($userIds)) {
-            return ['success' => false, 'message' => 'กรุณาเลือกผู้ใช้'];
+            return ['success' => false, 'message' => 'โปรดเลือกผู้ใช้'];
         }
 
         $toDept = Department::findOne($toDeptId);
@@ -353,7 +353,7 @@ class DepartmentController extends BaseController
         $ids = Yii::$app->request->post('ids', []);
 
         if (empty($ids)) {
-            return ['success' => false, 'message' => 'กรุณาเลือกหน่วยงาน'];
+            return ['success' => false, 'message' => 'โปรดเลือกหน่วยงาน'];
         }
 
         $count = 0;

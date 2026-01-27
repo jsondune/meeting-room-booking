@@ -151,7 +151,7 @@ class ProfileController extends Controller
                 if ($avatarPath) {
                     $model->avatar = $avatarPath;
                 } else {
-                    Yii::$app->session->setFlash('warning', 'ไม่สามารถอัพโหลดรูปภาพได้ กรุณาตรวจสอบสิทธิ์โฟลเดอร์');
+                    Yii::$app->session->setFlash('warning', 'ไม่สามารถอัพโหลดรูปภาพได้ โปรดตรวจสอบสิทธิ์โฟลเดอร์');
                 }
             }
 
@@ -259,7 +259,7 @@ class ProfileController extends Controller
         if (!$avatarFile) {
             return [
                 'success' => false,
-                'message' => 'กรุณาเลือกไฟล์รูปภาพ',
+                'message' => 'โปรดเลือกไฟล์รูปภาพ',
             ];
         }
 
@@ -536,7 +536,7 @@ class ProfileController extends Controller
         if (empty($model->password_hash)) {
             return [
                 'success' => false,
-                'message' => 'กรุณาตั้งรหัสผ่านก่อนยกเลิกการเชื่อมต่อ',
+                'message' => 'โปรดตั้งรหัสผ่านก่อนยกเลิกการเชื่อมต่อ',
             ];
         }
 
@@ -600,7 +600,7 @@ class ProfileController extends Controller
                 Yii::$app->session->setFlash('success', 'เปิดใช้งานการยืนยันตัวตนสองขั้นตอนสำเร็จ');
                 return $this->redirect(['edit']);
             } else {
-                Yii::$app->session->setFlash('error', 'รหัสไม่ถูกต้อง กรุณาลองใหม่');
+                Yii::$app->session->setFlash('error', 'รหัสไม่ถูกต้อง โปรดลองใหม่');
             }
         }
 
@@ -805,7 +805,7 @@ class ProfileController extends Controller
         if ($confirmation !== 'DELETE') {
             return [
                 'success' => false,
-                'message' => 'กรุณาพิมพ์ DELETE เพื่อยืนยัน',
+                'message' => 'โปรดพิมพ์ DELETE เพื่อยืนยัน',
             ];
         }
 

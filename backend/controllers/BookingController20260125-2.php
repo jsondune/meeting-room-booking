@@ -339,7 +339,7 @@ class BookingController extends BaseController
         $ids = Yii::$app->request->post('ids', []);
         
         if (empty($ids)) {
-            $this->setFlash('error', 'กรุณาเลือกการจองที่ต้องการอนุมัติ');
+            $this->setFlash('error', 'โปรดเลือกการจองที่ต้องการอนุมัติ');
             return $this->redirect(['index']);
         }
 
@@ -366,7 +366,7 @@ class BookingController extends BaseController
         $reason = Yii::$app->request->post('reason', 'ปฏิเสธโดยผู้ดูแลระบบ');
         
         if (empty($ids)) {
-            $this->setFlash('error', 'กรุณาเลือกการจองที่ต้องการปฏิเสธ');
+            $this->setFlash('error', 'โปรดเลือกการจองที่ต้องการปฏิเสธ');
             return $this->redirect(['index']);
         }
 
@@ -406,7 +406,7 @@ class BookingController extends BaseController
         $ids = Yii::$app->request->post('ids', []);
         
         if (empty($ids)) {
-            $this->setFlash('error', 'กรุณาเลือกการจองที่ต้องการลบ');
+            $this->setFlash('error', 'โปรดเลือกการจองที่ต้องการลบ');
             return $this->redirect(['index']);
         }
 

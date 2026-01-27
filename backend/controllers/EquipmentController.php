@@ -623,7 +623,7 @@ class EquipmentController extends BaseController
         $ids = Yii::$app->request->post('ids', []);
 
         if (empty($ids)) {
-            return ['success' => false, 'message' => 'กรุณาเลือกอุปกรณ์'];
+            return ['success' => false, 'message' => 'โปรดเลือกอุปกรณ์'];
         }
 
         $count = 0;

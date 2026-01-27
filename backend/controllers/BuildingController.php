@@ -258,7 +258,7 @@ class BuildingController extends BaseController
                 Yii::$app->session->setFlash('success', 'แก้ไขข้อมูลอาคารสำเร็จ');
                 return $this->redirect(['view', 'id' => $model->id]);
             } else {
-                Yii::$app->session->setFlash('error', 'บันทึกไม่สำเร็จ กรุณาตรวจสอบข้อมูล');
+                Yii::$app->session->setFlash('error', 'บันทึกไม่สำเร็จ โปรดตรวจสอบข้อมูล');
             }
         }
 
@@ -350,7 +350,7 @@ class BuildingController extends BaseController
         $ids = Yii::$app->request->post('ids', []);
 
         if (empty($ids)) {
-            return ['success' => false, 'message' => 'กรุณาเลือกรายการ'];
+            return ['success' => false, 'message' => 'โปรดเลือกรายการ'];
         }
 
         $count = 0;

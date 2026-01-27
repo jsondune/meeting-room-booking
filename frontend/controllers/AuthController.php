@@ -78,7 +78,7 @@ class AuthController extends Controller
     protected function showProviderNotConfigured(string $providerName): \yii\web\Response
     {
         Yii::$app->session->setFlash('warning', 
-            "การเข้าสู่ระบบด้วย {$providerName} ยังไม่พร้อมใช้งาน กรุณาใช้วิธีอื่นหรือติดต่อผู้ดูแลระบบ"
+            "การเข้าสู่ระบบด้วย {$providerName} ยังไม่พร้อมใช้งาน โปรดใช้วิธีอื่นหรือติดต่อผู้ดูแลระบบ"
         );
         return $this->redirect(['/site/login']);
     }

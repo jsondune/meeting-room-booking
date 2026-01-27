@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     if (typeof FullCalendar === 'undefined') {
-        calendarEl.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i>ไม่สามารถโหลด FullCalendar ได้ กรุณารีเฟรชหน้า</div>';
+        calendarEl.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i>ไม่สามารถโหลด FullCalendar ได้ โปรดรีเฟรชหน้า</div>';
         return;
     }
     
@@ -515,7 +515,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var end = document.getElementById('quick-end').value;
         
         if (!roomId || !date || !start || !end) {
-            alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+            alert('โปรดกรอกข้อมูลให้ครบถ้วน');
             return;
         }
         

@@ -3,7 +3,7 @@
  * 
  * Handles background push notifications for web browsers
  * 
- * @author PBRI Digital Technology & AI Division
+ * @author BIzAI
  * @version 1.0
  */
 

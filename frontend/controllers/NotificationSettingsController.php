@@ -5,7 +5,7 @@
  * Manages user notification preferences including email, push,
  * calendar sync, and reminder settings
  * 
- * @author PBRI Digital Technology & AI Division
+ * @author BIzAI
  * @version 1.0
  */
 

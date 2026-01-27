@@ -4,7 +4,7 @@
  * 
  * Handles authentication via Google OAuth2
  * 
- * @author PBRI Digital Technology & AI Division
+ * @author BIzAI
  * @version 1.0
  */
 

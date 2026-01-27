@@ -5,7 +5,7 @@
  * Handles OAuth authentication redirects to proper providers
  * Routes: /auth/azure, /auth/google, /auth/thaid
  * 
- * @author PBRI Digital Technology & AI Division
+ * @author BIzAI
  * @version 1.0
  */
 

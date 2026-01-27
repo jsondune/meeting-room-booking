@@ -4,7 +4,7 @@
  * 
  * Handles OAuth2 authentication callbacks for all providers
  * 
- * @author PBRI Digital Technology & AI Division
+ * @author BIzAI
  * @version 1.0
  */
 

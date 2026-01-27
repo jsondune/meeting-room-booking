@@ -5,7 +5,7 @@
  * Stores OAuth2 provider connections for users
  * Supports multiple providers per user
  * 
- * @author PBRI Digital Technology & AI Division
+ * @author BIzAI
  * @version 1.0
  * 
  * @property int $id

@@ -19,7 +19,7 @@
  * 
  * @property User $user
  * 
- * @author PBRI Digital Technology & AI Division
+ * @author BIzAI
  * @version 1.0
  */
 

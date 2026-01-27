@@ -209,7 +209,7 @@ $orgDepartment = 'กองดิจิทัลเทคโนโลยี';
                                 </div>
                                 <div class="d-flex align-items-center mb-2">
                                     <i class="bi bi-envelope text-primary me-2"></i>
-                                    <span class="text-muted small">digital@pbri.ac.th</span>
+                                    <span class="text-muted small">digital@bitzo.co.th</span>
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-clock text-primary me-2"></i>

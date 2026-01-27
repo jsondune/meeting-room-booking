@@ -2,7 +2,7 @@
 /**
  * Booking Model Unit Tests
  * 
- * @author PBRI Digital Technology & AI Division
+ * @author BIzAI
  * @version 1.0
  */
 

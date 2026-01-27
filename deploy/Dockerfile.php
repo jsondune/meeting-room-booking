@@ -3,7 +3,7 @@
 
 FROM php:8.2-fpm-alpine
 
-LABEL maintainer="PBRI Digital Technology & AI Division"
+LABEL maintainer="BIzAI"
 LABEL description="PHP-FPM container for Meeting Room Booking System"
 LABEL version="1.0"
 

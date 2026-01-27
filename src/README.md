@@ -311,7 +311,7 @@ MIT License - ดู [LICENSE](LICENSE) สำหรับรายละเอ�
 
 ## 👥 Contributors
 
-- **PBRI Digital Technology & AI Division**
+- **BIzAI**
 
 ## 📞 Support
 
@@ -321,4 +321,4 @@ MIT License - ดู [LICENSE](LICENSE) สำหรับรายละเอ�
 
 ---
 
-พัฒนาโดย ❤️ BiZCO
+พัฒนาโดย ❤️ BIzAI

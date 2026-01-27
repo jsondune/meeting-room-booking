@@ -634,10 +634,10 @@ tail -f /var/www/booking/frontend/runtime/logs/app.log
 
 - **Email**: dtai@bizco.co.th
 - **Phone**: 02-590-1000
-- **GitHub Issues**: https://github.com/jsondune/MRB-System/issues
+- **GitHub Issues**: https://github.com/jsondune/Meeting-Room-Booking/issues
 
 ---
 
 *Document Version: 1.0*
-*Last Updated: December 2025*
-*PBRI Digital Technology & AI Division*
+*Last Updated: December 2026*
+*BIzAI*

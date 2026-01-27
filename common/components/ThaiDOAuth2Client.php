@@ -7,7 +7,7 @@
  * 
  * @see https://api.thaid.dga.or.th
  * 
- * @author PBRI Digital Technology & AI Division
+ * @author BIzAI
  * @version 1.0
  */
 

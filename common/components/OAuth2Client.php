@@ -5,7 +5,7 @@
  * Abstract base class for OAuth2 providers
  * Supports Google, Microsoft, and ThaiD authentication
  * 
- * @author PBRI Digital Technology & AI Division
+ * @author BIzAI
  * @version 1.0
  */
 

@@ -12,7 +12,7 @@ use yii\db\Migration;
  * - RBAC tables
  * - Audit logging
  * 
- * @author Digital Technology & AI Division, PBRI
+ * @author BIzAI
  * @version 1.0.0
  */
 class m240101_000001_create_meeting_room_booking_tables extends Migration

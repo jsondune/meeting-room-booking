@@ -247,7 +247,7 @@ $this->beginPage();
 </div>
 
 <div class="version-info">
-    <?= Yii::$app->name ?> v1.0.0 &copy; <?= date('Y') + 543 ?> PBRI
+    <?= Yii::$app->name ?> v1.0.0 &copy; <?= date('Y') + 543 ?> BIzAI
 </div>
 
 <?php $this->endBody() ?>

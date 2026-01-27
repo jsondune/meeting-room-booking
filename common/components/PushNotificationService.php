@@ -5,7 +5,7 @@
  * Handles push notifications via Firebase Cloud Messaging (FCM)
  * and OneSignal for mobile and web push notifications
  * 
- * @author PBRI Digital Technology & AI Division
+ * @author BIzAI
  * @version 1.0
  */
 

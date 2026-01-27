@@ -178,7 +178,7 @@ class SeedController extends Controller
         $settings = [
             // General
             ['category' => 'general', 'key' => 'site_name', 'value' => 'ระบบจองห้องประชุม', 'type' => 'string'],
-            ['category' => 'general', 'key' => 'site_name_en', 'value' => 'PBRI Meeting Room Booking', 'type' => 'string'],
+            ['category' => 'general', 'key' => 'site_name_en', 'value' => 'Meeting Room Booking', 'type' => 'string'],
             ['category' => 'general', 'key' => 'timezone', 'value' => 'Asia/Bangkok', 'type' => 'string'],
             ['category' => 'general', 'key' => 'date_format', 'value' => 'd/m/Y', 'type' => 'string'],
             ['category' => 'general', 'key' => 'time_format', 'value' => 'H:i', 'type' => 'string'],

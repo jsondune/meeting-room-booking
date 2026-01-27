@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         
                         <h4 class="mb-1"><?= Html::encode($user->first_name . ' ' . $user->last_name) ?></h4>
                         <p class="text-muted mb-2"><?= Html::encode($user->position) ?></p>
-                        <span class="badge bg-primary"><?= Html::encode(($user->department->name ?? '-')) ?></span>
+                        <span class="badge bg-primary"><?= Html::encode(($user->department->name_th ?? '-')) ?></span>
                     </div>
                     
                     <div class="card-footer bg-light">
@@ -85,11 +85,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="card-body">
                         <div class="mb-3">
                             <small class="text-muted">สมัครสมาชิกเมื่อ</small>
-                            <div><?= Yii::$app->formatter->asDatetime($user->created_at) ?></div>
+                            <div><?= Yii::$app->formatter->asDatetime($user->created_at, 'medium') ?></div>
                         </div>
                         <div>
                             <small class="text-muted">เข้าสู่ระบบล่าสุด</small>
-                            <div><?= Yii::$app->formatter->asDatetime($user->last_login_at) ?></div>
+                            <div><?= Yii::$app->formatter->asDatetime($user->last_login_at, 'medium') ?></div>
                         </div>
                     </div>
                 </div>
@@ -164,7 +164,17 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <div class="col-md-6">
                                             <label class="form-label">หน่วยงาน/แผนก</label>
                                             <select class="form-select" name="department_id" disabled>
-                                                <option value="1" selected><?= Html::encode(($user->department->name ?? '-')) ?></option>
+                                                <option value="">-- เลือกหน่วยงาน --</option>
+                                                <?php
+                                                $departments = \common\models\Department::find()
+                                                    ->orderBy(['sort_order' => SORT_ASC, 'name_th' => SORT_ASC])
+                                                    ->all();
+                                                foreach ($departments as $dept):
+                                                ?>
+                                                <option value="<?= $dept->id ?>" <?= $user->department_id == $dept->id ? 'selected' : '' ?>>
+                                                    <?= Html::encode($dept->name_th) ?>
+                                                </option>
+                                                <?php endforeach; ?>
                                             </select>
                                         </div>
                                         <div class="col-md-6">

@@ -111,14 +111,14 @@ $selectedRoomId = Yii::$app->request->get('room_id');
                                         }
                                     ?>
                                     <div class="col-md-6 col-lg-4">
-                                        <div class="form-check room-card border rounded overflow-hidden h-100 <?= $selectedRoomId == $roomId ? 'border-primary border-2' : '' ?>">
+                                        <div class="form-check room-card border rounded h-100 position-relative <?= $selectedRoomId == $roomId ? 'border-primary border-2' : '' ?>">
                                             <input class="form-check-input position-absolute" type="radio" name="Booking[room_id]" value="<?= $roomId ?>" 
                                                    id="room<?= $roomId ?>" <?= $selectedRoomId == $roomId ? 'checked' : '' ?> required
                                                    data-hourly-rate="<?= $roomHourlyRate ?>"
-                                                   style="top: 10px; left: 10px; z-index: 10;">
+                                                   style="top: 12px; left: 12px; z-index: 20; width: 20px; height: 20px;">
                                             <label class="form-check-label w-100 d-block" for="room<?= $roomId ?>" style="cursor: pointer;">
                                                 <!-- Room Thumbnail -->
-                                                <div class="room-thumb position-relative" style="height: 120px; overflow: hidden;">
+                                                <div class="room-thumb position-relative" style="height: 120px; overflow: hidden; border-radius: 0.375rem 0.375rem 0 0;">
                                                     <?php if ($roomImage): ?>
                                                         <img src="<?= Html::encode($roomImage) ?>" alt="<?= Html::encode($roomName) ?>" 
                                                              class="w-100 h-100" style="object-fit: cover;"
@@ -564,7 +564,16 @@ $css = <<<CSS
 }
 
 .room-card input[type="radio"] {
-    transform: scale(1.2);
+    transform: scale(1.3);
+    background-color: #fff;
+    border: 2px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+
+.room-card input[type="radio"]:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
 }
 
 .room-card input:checked ~ label {

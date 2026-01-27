@@ -345,8 +345,12 @@ $this->registerCss("
                                 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">วันที่จอง</label>
-                                    <input type="date" class="form-control form-control-lg" name="booking_date" 
-                                           id="bookingDate" min="<?= date('Y-m-d') ?>" required>
+                                    <div class="position-relative">
+                                        <input type="text" class="form-control form-control-lg" id="thaiDateDisplayRoom"
+                                               readonly placeholder="เลือกวันที่" style="background-color: #fff; cursor: pointer;" required>
+                                        <input type="hidden" name="booking_date" id="bookingDate" value="">
+                                        <i class="bi bi-calendar3 position-absolute" style="right: 15px; top: 50%; transform: translateY(-50%); color: #6c757d; pointer-events: none;"></i>
+                                    </div>
                                 </div>
                                 
                                 <div class="mb-3">
@@ -424,12 +428,23 @@ $this->registerCss("
                     </div>
                     <div class="card-body p-0">
                         <?php if (!empty($upcomingBookings)): ?>
+                            <?php
+                            // Thai date helpers
+                            $thaiMonthsShort = [1 => 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 
+                                               'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+                            ?>
                             <ul class="list-group list-group-flush">
                                 <?php foreach (array_slice($upcomingBookings, 0, 5) as $booking): ?>
                                 <li class="list-group-item">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <div class="fw-bold"><?= Yii::$app->formatter->asDate($booking['booking_date'], 'php:d M Y') ?></div>
+                                            <?php
+                                            $bookingDate = new DateTime($booking['booking_date']);
+                                            $day = $bookingDate->format('j');
+                                            $month = $thaiMonthsShort[(int)$bookingDate->format('n')];
+                                            $year = $bookingDate->format('Y') + 543;
+                                            ?>
+                                            <div class="fw-bold"><?= $day ?> <?= $month ?> <?= $year ?></div>
                                             <small class="text-muted">
                                                 <?= substr($booking['start_time'], 0, 5) ?> - <?= substr($booking['end_time'], 0, 5) ?>
                                             </small>
@@ -490,6 +505,149 @@ function calculatePrice() {
 
 document.getElementById('startTime')?.addEventListener('change', calculatePrice);
 document.getElementById('endTime')?.addEventListener('change', calculatePrice);
+
+// Thai Date Picker for Room View
+(function initThaiDatePickerRoomView() {
+    const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 
+                       'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+    const thaiMonthsShort = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 
+                             'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+    const thaiDaysShort = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+    
+    const displayInput = document.getElementById('thaiDateDisplayRoom');
+    const hiddenInput = document.getElementById('bookingDate');
+    
+    if (!displayInput || !hiddenInput) return;
+    
+    let selectedDate = new Date();
+    selectedDate.setDate(selectedDate.getDate() + 1);
+    let viewDate = new Date(selectedDate);
+    const minDate = new Date();
+    minDate.setHours(0, 0, 0, 0);
+    
+    function formatThaiDateShort(date) {
+        const day = date.getDate();
+        const month = thaiMonthsShort[date.getMonth()];
+        const year = date.getFullYear() + 543;
+        return day + ' ' + month + ' ' + year;
+    }
+    
+    function updateDisplay() {
+        displayInput.value = formatThaiDateShort(selectedDate);
+        hiddenInput.value = selectedDate.toISOString().split('T')[0];
+        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    
+    const pickerContainer = document.createElement('div');
+    pickerContainer.style.cssText = 'position: absolute; top: 100%; left: 0; z-index: 1050; background: #fff; border: 1px solid #dee2e6; border-radius: 0.5rem; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); padding: 1rem; min-width: 280px; display: none;';
+    displayInput.parentElement.appendChild(pickerContainer);
+    
+    function renderCalendar() {
+        const year = viewDate.getFullYear();
+        const month = viewDate.getMonth();
+        const thaiYear = year + 543;
+        
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const daysInPrevMonth = new Date(year, month, 0).getDate();
+        
+        let html = '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">' +
+            '<button type="button" class="btn btn-sm btn-outline-secondary" id="prevMonthBtnRV"><i class="bi bi-chevron-left"></i></button>' +
+            '<span style="font-weight: 600;">' + thaiMonths[month] + ' ' + thaiYear + '</span>' +
+            '<button type="button" class="btn btn-sm btn-outline-secondary" id="nextMonthBtnRV"><i class="bi bi-chevron-right"></i></button>' +
+            '</div><div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center;">';
+        
+        thaiDaysShort.forEach(function(day) {
+            html += '<div style="font-size: 0.75rem; font-weight: 600; color: #6c757d; padding: 0.25rem;">' + day + '</div>';
+        });
+        
+        for (let i = firstDay - 1; i >= 0; i--) {
+            const day = daysInPrevMonth - i;
+            html += '<div style="padding: 0.5rem; color: #adb5bd; font-size: 0.875rem;">' + day + '</div>';
+        }
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month, day);
+            date.setHours(0, 0, 0, 0);
+            
+            let style = 'padding: 0.5rem; border-radius: 0.25rem; font-size: 0.875rem;';
+            let classes = '';
+            
+            if (date < minDate) {
+                style += ' color: #dee2e6; cursor: not-allowed;';
+            } else {
+                style += ' cursor: pointer;';
+                classes = 'date-selectable-rv';
+            }
+            
+            if (date.toDateString() === today.toDateString()) {
+                style += ' border: 1px solid #0d6efd;';
+            }
+            
+            if (date.toDateString() === selectedDate.toDateString()) {
+                style += ' background-color: #0d6efd; color: #fff;';
+            }
+            
+            html += '<div class="' + classes + '" data-date="' + year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0') + '" style="' + style + '">' + day + '</div>';
+        }
+        
+        html += '</div>';
+        pickerContainer.innerHTML = html;
+        
+        document.getElementById('prevMonthBtnRV')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            viewDate.setMonth(viewDate.getMonth() - 1);
+            renderCalendar();
+        });
+        
+        document.getElementById('nextMonthBtnRV')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            viewDate.setMonth(viewDate.getMonth() + 1);
+            renderCalendar();
+        });
+        
+        pickerContainer.querySelectorAll('.date-selectable-rv').forEach(function(el) {
+            el.addEventListener('click', function() {
+                const dateStr = this.dataset.date;
+                selectedDate = new Date(dateStr);
+                updateDisplay();
+                pickerContainer.style.display = 'none';
+            });
+            
+            el.addEventListener('mouseenter', function() {
+                if (!this.style.backgroundColor.includes('13, 110, 253')) {
+                    this.style.backgroundColor = '#e9ecef';
+                }
+            });
+            
+            el.addEventListener('mouseleave', function() {
+                if (!this.style.backgroundColor.includes('13, 110, 253')) {
+                    this.style.backgroundColor = '';
+                }
+            });
+        });
+    }
+    
+    displayInput.addEventListener('click', function(e) {
+        e.stopPropagation();
+        viewDate = new Date(selectedDate);
+        renderCalendar();
+        pickerContainer.style.display = pickerContainer.style.display === 'none' ? 'block' : 'none';
+    });
+    
+    document.addEventListener('click', function(e) {
+        if (!pickerContainer.contains(e.target) && e.target !== displayInput) {
+            pickerContainer.style.display = 'none';
+        }
+    });
+    
+    updateDisplay();
+})();
 
 // Check availability on date change
 document.getElementById('bookingDate')?.addEventListener('change', function() {

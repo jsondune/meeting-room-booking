@@ -1,364 +1,324 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Booking */
+/** @var yii\web\View $this */
+/** @var common\models\Booking $model */
+/** @var array $equipment */
 
-$this->title = $model->booking_code;
-$this->params['breadcrumbs'][] = ['label' => 'การจองห้องประชุม', 'url' => ['index']];
+$this->title = Yii::t('app', 'รายละเอียดการจอง') . ' #' . $model->id;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'การจองของฉัน'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-$statusColors = [
-    'pending' => 'warning',
-    'approved' => 'success',
-    'rejected' => 'danger',
-    'cancelled' => 'secondary',
-    'completed' => 'info',
-];
 $statusLabels = [
-    'pending' => 'รออนุมัติ',
-    'approved' => 'อนุมัติแล้ว',
-    'rejected' => 'ไม่อนุมัติ',
-    'cancelled' => 'ยกเลิก',
-    'completed' => 'เสร็จสิ้น',
+    'pending' => ['class' => 'warning', 'text' => 'รออนุมัติ', 'icon' => 'bi-hourglass-split'],
+    'approved' => ['class' => 'success', 'text' => 'อนุมัติแล้ว', 'icon' => 'bi-check-circle'],
+    'rejected' => ['class' => 'danger', 'text' => 'ไม่อนุมัติ', 'icon' => 'bi-x-circle'],
+    'cancelled' => ['class' => 'secondary', 'text' => 'ยกเลิกแล้ว', 'icon' => 'bi-slash-circle'],
+    'completed' => ['class' => 'info', 'text' => 'เสร็จสิ้น', 'icon' => 'bi-check2-all'],
 ];
-$typeLabels = [
-    'meeting' => 'ประชุม',
-    'training' => 'อบรม/สัมมนา',
-    'workshop' => 'เวิร์คช็อป',
-    'presentation' => 'นำเสนอ',
-    'interview' => 'สัมภาษณ์',
-    'other' => 'อื่นๆ',
-];
+$status = $statusLabels[$model->status] ?? ['class' => 'secondary', 'text' => $model->status, 'icon' => 'bi-question-circle'];
+
+$this->registerCss("
+    .booking-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 1rem;
+        color: white;
+        padding: 2rem;
+    }
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 2rem;
+        font-size: 1.1rem;
+    }
+    .info-card {
+        border-radius: 1rem;
+        transition: transform 0.3s;
+    }
+    .info-card:hover {
+        transform: translateY(-5px);
+    }
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 0.5rem;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #dee2e6;
+    }
+    .timeline-item {
+        position: relative;
+        padding-bottom: 1.5rem;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -1.5rem;
+        top: 0.25rem;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #0d6efd;
+        border: 2px solid white;
+        box-shadow: 0 0 0 2px #0d6efd;
+    }
+    .timeline-item.completed::before {
+        background: #198754;
+        box-shadow: 0 0 0 2px #198754;
+    }
+    .room-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 0.75rem;
+    }
+    .qr-code {
+        width: 150px;
+        height: 150px;
+        padding: 1rem;
+        background: white;
+        border-radius: 0.5rem;
+    }
+    .equipment-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+");
 ?>
 
 <div class="booking-view">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-start mb-4">
-        <div>
-            <h1 class="h3 mb-2">
-                <i class="bi bi-calendar-check me-2"></i><?= Html::encode($model->title) ?>
-            </h1>
-            <div class="d-flex align-items-center gap-3">
-                <span class="badge bg-<?= $statusColors[$model->status] ?? 'secondary' ?> fs-6">
-                    <?= $statusLabels[$model->status] ?? $model->status ?>
-                </span>
-                <span class="text-muted">
-                    <i class="bi bi-hash me-1"></i><?= Html::encode($model->booking_code) ?>
-                </span>
-                <span class="badge bg-light text-dark">
-                    <?= $typeLabels[$model->booking_type] ?? $model->booking_type ?>
-                </span>
+    <!-- Booking Header -->
+    <div class="booking-header mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="status-badge bg-<?= $status['class'] ?>">
+                        <i class="bi <?= $status['icon'] ?> me-2"></i><?= $status['text'] ?>
+                    </span>
+                </div>
+                <h2 class="mb-2"><?= Html::encode($model->title) ?></h2>
+                <p class="mb-0 opacity-75">
+                    <i class="bi bi-hash me-1"></i>หมายเลขการจอง: <strong><?= $model->booking_code ?? 'BK-' . str_pad($model->id, 6, '0', STR_PAD_LEFT) ?></strong>
+                </p>
             </div>
-        </div>
-        <div class="btn-group">
-            <?= Html::a('<i class="bi bi-pencil me-1"></i>แก้ไข', ['update', 'id' => $model->id], ['class' => 'btn btn-outline-primary']) ?>
-            <button type="button" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
-                <span class="visually-hidden">Toggle Dropdown</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><?= Html::a('<i class="bi bi-printer me-2"></i>พิมพ์', ['print', 'id' => $model->id], ['class' => 'dropdown-item', 'target' => '_blank']) ?></li>
-                <li><?= Html::a('<i class="bi bi-envelope me-2"></i>ส่งอีเมล', ['send-email', 'id' => $model->id], ['class' => 'dropdown-item']) ?></li>
-                <li><hr class="dropdown-divider"></li>
-                <?php if ($model->status === 'pending'): ?>
-                <li><a href="#" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#approveModal"><i class="bi bi-check-circle me-2"></i>อนุมัติ</a></li>
-                <li><a href="#" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#rejectModal"><i class="bi bi-x-circle me-2"></i>ไม่อนุมัติ</a></li>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <?php if (in_array($model->status, ['pending', 'approved']) && strtotime($model->booking_date) > time()): ?>
+                    <button type="button" class="btn btn-light btn-lg" onclick="cancelBooking()">
+                        <i class="bi bi-x-lg me-2"></i>ยกเลิกการจอง
+                    </button>
                 <?php endif; ?>
-                <?php if (in_array($model->status, ['pending', 'approved'])): ?>
-                <li><a href="#" class="dropdown-item text-warning" data-bs-toggle="modal" data-bs-target="#cancelModal"><i class="bi bi-slash-circle me-2"></i>ยกเลิก</a></li>
-                <?php endif; ?>
-                <li><hr class="dropdown-divider"></li>
-                <li><?= Html::a('<i class="bi bi-trash me-2"></i>ลบ', ['delete', 'id' => $model->id], [
-                    'class' => 'dropdown-item text-danger',
-                    'data' => [
-                        'confirm' => 'คุณแน่ใจหรือไม่ที่จะลบการจองนี้?',
-                        'method' => 'post',
-                    ],
-                ]) ?></li>
-            </ul>
+            </div>
         </div>
     </div>
 
     <div class="row">
         <!-- Main Content -->
         <div class="col-lg-8">
-            <!-- Booking Details -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-info-circle me-2"></i>รายละเอียดการจอง
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <table class="table table-borderless mb-0">
-                                <tr>
-                                    <td class="text-muted" style="width: 140px;">หัวข้อ:</td>
-                                    <td class="fw-semibold"><?= Html::encode($model->title) ?></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">ประเภท:</td>
-                                    <td><?= $typeLabels[$model->booking_type] ?? $model->booking_type ?></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">ผู้จอง:</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-circle me-2" style="width: 32px; height: 32px; font-size: 12px;">
-                                                <?= strtoupper(substr($model->user->first_name ?? 'U', 0, 1) . substr($model->user->last_name ?? '', 0, 1)) ?>
-                                            </div>
-                                            <div>
-                                                <div><?= Html::encode($model->user->full_name ?? '-') ?></div>
-                                                <small class="text-muted"><?= Html::encode($model->user->department->name_th ?? '-') ?></small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">จำนวนผู้เข้าร่วม:</td>
-                                    <td><i class="bi bi-people me-1"></i><?= Html::encode($model->attendee_count) ?> คน</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-6">
-                            <table class="table table-borderless mb-0">
-                                <tr>
-                                    <td class="text-muted" style="width: 140px;">วันที่:</td>
-                                    <td class="fw-semibold">
-                                        <i class="bi bi-calendar3 me-1"></i>
-                                        <?= Yii::$app->formatter->asDate($model->booking_date, 'php:l j F Y') ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">เวลา:</td>
-                                    <td>
-                                        <i class="bi bi-clock me-1"></i>
-                                        <?= Html::encode($model->start_time) ?> - <?= Html::encode($model->end_time) ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">ระยะเวลา:</td>
-                                    <td>
-                                        <?php
-                                        $start = strtotime($model->start_time);
-                                        $end = strtotime($model->end_time);
-                                        $diff = ($end - $start) / 60;
-                                        $hours = floor($diff / 60);
-                                        $mins = $diff % 60;
-                                        echo $hours > 0 ? $hours . ' ชั่วโมง ' : '';
-                                        echo $mins > 0 ? $mins . ' นาที' : '';
-                                        ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">สถานะ:</td>
-                                    <td>
-                                        <span class="badge bg-<?= $statusColors[$model->status] ?? 'secondary' ?>">
-                                            <?= $statusLabels[$model->status] ?? $model->status ?>
-                                        </span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-
-                    <?php if ($model->description): ?>
-                    <hr>
-                    <h6 class="text-muted mb-2">รายละเอียด</h6>
-                    <p class="mb-0"><?= nl2br(Html::encode($model->description)) ?></p>
-                    <?php endif; ?>
-                </div>
-            </div>
-
             <!-- Room Information -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-door-open me-2"></i>ห้องประชุม
-                    </h5>
-                </div>
+            <div class="card info-card shadow-sm mb-4">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4">
                             <?php 
-                                $roomPrimaryImage = $model->room ? $model->room->getPrimaryImage() : null;
-                                $roomImageUrl = $roomPrimaryImage ? $roomPrimaryImage->getUrl() : null;
+                            $roomImage = $model->room ? $model->room->primaryImage : null;
+                            if ($roomImage): 
                             ?>
-                            <?php if ($roomImageUrl): ?>
-                            <img src="<?= Html::encode($roomImageUrl) ?>" 
-                                 class="img-fluid rounded" alt="<?= Html::encode($model->room->name_th) ?>">
+                                <img src="<?= Html::encode($roomImage->url) ?>" 
+                                     class="room-image" alt="">
                             <?php else: ?>
-                            <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 150px;">
-                                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
-                            </div>
+                                <div class="room-image d-flex flex-column align-items-center justify-content-center text-white"
+                                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 0.5rem;">
+                                    <i class="bi bi-door-open" style="font-size: 2.5rem; opacity: 0.8;"></i>
+                                    <span class="mt-2 small text-center px-2" style="opacity: 0.9;"><?= Html::encode($model->room->name ?? 'ห้องประชุม') ?></span>
+                                </div>
                             <?php endif; ?>
                         </div>
                         <div class="col-md-8">
-                            <h5 class="mb-2"><?= Html::encode($model->room->name_th ?? '-') ?></h5>
-                            <p class="text-muted mb-2">
-                                <i class="bi bi-building me-1"></i><?= Html::encode($model->room->building->name_th ?? '-') ?>
-                                <span class="mx-2">|</span>
-                                <i class="bi bi-geo-alt me-1"></i>ชั้น <?= Html::encode($model->room->floor ?? '-') ?>
-                            </p>
-                            <p class="mb-2">
-                                <i class="bi bi-people me-1"></i>ความจุ: <?= Html::encode($model->room->capacity ?? '-') ?> คน
-                            </p>
-                            <div class="d-flex flex-wrap gap-2">
-                                <?php if (!empty($model->room->has_projector)): ?>
-                                <span class="badge bg-light text-dark"><i class="bi bi-projector me-1"></i>โปรเจคเตอร์</span>
-                                <?php endif; ?>
-                                <?php if (!empty($model->room->has_video_conference)): ?>
-                                <span class="badge bg-light text-dark"><i class="bi bi-camera-video me-1"></i>Video Conference</span>
-                                <?php endif; ?>
-                                <?php if (!empty($model->room->has_whiteboard)): ?>
-                                <span class="badge bg-light text-dark"><i class="bi bi-easel me-1"></i>ไวท์บอร์ด</span>
-                                <?php endif; ?>
-                                <?php if (!empty($model->room->has_wifi)): ?>
-                                <span class="badge bg-light text-dark"><i class="bi bi-wifi me-1"></i>WiFi</span>
-                                <?php endif; ?>
+                            <h4 class="mb-3">
+                                <i class="bi bi-door-open text-primary me-2"></i>
+                                <?= Html::encode($model->room->name) ?>
+                            </h4>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="text-muted small">สถานที่</div>
+                                    <div><i class="bi bi-geo-alt me-1"></i><?= Html::encode($model->room->location) ?></div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-muted small">อาคาร / ชั้น</div>
+                                    <div><i class="bi bi-building me-1"></i><?= Html::encode($model->room->building) ?> / ชั้น <?= $model->room->floor ?></div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-muted small">ความจุ</div>
+                                    <div><i class="bi bi-people me-1"></i><?= $model->room->capacity ?> คน</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-muted small">ประเภทห้อง</div>
+                                    <div><i class="bi bi-tag me-1"></i><?= Html::encode($model->room->room_type) ?></div>
+                                </div>
                             </div>
                             <div class="mt-3">
-                                <?= Html::a('<i class="bi bi-eye me-1"></i>ดูรายละเอียดห้อง', ['/room/view', 'id' => $model->room_id], ['class' => 'btn btn-sm btn-outline-primary']) ?>
+                                <?= Html::a('<i class="bi bi-eye me-1"></i>ดูรายละเอียดห้อง', ['room/view', 'id' => $model->room_id], ['class' => 'btn btn-outline-primary btn-sm']) ?>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Booking Details -->
+            <div class="card info-card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-calendar-event me-2"></i>รายละเอียดการจอง</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                                    <i class="bi bi-calendar-date text-primary fs-4"></i>
+                                </div>
+                                <div>
+                                    <div class="text-muted small">วันที่</div>
+                                    <?php
+                                    // Thai date formatting
+                                    $thaiDays = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+                                    $thaiMonths = [1 => 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 
+                                                   'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+                                    $bookingDate = new DateTime($model->booking_date);
+                                    $dayOfWeek = $thaiDays[$bookingDate->format('w')];
+                                    $day = $bookingDate->format('j');
+                                    $month = $thaiMonths[(int)$bookingDate->format('n')];
+                                    $year = $bookingDate->format('Y') + 543;
+                                    ?>
+                                    <div class="fw-bold">วัน<?= $dayOfWeek ?>ที่ <?= $day ?> <?= $month ?> พ.ศ. <?= $year ?></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                                    <i class="bi bi-clock text-success fs-4"></i>
+                                </div>
+                                <div>
+                                    <div class="text-muted small">เวลา</div>
+                                    <div class="fw-bold"><?= substr($model->start_time, 0, 5) ?> - <?= substr($model->end_time, 0, 5) ?> น.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-info bg-opacity-10 rounded-circle p-3 me-3">
+                                    <i class="bi bi-people text-info fs-4"></i>
+                                </div>
+                                <div>
+                                    <div class="text-muted small">จำนวนผู้เข้าร่วม</div>
+                                    <div class="fw-bold"><?= $model->attendees_count ?> คน</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-warning bg-opacity-10 rounded-circle p-3 me-3">
+                                    <i class="bi bi-hourglass-split text-warning fs-4"></i>
+                                </div>
+                                <div>
+                                    <div class="text-muted small">ระยะเวลา</div>
+                                    <?php
+                                    $start = strtotime($model->start_time);
+                                    $end = strtotime($model->end_time);
+                                    $duration = ($end - $start) / 3600;
+                                    ?>
+                                    <div class="fw-bold"><?= $duration ?> ชั่วโมง</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <?php if ($model->purpose): ?>
+                    <hr class="my-4">
+                    <h6><i class="bi bi-chat-left-text me-2"></i>วัตถุประสงค์</h6>
+                    <p class="mb-0"><?= nl2br(Html::encode($model->purpose)) ?></p>
+                    <?php endif; ?>
+                    
+                    <?php if ($model->notes): ?>
+                    <hr class="my-4">
+                    <h6><i class="bi bi-sticky me-2"></i>หมายเหตุ</h6>
+                    <p class="mb-0"><?= nl2br(Html::encode($model->notes)) ?></p>
+                    <?php endif; ?>
                 </div>
             </div>
 
             <!-- Equipment Requested -->
-            <?php if (!empty($model->bookingEquipment)): ?>
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-tools me-2"></i>อุปกรณ์ที่ขอใช้
-                    </h5>
+            <?php if (!empty($equipment)): ?>
+            <div class="card info-card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-box-seam me-2"></i>อุปกรณ์ที่ขอใช้</h5>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-sm mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>อุปกรณ์</th>
-                                    <th style="width: 100px;">จำนวน</th>
-                                    <th>หมายเหตุ</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($model->bookingEquipment as $equip): ?>
-                                <tr>
-                                    <td>
-                                        <i class="bi bi-check-circle text-success me-2"></i>
-                                        <?= Html::encode($equip->equipment->name_th ?? '-') ?>
-                                    </td>
-                                    <td><?= Html::encode($equip->quantity) ?></td>
-                                    <td class="text-muted"><?= Html::encode($equip->notes ?? '-') ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                    <?php foreach ($equipment as $item): ?>
+                    <div class="equipment-item">
+                        <i class="bi bi-box text-primary fs-4 me-3"></i>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold"><?= Html::encode($item['name']) ?></div>
+                            <small class="text-muted">จำนวน: <?= $item['quantity'] ?> ชิ้น</small>
+                        </div>
+                        <?php if ($item['price'] > 0): ?>
+                        <div class="text-primary fw-bold">฿<?= number_format($item['price'] * $item['quantity']) ?></div>
+                        <?php else: ?>
+                        <span class="badge bg-success">ฟรี</span>
+                        <?php endif; ?>
                     </div>
-                </div>
-            </div>
-            <?php endif; ?>
-
-            <!-- Special Requests -->
-            <?php if ($model->special_requests): ?>
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-chat-text me-2"></i>คำขอพิเศษ
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <p class="mb-0"><?= nl2br(Html::encode($model->special_requests)) ?></p>
+                    <?php endforeach; ?>
                 </div>
             </div>
             <?php endif; ?>
 
             <!-- Activity Timeline -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-clock-history me-2"></i>ประวัติกิจกรรม
-                    </h5>
+            <div class="card info-card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>ประวัติกิจกรรม</h5>
                 </div>
                 <div class="card-body">
                     <div class="timeline">
-                        <!-- Created -->
-                        <div class="timeline-item">
-                            <div class="timeline-marker bg-primary"></div>
-                            <div class="timeline-content">
-                                <div class="d-flex justify-content-between">
-                                    <span class="fw-semibold">สร้างการจอง</span>
-                                    <small class="text-muted"><?= Yii::$app->formatter->asDatetime($model->created_at) ?></small>
-                                </div>
-                                <p class="text-muted mb-0 small">
-                                    โดย <?= Html::encode($model->user->full_name ?? '-') ?>
-                                </p>
-                            </div>
+                        <div class="timeline-item completed">
+                            <div class="fw-bold">สร้างการจอง</div>
+                            <div class="text-muted small"><?= Yii::$app->formatter->asDatetime($model->created_at, 'medium') ?></div>
                         </div>
-
-                        <?php if ($model->status === 'approved' && $model->approved_at): ?>
-                        <div class="timeline-item">
-                            <div class="timeline-marker bg-success"></div>
-                            <div class="timeline-content">
-                                <div class="d-flex justify-content-between">
-                                    <span class="fw-semibold text-success">อนุมัติแล้ว</span>
-                                    <small class="text-muted"><?= Yii::$app->formatter->asDatetime($model->approved_at) ?></small>
-                                </div>
-                                <p class="text-muted mb-0 small">
-                                    อนุมัติโดย <?= Html::encode($model->approver->full_name ?? '-') ?>
-                                </p>
-                            </div>
-                        </div>
-                        <?php endif; ?>
-
-                        <?php if ($model->status === 'rejected' && $model->approved_at): ?>
-                        <div class="timeline-item">
-                            <div class="timeline-marker bg-danger"></div>
-                            <div class="timeline-content">
-                                <div class="d-flex justify-content-between">
-                                    <span class="fw-semibold text-danger">ไม่อนุมัติ</span>
-                                    <small class="text-muted"><?= Yii::$app->formatter->asDatetime($model->approved_at) ?></small>
-                                </div>
-                                <p class="text-muted mb-0 small">
-                                    โดย <?= Html::encode($model->approver->full_name ?? '-') ?>
-                                    <?php if ($model->rejection_reason): ?>
-                                    <br>เหตุผล: <?= Html::encode($model->rejection_reason) ?>
-                                    <?php endif; ?>
-                                </p>
-                            </div>
-                        </div>
-                        <?php endif; ?>
-
-                        <?php if ($model->status === 'cancelled' && $model->cancelled_at): ?>
-                        <div class="timeline-item">
-                            <div class="timeline-marker bg-secondary"></div>
-                            <div class="timeline-content">
-                                <div class="d-flex justify-content-between">
-                                    <span class="fw-semibold text-secondary">ยกเลิก</span>
-                                    <small class="text-muted"><?= Yii::$app->formatter->asDatetime($model->cancelled_at) ?></small>
-                                </div>
-                                <?php if ($model->cancellation_reason): ?>
-                                <p class="text-muted mb-0 small">
-                                    เหตุผล: <?= Html::encode($model->cancellation_reason) ?>
-                                </p>
+                        <?php if ($model->status !== 'pending'): ?>
+                        <div class="timeline-item completed">
+                            <div class="fw-bold">
+                                <?php if ($model->status === 'approved'): ?>
+                                    ได้รับการอนุมัติ
+                                <?php elseif ($model->status === 'rejected'): ?>
+                                    ไม่ได้รับการอนุมัติ
+                                <?php elseif ($model->status === 'cancelled'): ?>
+                                    ยกเลิกการจอง
+                                <?php elseif ($model->status === 'completed'): ?>
+                                    การใช้งานเสร็จสิ้น
                                 <?php endif; ?>
                             </div>
-                        </div>
-                        <?php endif; ?>
-
-                        <?php if ($model->updated_at && $model->updated_at != $model->created_at): ?>
-                        <div class="timeline-item">
-                            <div class="timeline-marker bg-info"></div>
-                            <div class="timeline-content">
-                                <div class="d-flex justify-content-between">
-                                    <span class="fw-semibold">แก้ไขล่าสุด</span>
-                                    <small class="text-muted"><?= Yii::$app->formatter->asDatetime($model->updated_at) ?></small>
+                            <div class="text-muted small"><?= Yii::$app->formatter->asDatetime($model->updated_at, 'medium') ?></div>
+                            <?php if ($model->status === 'rejected' && $model->rejection_reason): ?>
+                                <div class="alert alert-danger mt-2 mb-0 py-2">
+                                    <small><strong>เหตุผล:</strong> <?= Html::encode($model->rejection_reason) ?></small>
                                 </div>
-                            </div>
+                            <?php endif; ?>
+                        </div>
+                        <?php else: ?>
+                        <div class="timeline-item">
+                            <div class="fw-bold text-muted">รอการอนุมัติ</div>
+                            <div class="text-muted small">รอดำเนินการ</div>
                         </div>
                         <?php endif; ?>
                     </div>
@@ -368,255 +328,202 @@ $typeLabels = [
 
         <!-- Sidebar -->
         <div class="col-lg-4">
-            <!-- Quick Actions -->
-            <?php if ($model->status === 'pending'): ?>
-            <div class="card mb-4 border-warning">
-                <div class="card-header bg-warning bg-opacity-10">
-                    <h5 class="card-title mb-0 text-warning">
-                        <i class="bi bi-exclamation-triangle me-2"></i>รออนุมัติ
-                    </h5>
+            <!-- Price Summary -->
+            <div class="card info-card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>สรุปค่าใช้จ่าย</h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted small mb-3">การจองนี้รอการอนุมัติจากผู้ดูแลระบบ</p>
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#approveModal">
-                            <i class="bi bi-check-circle me-2"></i>อนุมัติ
-                        </button>
-                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">
-                            <i class="bi bi-x-circle me-2"></i>ไม่อนุมัติ
-                        </button>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>ค่าห้องประชุม</span>
+                        <span>฿<?= number_format($model->room_price ?? 0) ?></span>
                     </div>
+                    <?php if (($model->equipment_price ?? 0) > 0): ?>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>ค่าอุปกรณ์</span>
+                        <span>฿<?= number_format($model->equipment_price) ?></span>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (($model->service_price ?? 0) > 0): ?>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>ค่าบริการเพิ่มเติม</span>
+                        <span>฿<?= number_format($model->service_price) ?></span>
+                    </div>
+                    <?php endif; ?>
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>รวมทั้งหมด</span>
+                        <span class="text-primary">฿<?= number_format($model->total_price ?? 0) ?></span>
+                    </div>
+                    
+                    <?php if ($model->payment_status): ?>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>สถานะการชำระ</span>
+                        <?php
+                        $paymentStatuses = [
+                            'pending' => ['class' => 'warning', 'text' => 'รอชำระ'],
+                            'paid' => ['class' => 'success', 'text' => 'ชำระแล้ว'],
+                            'refunded' => ['class' => 'info', 'text' => 'คืนเงินแล้ว'],
+                        ];
+                        $pStatus = $paymentStatuses[$model->payment_status] ?? ['class' => 'secondary', 'text' => $model->payment_status];
+                        ?>
+                        <span class="badge bg-<?= $pStatus['class'] ?>"><?= $pStatus['text'] ?></span>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- QR Code for Check-in -->
+            <?php if ($model->status === 'approved'): ?>
+            <div class="card info-card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-qr-code me-2"></i>QR Code สำหรับเช็คอิน</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="qr-code mx-auto mb-3 border">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=<?= urlencode($model->booking_code ?? 'BK-' . $model->id) ?>" 
+                             alt="QR Code" class="img-fluid">
+                    </div>
+                    <p class="text-muted small mb-2">สแกน QR Code เพื่อเช็คอินเมื่อถึงห้องประชุม</p>
+                    <button class="btn btn-outline-primary btn-sm" onclick="window.print()">
+                        <i class="bi bi-printer me-1"></i>พิมพ์
+                    </button>
                 </div>
             </div>
             <?php endif; ?>
 
-            <!-- Contact Person -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-person-lines-fill me-2"></i>ผู้ประสานงาน
-                    </h5>
+            <!-- Contact Information -->
+            <div class="card info-card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-person-lines-fill me-2"></i>ข้อมูลผู้จอง</h5>
                 </div>
                 <div class="card-body">
-                    <?php if ($model->contact_name): ?>
-                    <p class="mb-2">
-                        <i class="bi bi-person me-2 text-muted"></i>
-                        <?= Html::encode($model->contact_name) ?>
-                    </p>
-                    <?php endif; ?>
-                    <?php if ($model->contact_phone): ?>
-                    <p class="mb-2">
-                        <i class="bi bi-telephone me-2 text-muted"></i>
-                        <a href="tel:<?= Html::encode($model->contact_phone) ?>"><?= Html::encode($model->contact_phone) ?></a>
-                    </p>
-                    <?php endif; ?>
-                    <?php if ($model->contact_email): ?>
-                    <p class="mb-0">
-                        <i class="bi bi-envelope me-2 text-muted"></i>
-                        <a href="mailto:<?= Html::encode($model->contact_email) ?>"><?= Html::encode($model->contact_email) ?></a>
-                    </p>
-                    <?php endif; ?>
-                    <?php if (!$model->contact_name && !$model->contact_phone && !$model->contact_email): ?>
-                    <p class="text-muted mb-0">ไม่ได้ระบุข้อมูลผู้ประสานงาน</p>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <!-- Cost Summary -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-receipt me-2"></i>ค่าใช้จ่าย
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <table class="table table-sm table-borderless mb-0">
-                        <tr>
-                            <td class="text-muted">ค่าห้อง:</td>
-                            <td class="text-end">฿<?= number_format($model->room_cost ?? 0, 2) ?></td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">ค่าอุปกรณ์:</td>
-                            <td class="text-end">฿<?= number_format($model->equipment_cost ?? 0, 2) ?></td>
-                        </tr>
-                        <tr class="border-top">
-                            <td class="fw-semibold">รวมทั้งสิ้น:</td>
-                            <td class="text-end fw-bold text-primary h5 mb-0">
-                                ฿<?= number_format($model->total_cost ?? 0, 2) ?>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-
-            <!-- System Info -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-info-circle me-2"></i>ข้อมูลระบบ
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <small class="text-muted">
-                        <div class="mb-2">
-                            <i class="bi bi-hash me-2"></i>รหัส: <?= Html::encode($model->booking_code) ?>
-                        </div>
-                        <div class="mb-2">
-                            <i class="bi bi-calendar-plus me-2"></i>สร้างเมื่อ: <?= Yii::$app->formatter->asDatetime($model->created_at) ?>
-                        </div>
-                        <div class="mb-2">
-                            <i class="bi bi-calendar-check me-2"></i>แก้ไขล่าสุด: <?= Yii::$app->formatter->asDatetime($model->updated_at) ?>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center text-white me-3" style="width: 50px; height: 50px;">
+                            <?= strtoupper(substr($model->user->fullname ?? $model->user->username, 0, 1)) ?>
                         </div>
                         <div>
-                            <i class="bi bi-key me-2"></i>ID: <?= $model->id ?>
+                            <div class="fw-bold"><?= Html::encode($model->user->fullname ?? $model->user->username) ?></div>
+                            <small class="text-muted"><?= Html::encode($model->user->department->name ?? '-') ?></small>
                         </div>
-                    </small>
+                    </div>
+                    <div class="mb-2">
+                        <i class="bi bi-envelope me-2 text-muted"></i>
+                        <?= Html::encode($model->user->email) ?>
+                    </div>
+                    <?php if ($model->user->phone): ?>
+                    <div class="mb-0">
+                        <i class="bi bi-telephone me-2 text-muted"></i>
+                        <?= Html::encode($model->user->phone) ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card info-card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>การดำเนินการ</h5>
+                </div>
+                <div class="card-body d-grid gap-2">
+                    <?= Html::a('<i class="bi bi-arrow-left me-2"></i>กลับไปรายการจอง', ['index'], ['class' => 'btn btn-outline-secondary']) ?>
+                    
+                    <?php if ($model->status === 'approved'): ?>
+                        <button class="btn btn-outline-primary" onclick="addToCalendar()">
+                            <i class="bi bi-calendar-plus me-2"></i>เพิ่มในปฏิทิน
+                        </button>
+                    <?php endif; ?>
+                    
+                    <?php if (in_array($model->status, ['pending', 'approved']) && strtotime($model->booking_date) > time()): ?>
+                        <button class="btn btn-outline-danger" onclick="cancelBooking()">
+                            <i class="bi bi-x-lg me-2"></i>ยกเลิกการจอง
+                        </button>
+                    <?php endif; ?>
+                    
+                    <?php if ($model->status === 'completed' && !$model->has_review): ?>
+                        <button class="btn btn-warning" onclick="openReviewModal()">
+                            <i class="bi bi-star me-2"></i>ให้คะแนน
+                        </button>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Approve Modal -->
-<div class="modal fade" id="approveModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <?= Html::beginForm(['approve', 'id' => $model->id], 'post') ?>
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="bi bi-check-circle text-success me-2"></i>อนุมัติการจอง
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>คุณต้องการอนุมัติการจอง <strong><?= Html::encode($model->booking_code) ?></strong> หรือไม่?</p>
-                <div class="alert alert-light">
-                    <strong><?= Html::encode($model->title) ?></strong><br>
-                    <small class="text-muted">
-                        <?= Html::encode($model->room->name_th ?? '-') ?><br>
-                        <?= Yii::$app->formatter->asDate($model->booking_date) ?> <?= $model->start_time ?> - <?= $model->end_time ?>
-                    </small>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">หมายเหตุ (ถ้ามี)</label>
-                    <textarea name="approval_notes" class="form-control" rows="2" placeholder="หมายเหตุเพิ่มเติม..."></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check-circle me-2"></i>อนุมัติ
-                </button>
-            </div>
-            <?= Html::endForm() ?>
-        </div>
-    </div>
-</div>
-
-<!-- Reject Modal -->
-<div class="modal fade" id="rejectModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <?= Html::beginForm(['reject', 'id' => $model->id], 'post') ?>
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="bi bi-x-circle text-danger me-2"></i>ไม่อนุมัติการจอง
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>คุณต้องการไม่อนุมัติการจอง <strong><?= Html::encode($model->booking_code) ?></strong> หรือไม่?</p>
-                <div class="mb-3">
-                    <label class="form-label">เหตุผลที่ไม่อนุมัติ <span class="text-danger">*</span></label>
-                    <textarea name="rejection_reason" class="form-control" rows="3" required placeholder="กรุณาระบุเหตุผล..."></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                <button type="submit" class="btn btn-danger">
-                    <i class="bi bi-x-circle me-2"></i>ไม่อนุมัติ
-                </button>
-            </div>
-            <?= Html::endForm() ?>
-        </div>
-    </div>
-</div>
-
-<!-- Cancel Modal -->
+<!-- Cancel Booking Modal -->
 <div class="modal fade" id="cancelModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <?= Html::beginForm(['cancel', 'id' => $model->id], 'post') ?>
             <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="bi bi-slash-circle text-warning me-2"></i>ยกเลิกการจอง
-                </h5>
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-warning me-2"></i>ยืนยันการยกเลิก</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>คุณต้องการยกเลิกการจอง <strong><?= Html::encode($model->booking_code) ?></strong> หรือไม่?</p>
+                <p>คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการจองนี้?</p>
+                <div class="alert alert-warning">
+                    <i class="bi bi-info-circle me-2"></i>
+                    การยกเลิกจะไม่สามารถย้อนกลับได้
+                </div>
                 <div class="mb-3">
-                    <label class="form-label">เหตุผลที่ยกเลิก <span class="text-danger">*</span></label>
-                    <textarea name="cancellation_reason" class="form-control" rows="3" required placeholder="กรุณาระบุเหตุผล..."></textarea>
+                    <label class="form-label">เหตุผลในการยกเลิก</label>
+                    <textarea class="form-control" id="cancelReason" rows="3" placeholder="ระบุเหตุผล (ไม่บังคับ)"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
-                <button type="submit" class="btn btn-warning">
-                    <i class="bi bi-slash-circle me-2"></i>ยกเลิกการจอง
-                </button>
+                <button type="button" class="btn btn-danger" id="confirmCancel">ยืนยันยกเลิก</button>
             </div>
-            <?= Html::endForm() ?>
         </div>
     </div>
 </div>
 
-<style>
-.avatar-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--bs-primary) 0%, #6366f1 100%);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-}
+<?php
+$cancelUrl = Url::to(['booking/cancel', 'id' => $model->id]);
+$csrfToken = Yii::$app->request->csrfToken;
 
-.timeline {
-    position: relative;
-    padding-left: 30px;
-}
-.timeline::before {
-    content: '';
-    position: absolute;
-    left: 8px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: #e9ecef;
-}
-.timeline-item {
-    position: relative;
-    padding-bottom: 20px;
-}
-.timeline-item:last-child {
-    padding-bottom: 0;
-}
-.timeline-marker {
-    position: absolute;
-    left: -26px;
-    top: 4px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 2px solid white;
-    box-shadow: 0 0 0 2px currentColor;
-}
-.timeline-content {
-    background: #f8f9fa;
-    padding: 12px 15px;
-    border-radius: 8px;
-}
-</style>
+// Calendar event data
+$calendarTitle = addslashes($model->title);
+$calendarLocation = addslashes($model->room->name . ' - ' . $model->room->location);
+$calendarStart = date('Ymd', strtotime($model->booking_date)) . 'T' . str_replace(':', '', substr($model->start_time, 0, 5)) . '00';
+$calendarEnd = date('Ymd', strtotime($model->booking_date)) . 'T' . str_replace(':', '', substr($model->end_time, 0, 5)) . '00';
+
+$this->registerJs(<<<JS
+// Cancel booking
+window.cancelBooking = function() {
+    new bootstrap.Modal(document.getElementById('cancelModal')).show();
+};
+
+document.getElementById('confirmCancel').addEventListener('click', function() {
+    const reason = document.getElementById('cancelReason').value;
+    
+    fetch('{$cancelUrl}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': '{$csrfToken}'
+        },
+        body: JSON.stringify({ reason: reason })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message || 'เกิดข้อผิดพลาด');
+        }
+    });
+});
+
+// Add to calendar
+window.addToCalendar = function() {
+    const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+        '&text={$calendarTitle}' +
+        '&dates={$calendarStart}/{$calendarEnd}' +
+        '&location={$calendarLocation}' +
+        '&sf=true&output=xml';
+    window.open(url, '_blank');
+};
+JS);
+?>

@@ -373,6 +373,28 @@ class SiteController extends Controller
     }
 
     /**
+     * Change password action
+     * @return string|\yii\web\Response
+     */
+    public function actionChangePassword()
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+
+        $model = new \frontend\models\ChangePasswordForm();
+
+        if ($model->load(Yii::$app->request->post()) && $model->changePassword()) {
+            Yii::$app->session->setFlash('success', 'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว');
+            return $this->redirect(['profile/index']);
+        }
+
+        return $this->render('change-password', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
      * Calendar view - public calendar page
      *
      * @return string

@@ -53,7 +53,7 @@ class SiteController extends Controller
                     [
                         'actions' => ['dashboard', 'system-settings', 'clear-cache', 'audit-log'],
                         'allow' => true,
-                        'roles' => ['admin', 'superadmin'],
+                        'roles' => ['admin', 'superadmin', 'staff', 'approver', '@'],
                     ],
                 ],
             ],
@@ -158,12 +158,17 @@ class SiteController extends Controller
      */
     protected function getMonthlyBookings()
     {
+        $thaiMonthsShort = [1 => 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 
+                           'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
         $months = [];
         $data = [];
         
         for ($i = 5; $i >= 0; $i--) {
             $date = date('Y-m', strtotime("-$i months"));
-            $months[] = date('M Y', strtotime("-$i months"));
+            // Format as Thai: ม.ค.69
+            $monthNum = (int)date('n', strtotime("-$i months"));
+            $yearBE = (date('Y', strtotime("-$i months")) + 543) % 100;
+            $months[] = $thaiMonthsShort[$monthNum] . $yearBE;
             
             $count = Booking::find()
                 ->where(['like', 'booking_date', $date])
@@ -270,15 +275,15 @@ class SiteController extends Controller
      */
     public function actionProfile()
     {
-        $model = Yii::$app->user->identity;
+        $user = Yii::$app->user->identity;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($user->load(Yii::$app->request->post()) && $user->save()) {
             Yii::$app->session->setFlash('success', 'อัปเดตข้อมูลโปรไฟล์เรียบร้อยแล้ว');
             return $this->refresh();
         }
 
         return $this->render('profile', [
-            'model' => $model,
+            'user' => $user,
         ]);
     }
 
@@ -397,7 +402,7 @@ class SiteController extends Controller
                 Yii::$app->session->remove('2fa_required');
                 Yii::$app->session->remove('2fa_user_id');
                 Yii::$app->user->login($user);
-                Yii::$app->session->setFlash('warning', 'คุณใช้รหัสสำรอง โปรดสร้างรหัสสำรองใหม่');
+                Yii::$app->session->setFlash('warning', 'คุณใช้รหัสสำรอง กรุณาสร้างรหัสสำรองใหม่');
                 return $this->goHome();
             }
             
@@ -467,7 +472,7 @@ class SiteController extends Controller
             LoginHistory::logAttempt(null, 'oauth_' . $provider, $provider, 'failed', $e->getMessage());
         }
 
-        Yii::$app->session->setFlash('error', 'ไม่สามารถเข้าสู่ระบบได้ โปรดลองใหม่อีกครั้ง');
+        Yii::$app->session->setFlash('error', 'ไม่สามารถเข้าสู่ระบบได้ กรุณาลองใหม่อีกครั้ง');
         return $this->redirect(['login']);
     }
 
@@ -739,7 +744,7 @@ class SiteController extends Controller
         $model = new \backend\models\ForgotPasswordForm();
 
         if ($model->load(Yii::$app->request->post()) && $model->sendEmail()) {
-            Yii::$app->session->setFlash('success', 'โปรดตรวจสอบอีเมลของคุณสำหรับคำแนะนำในการรีเซ็ตรหัสผ่าน');
+            Yii::$app->session->setFlash('success', 'กรุณาตรวจสอบอีเมลของคุณสำหรับคำแนะนำในการรีเซ็ตรหัสผ่าน');
             return $this->redirect(['login']);
         }
 

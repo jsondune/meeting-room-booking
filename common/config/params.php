@@ -8,8 +8,8 @@ return [
     // Application info
     'appName' => 'ระบบจองห้องประชุม',
     'appVersion' => '1.0.0',
-    'adminEmail' => getenv('ADMIN_EMAIL') ?: 'dune2002@pb.ac.th',
-    'supportEmail' => getenv('SUPPORT_EMAIL') ?: 'dune2002@pi.ac.th',
+    'adminEmail' => getenv('ADMIN_EMAIL') ?: 'digitaltechnology@pi.ac.th',
+    'supportEmail' => getenv('SUPPORT_EMAIL') ?: 'digitaltechnology@pi.ac.th',
     'senderEmail' => getenv('SENDER_EMAIL') ?: 'noreply@pi.ac.th',
     'senderName' => getenv('SENDER_NAME') ?: 'ระบบจองห้องประชุม',
     

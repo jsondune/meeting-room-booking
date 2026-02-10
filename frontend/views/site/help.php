@@ -119,21 +119,21 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <div class="text-center p-3">
                                     <i class="bi bi-telephone text-primary fs-1 mb-3"></i>
                                     <h6>โทรศัพท์</h6>
-                                    <p class="text-muted mb-0">02-xxx-xxxx</p>
+                                    <p class="text-muted mb-0">02-590-1981</p>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="text-center p-3">
                                     <i class="bi bi-envelope text-primary fs-1 mb-3"></i>
                                     <h6>อีเมล</h6>
-                                    <p class="text-muted mb-0">support@example.com</p>
+                                    <p class="text-muted mb-0">support@pi.ac.th</p>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="text-center p-3">
                                     <i class="bi bi-clock text-primary fs-1 mb-3"></i>
                                     <h6>เวลาทำการ</h6>
-                                    <p class="text-muted mb-0">จันทร์ - ศุกร์ 08:30 - 16:30 น.</p>
+                                    <p class="text-muted mb-0">จันทร์-ศุกร์  08:30-16:30 น.</p>
                                 </div>
                             </div>
                         </div>

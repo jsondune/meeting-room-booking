@@ -1,0 +1,328 @@
+═══════════════════════════════════════════════════════════════════
+🔧 BACKEND ROUTING ERROR - Complete Fix Guide
+═══════════════════════════════════════════════════════════════════
+
+❌ PROBLEM:
+───────────────────────────────────────────────────────────────────
+URLs have duplicate "/index":
+- http://backend.sis.test/profile/index → profile/index/index
+- http://backend.sis.test/site/logout → site/logout/index
+- http://backend.sis.test/role/index → role/index/index
+- http://backend.sis.test/user/index → user/index/index
+
+Error: Unable to resolve the request
+
+✅ SOLUTION: 3 Steps
+═══════════════════════════════════════════════════════════════════
+
+STEP 1: Create/Update .htaccess
+───────────────────────────────────────────────────────────────────
+Location: C:\xampp\htdocs\erp-sis\backend\web\.htaccess
+
+Create new file named: .htaccess (note the dot at the beginning)
+
+Content:
+────────
+RewriteEngine on
+
+# If a directory or a file exists, use the request directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Otherwise forward the request to index.php
+RewriteRule . index.php
+
+# Prevent directory listing
+Options -Indexes
+
+# Follow symbolic links
+Options +FollowSymLinks
+
+# Deny access to .git and other hidden files
+RedirectMatch 404 /\..*$
+────────
+
+HOW TO CREATE .htaccess on Windows:
+1. Open Notepad
+2. Copy the content above
+3. Save As → File name: .htaccess (include the dot)
+4. Save type: All Files (*)
+5. Encoding: UTF-8
+6. Save to: C:\xampp\htdocs\erp-sis\backend\web\
+
+
+STEP 2: Update URL Manager Configuration
+───────────────────────────────────────────────────────────────────
+Location: C:\xampp\htdocs\erp-sis\backend\config\main.php
+
+Find the 'components' section and update 'urlManager':
+
+────────
+'components' => [
+    // ... other components ...
+    
+    'urlManager' => [
+        'enablePrettyUrl' => true,
+        'showScriptName' => false,
+        'enableStrictParsing' => false,
+        'rules' => [
+            '' => 'site/index',
+            '<controller:\w+>/<id:\d+>' => '<controller>/view',
+            '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+            '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+        ],
+    ],
+    
+    // ... other components ...
+],
+────────
+
+FULL EXAMPLE (backend/config/main.php):
+────────
+<?php
+$params = array_merge(
+    require __DIR__ . '/../../common/config/params.php',
+    require __DIR__ . '/../../common/config/params-local.php',
+    require __DIR__ . '/params.php',
+    require __DIR__ . '/params-local.php'
+);
+
+return [
+    'id' => 'app-backend',
+    'basePath' => dirname(__DIR__),
+    'controllerNamespace' => 'backend\controllers',
+    'bootstrap' => ['log'],
+    'modules' => [],
+    
+    'components' => [
+        'request' => [
+            'csrfParam' => '_csrf-backend',
+            'baseUrl' => '',  // Important!
+        ],
+        
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'enableStrictParsing' => false,
+            'rules' => [
+                '' => 'site/index',
+                '<controller:\w+>/<id:\d+>' => '<controller>/view',
+                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+            ],
+        ],
+        
+        'user' => [
+            'identityClass' => 'common\models\User',
+            'enableAutoLogin' => true,
+            'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
+        ],
+        
+        'session' => [
+            'name' => 'advanced-backend',
+        ],
+        
+        'log' => [
+            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'targets' => [
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning'],
+                ],
+            ],
+        ],
+        
+        'errorHandler' => [
+            'errorAction' => 'site/error',
+        ],
+    ],
+    
+    'params' => $params,
+];
+────────
+
+
+STEP 3: Enable Apache Rewrite Module
+───────────────────────────────────────────────────────────────────
+1. Open XAMPP Control Panel
+2. Click "Config" next to Apache
+3. Select "httpd.conf"
+4. Find this line (around line 178):
+   #LoadModule rewrite_module modules/mod_rewrite.so
+   
+5. Remove the # to uncomment:
+   LoadModule rewrite_module modules/mod_rewrite.so
+   
+6. Save the file
+7. Restart Apache in XAMPP Control Panel
+
+
+STEP 4: Clear Cache
+───────────────────────────────────────────────────────────────────
+Execute these commands or delete manually:
+
+Windows CMD:
+────────
+cd C:\xampp\htdocs\erp-sis
+rd /s /q backend\runtime\cache
+rd /s /q backend\web\assets
+────────
+
+Or manually delete:
+- C:\xampp\htdocs\erp-sis\backend\runtime\cache\ (all files)
+- C:\xampp\htdocs\erp-sis\backend\web\assets\ (all files)
+
+
+STEP 5: Test
+───────────────────────────────────────────────────────────────────
+Visit these URLs (should work now):
+
+✅ http://backend.sis.test/
+✅ http://backend.sis.test/site/index
+✅ http://backend.sis.test/site/logout
+✅ http://backend.sis.test/profile/index
+✅ http://backend.sis.test/role/index
+✅ http://backend.sis.test/user/index
+
+
+═══════════════════════════════════════════════════════════════════
+TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════
+
+PROBLEM: Still shows error after fixing
+SOLUTION:
+1. Clear browser cache (Ctrl + F5)
+2. Restart Apache
+3. Check .htaccess file exists in backend/web/
+4. Verify rewrite module is enabled
+
+
+PROBLEM: 404 Not Found on all pages
+SOLUTION:
+1. Check .htaccess file location (must be in backend/web/)
+2. Verify .htaccess content is correct
+3. Enable mod_rewrite in Apache
+
+
+PROBLEM: Homepage works but other pages don't
+SOLUTION:
+1. Check AllowOverride in Apache config
+2. Open httpd.conf
+3. Find <Directory "C:/xampp/htdocs">
+4. Change: AllowOverride None → AllowOverride All
+5. Restart Apache
+
+
+PROBLEM: Can't create .htaccess file
+SOLUTION (Windows):
+Method 1: Use Command Prompt
+cd C:\xampp\htdocs\erp-sis\backend\web
+echo. > .htaccess
+notepad .htaccess
+
+Method 2: Use File Explorer
+1. Open backend/web folder
+2. Right-click → New → Text Document
+3. Rename to: .htaccess (remove .txt extension)
+4. Edit with Notepad
+5. Paste the content
+
+
+PROBLEM: "The requested page does not exist"
+SOLUTION:
+1. Check controller exists
+2. Check action exists in controller
+3. Verify namespace is correct
+4. Clear cache again
+
+
+═══════════════════════════════════════════════════════════════════
+VERIFICATION CHECKLIST
+═══════════════════════════════════════════════════════════════════
+
+Before:
+□ .htaccess exists in backend/web/
+□ .htaccess content is correct
+□ mod_rewrite is enabled in Apache
+□ urlManager is configured in main.php
+□ enablePrettyUrl = true
+□ showScriptName = false
+□ baseUrl = '' (empty string)
+
+After:
+□ Apache restarted
+□ Cache cleared
+□ Test URLs work
+□ No duplicate /index in URLs
+□ Logout works
+□ Navigation works
+
+
+═══════════════════════════════════════════════════════════════════
+COMMON MISTAKES
+═══════════════════════════════════════════════════════════════════
+
+❌ Wrong:
+'baseUrl' => '/backend',  // Don't set this for subdomain
+'showScriptName' => true,  // Should be false
+.htaccess in wrong folder (backend/ instead of backend/web/)
+
+✅ Correct:
+'baseUrl' => '',  // Empty for subdomain
+'showScriptName' => false,
+.htaccess in backend/web/
+
+
+═══════════════════════════════════════════════════════════════════
+QUICK FIX SUMMARY
+═══════════════════════════════════════════════════════════════════
+
+1. Create .htaccess in backend/web/
+2. Update urlManager in backend/config/main.php
+3. Enable mod_rewrite in Apache
+4. Clear cache
+5. Restart Apache
+6. Test!
+
+
+═══════════════════════════════════════════════════════════════════
+FILES TO CREATE/EDIT
+═══════════════════════════════════════════════════════════════════
+
+File 1: backend/web/.htaccess (CREATE)
+→ See backend-htaccess.txt
+
+File 2: backend/config/main.php (EDIT)
+→ Update 'components' → 'urlManager' section
+→ See backend-url-manager-config.php
+
+
+═══════════════════════════════════════════════════════════════════
+ADDITIONAL NOTES
+═══════════════════════════════════════════════════════════════════
+
+1. The .htaccess file MUST be in backend/web/ folder
+2. The dot (.) at the beginning is important
+3. File must be named exactly: .htaccess (no extension)
+4. mod_rewrite must be enabled in Apache
+5. After changes, always clear cache and restart Apache
+
+
+═══════════════════════════════════════════════════════════════════
+NEED HELP WITH FRONTEND TOO?
+═══════════════════════════════════════════════════════════════════
+
+If frontend has same issue, do the same:
+1. Create frontend/web/.htaccess (same content)
+2. Update frontend/config/main.php urlManager
+3. Clear cache
+
+
+═══════════════════════════════════════════════════════════════════
+END OF GUIDE
+═══════════════════════════════════════════════════════════════════
+
+Status after fix: ✅ URLs should work correctly
+Expected result: http://backend.sis.test/profile/index (no duplicate)
+
+Good luck! 🚀

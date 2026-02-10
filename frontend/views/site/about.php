@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 // Organization info - customize as needed
 $orgName = Yii::$app->name ?? 'ระบบจองห้องประชุม';
 $orgFullName = 'สถาบันพระบรมราชชนก';
-$orgDepartment = 'กองดิจิทัลเทคโนโลยี';
+$orgDepartment = 'กองเทคโนโลยีดิจิทัล';
 ?>
 
 <div class="site-about">
@@ -30,7 +30,7 @@ $orgDepartment = 'กองดิจิทัลเทคโนโลยี';
                 <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
                     <div class="bg-white bg-opacity-10 rounded-3 p-3 d-inline-block">
                         <div class="text-white-50 small">เวอร์ชัน</div>
-                        <div class="h4 mb-0">1.0.0</div>
+                        <div class="h4 mb-0">1.0.1</div>
                     </div>
                 </div>
             </div>
@@ -198,22 +198,22 @@ $orgDepartment = 'กองดิจิทัลเทคโนโลยี';
                                     <?= Html::encode($orgFullName) ?>
                                 </p>
                                 <p class="text-muted small mb-0">
-                                    <i class="bi bi-geo-alt me-1"></i>อาคาร 4 ชั้น 3 ตึกสำนักงานปลัดกระทรวงสาธารณสุข<br>
+                                    <i class="bi bi-geo-alt me-1"></i>อาคาร 6 ชั้น 9 ตึกสำนักงานปลัดกระทรวงสาธารณสุข<br>
                                     ถนนติวานนท์ ตำบลตลาดขวัญ อำเภอเมือง จังหวัดนนทบุรี 11000
                                 </p>
                             </div>
                             <div class="col-md-6">
                                 <div class="d-flex align-items-center mb-2">
                                     <i class="bi bi-telephone text-primary me-2"></i>
-                                    <span class="text-muted small">02-590-1234</span>
+                                    <span class="text-muted small">02-590-1981</span>
                                 </div>
                                 <div class="d-flex align-items-center mb-2">
                                     <i class="bi bi-envelope text-primary me-2"></i>
-                                    <span class="text-muted small">digital@bitzo.co.th</span>
+                                    <span class="text-muted small">digitaltechnology@pi.ac.th</span>
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-clock text-primary me-2"></i>
-                                    <span class="text-muted small">จันทร์ - ศุกร์ 08:30 - 16:30 น.</span>
+                                    <span class="text-muted small">จันทร์-ศุกร์  08:30-16:30 น.</span>
                                 </div>
                             </div>
                         </div>
@@ -232,6 +232,18 @@ $orgDepartment = 'กองดิจิทัลเทคโนโลยี';
                         </h2>
                         
                         <div class="timeline">
+                            <div class="d-flex mb-3">
+                                <div class="flex-shrink-0">
+                                    <span class="badge bg-primary rounded-pill">v1.0.1</span>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <div class="fw-bold small">กุมภาพันธ์ 2569</div>
+                                    <p class="text-muted small mb-0">
+                                        -ปรับการแสดง วัน/เดือน/ปี เป็นปี พ.ศ.
+                                        -ปรับการแสดงผล backend dashboard
+                                    </p>
+                                </div>
+                            </div>                            
                             <div class="d-flex mb-3">
                                 <div class="flex-shrink-0">
                                     <span class="badge bg-primary rounded-pill">v1.0.0</span>

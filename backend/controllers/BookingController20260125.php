@@ -507,8 +507,19 @@ class BookingController extends BaseController
         
         $bookings = $query->all();
         
+        // Get holidays for full year
+        $currentYear = date('Y', strtotime($month . '-01'));
+        $holidayStartDate = $currentYear . '-01-01';
+        $holidayEndDate = $currentYear . '-12-31';
+        
+        $holidays = \common\models\Holiday::find()
+            ->where(['between', 'holiday_date', $holidayStartDate, $holidayEndDate])
+            ->andWhere(['is_active' => true])
+            ->orderBy(['holiday_date' => SORT_ASC])
+            ->all();
+        
         // Color mapping by room
-        $colorArray = ['#3788d8', '#28a745', '#dc3545', '#ffc107', '#17a2b8', '#6f42c1', '#fd7e14', '#20c997'];
+        $colorArray = ['#3788d8', '#28a745', '#17a2b8', '#6f42c1', '#fd7e14', '#20c997', '#e83e8c', '#6610f2'];
         $roomColors = [];
         $rooms = MeetingRoom::getDropdownList();
         $index = 0;
@@ -517,7 +528,7 @@ class BookingController extends BaseController
             $index++;
         }
         
-        // Format for calendar
+        // Format booking events for calendar
         $events = [];
         foreach ($bookings as $booking) {
             $startTime = substr($booking->start_time, 0, 5);
@@ -538,7 +549,50 @@ class BookingController extends BaseController
                     'status' => $booking->status,
                     'time' => $startTime . ' - ' . $endTime,
                     'viewUrl' => Yii::$app->urlManager->createUrl(['booking/view', 'id' => $booking->id]),
+                    'type' => 'booking',
                 ],
+            ];
+        }
+        
+        // Format holiday events
+        $holidayEvents = [];
+        $holidayDates = [];
+        foreach ($holidays as $holiday) {
+            // Background event
+            $holidayEvents[] = [
+                'id' => 'holiday-' . $holiday->id,
+                'title' => $holiday->name_th,
+                'start' => $holiday->holiday_date,
+                'allDay' => true,
+                'display' => 'background',
+                'backgroundColor' => '#ffebee',
+                'classNames' => ['holiday-event'],
+                'extendedProps' => [
+                    'type' => 'holiday',
+                    'holiday_type' => $holiday->holiday_type,
+                    'description' => $holiday->description,
+                ],
+            ];
+            
+            // Label event
+            $events[] = [
+                'id' => 'holiday-label-' . $holiday->id,
+                'title' => '🔴 ' . $holiday->name_th,
+                'start' => $holiday->holiday_date,
+                'allDay' => true,
+                'color' => '#dc3545',
+                'textColor' => '#ffffff',
+                'classNames' => ['holiday-label'],
+                'extendedProps' => [
+                    'type' => 'holiday',
+                    'holiday_type' => $holiday->holiday_type,
+                    'description' => $holiday->description,
+                ],
+            ];
+            
+            $holidayDates[$holiday->holiday_date] = [
+                'name' => $holiday->name_th,
+                'type' => $holiday->holiday_type,
             ];
         }
 
@@ -554,7 +608,10 @@ class BookingController extends BaseController
 
         return $this->render('calendar', [
             'events' => $events,
+            'holidayEvents' => $holidayEvents,
+            'holidayDates' => $holidayDates,
             'rooms' => $rooms,
+            'roomColors' => $roomColors,
             'currentMonth' => $month,
             'currentRoomId' => $roomId,
         ]);

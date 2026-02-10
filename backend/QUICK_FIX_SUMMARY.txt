@@ -1,0 +1,121 @@
+🔧 BACKEND ROUTING ERROR - QUICK FIX
+════════════════════════════════════════════════════════════════════
+
+❌ PROBLEM: URLs have duplicate /index
+   - profile/index/index ❌
+   - site/logout/index ❌
+   
+✅ SOLUTION: 3 Simple Steps (5 minutes)
+
+════════════════════════════════════════════════════════════════════
+STEP 1: Create .htaccess
+════════════════════════════════════════════════════════════════════
+
+Location: C:\xampp\htdocs\erp-sis\backend\web\.htaccess
+
+Method 1 - Use provided file:
+-----------------------------
+1. Download: backend-htaccess.txt
+2. Rename to: .htaccess (include the dot, remove .txt)
+3. Copy to: C:\xampp\htdocs\erp-sis\backend\web\
+
+Method 2 - Use batch script:
+---------------------------
+1. Download: fix-backend-routing.bat
+2. Copy to: C:\xampp\htdocs\erp-sis\
+3. Double-click to run
+4. Done! (auto creates .htaccess and clears cache)
+
+Method 3 - Manual:
+-----------------
+1. Open Notepad
+2. Copy content from backend-htaccess.txt
+3. Save As → .htaccess
+4. Save to: backend\web\
+
+
+════════════════════════════════════════════════════════════════════
+STEP 2: Update URL Manager
+════════════════════════════════════════════════════════════════════
+
+File: backend/config/main.php
+
+Find 'components' section, update 'urlManager':
+
+'urlManager' => [
+    'enablePrettyUrl' => true,
+    'showScriptName' => false,
+    'enableStrictParsing' => false,
+    'rules' => [
+        '' => 'site/index',
+        '<controller:\w+>/<id:\d+>' => '<controller>/view',
+        '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+        '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+    ],
+],
+
+Full example in: backend-url-manager-config.php
+
+
+════════════════════════════════════════════════════════════════════
+STEP 3: Enable mod_rewrite & Clear Cache
+════════════════════════════════════════════════════════════════════
+
+1. XAMPP Control Panel → Apache → Config → httpd.conf
+2. Find: #LoadModule rewrite_module modules/mod_rewrite.so
+3. Remove # → LoadModule rewrite_module modules/mod_rewrite.so
+4. Save & Restart Apache
+
+5. Clear cache:
+   rd /s /q backend\runtime\cache
+   rd /s /q backend\web\assets
+
+6. Test: http://backend.sis.test/
+
+
+════════════════════════════════════════════════════════════════════
+FILES PROVIDED (4):
+════════════════════════════════════════════════════════════════════
+
+1. backend-htaccess.txt
+   → Copy to backend/web/.htaccess
+
+2. backend-url-manager-config.php
+   → Example config for main.php
+
+3. BACKEND_ROUTING_FIX_GUIDE.txt
+   → Complete detailed guide
+
+4. fix-backend-routing.bat
+   → Auto-fix script (Windows)
+
+
+════════════════════════════════════════════════════════════════════
+QUICK TEST:
+════════════════════════════════════════════════════════════════════
+
+After fix, these should work:
+✅ http://backend.sis.test/
+✅ http://backend.sis.test/site/logout
+✅ http://backend.sis.test/profile/index
+✅ http://backend.sis.test/user/index
+✅ http://backend.sis.test/role/index
+
+
+════════════════════════════════════════════════════════════════════
+TROUBLESHOOTING:
+════════════════════════════════════════════════════════════════════
+
+Still not working?
+1. Check .htaccess exists in backend/web/
+2. Verify mod_rewrite is enabled
+3. Clear browser cache (Ctrl+F5)
+4. Restart Apache
+5. See full guide: BACKEND_ROUTING_FIX_GUIDE.txt
+
+
+════════════════════════════════════════════════════════════════════
+STATUS: ✅ Ready to fix!
+Time needed: 5 minutes
+Difficulty: ⭐ Easy
+════════════════════════════════════════════════════════════════════

@@ -52,8 +52,13 @@ return [
                 'rooms' => 'room/index',
                 'room/<id:\d+>' => 'room/view',
                 'booking/create' => 'booking/create',
-                'booking/<id:\d+>' => 'booking/view',
+                'booking/<id:\d+>' => 'booking/view',            
                 'my-bookings' => 'booking/index',
+                // เพิ่มบรรทัดเหล่านี้
+                'book' => 'booking/index',
+                'book/<action:\w+>' => 'booking/<action>',
+                'book/<action:\w+>/<id:\d+>' => 'booking/<action>',
+                // ... other rules
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ],

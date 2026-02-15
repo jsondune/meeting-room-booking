@@ -138,7 +138,7 @@ class ProfileController extends Controller
                 ->count();
 
             if (!$hasPassword && $oauthCount <= 1) {
-                Yii::$app->session->setFlash('error', 'ไม่สามารถยกเลิกการเชื่อมต่อได้ คุณต้องมีวิธีการเข้าสู่ระบบอย่างน้อย 1 วิธี กรุณาตั้งรหัสผ่านก่อน');
+                Yii::$app->session->setFlash('error', 'ไม่สามารถยกเลิกการเชื่อมต่อได้ คุณต้องมีวิธีการเข้าสู่ระบบอย่างน้อย 1 วิธี โปรดตั้งรหัสผ่านก่อน');
                 return $this->redirect(['connections']);
             }
 

@@ -10,7 +10,7 @@ use yii\data\ActiveDataProvider;
 use common\models\User;
 use common\models\Department;
 use common\models\Booking;
-use common\models\ActivityLog;
+use common\models\AuditLog;
 
 /**
  * UserController - Backend user management
@@ -80,8 +80,7 @@ class UserController extends BaseController
                 'or',
                 ['like', 'username', $keyword],
                 ['like', 'email', $keyword],
-                ['like', 'first_name', $keyword],
-                ['like', 'last_name', $keyword],
+                ['like', 'full_name', $keyword],
             ]);
         }
 
@@ -150,7 +149,7 @@ class UserController extends BaseController
             ->all();
 
         // Get recent activity
-        $recentActivity = ActivityLog::find()
+        $recentActivity = AuditLog::find()
             ->where(['user_id' => $id])
             ->orderBy(['created_at' => SORT_DESC])
             ->limit(20)
@@ -180,9 +179,10 @@ class UserController extends BaseController
         $model->scenario = 'admin-create';
 
         if ($model->load(Yii::$app->request->post())) {
-            // Set password
-            $password = Yii::$app->request->post('password');
-            if ($password) {
+            // Get password from User array
+            $userData = Yii::$app->request->post('User', []);
+            $password = $userData['password'] ?? '';
+            if (!empty($password)) {
                 $model->setPassword($password);
             }
             $model->generateAuthKey();
@@ -198,8 +198,8 @@ class UserController extends BaseController
             }
 
             if ($model->save()) {
-                // Assign role
-                $role = Yii::$app->request->post('role');
+                // Assign role - get from User array or separate field
+                $role = $userData['role'] ?? Yii::$app->request->post('role');
                 if ($role) {
                     $auth = Yii::$app->authManager;
                     $roleObj = $auth->getRole($role);
@@ -209,10 +209,14 @@ class UserController extends BaseController
                 }
 
                 // Log activity
-                ActivityLog::log(ActivityLog::TYPE_USER_CREATED, 'ผู้ใช้ถูกสร้างโดยผู้ดูแลระบบ', [
-                    'user_id' => $model->id,
-                    'created_by' => Yii::$app->user->id,
-                ]);
+                AuditLog::log(
+                    'create',                    // action
+                    User::class,                 // modelClass
+                    $model->id,                  // modelId
+                    [],                          // oldValues
+                    ['created_by' => Yii::$app->user->id], // newValues
+                    'ผู้ใช้ถูกสร้างโดยผู้ดูแลระบบ'  // description
+                );
 
                 Yii::$app->session->setFlash('success', 'เพิ่มผู้ใช้สำเร็จ');
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -241,9 +245,10 @@ class UserController extends BaseController
         $model->scenario = 'admin-update';
 
         if ($model->load(Yii::$app->request->post())) {
-            // Handle password update
-            $password = Yii::$app->request->post('password');
-            if ($password) {
+            // Handle password update - get from User array
+            $userData = Yii::$app->request->post('User', []);
+            $password = $userData['password'] ?? '';
+            if (!empty($password)) {
                 $model->setPassword($password);
                 $model->generateAuthKey();
             }
@@ -256,10 +261,15 @@ class UserController extends BaseController
                     $model->avatar = $avatarPath;
                 }
             }
+            
+            // Handle avatar removal
+            if (!empty($userData['removeAvatar'])) {
+                $model->avatar = null;
+            }
 
             if ($model->save()) {
-                // Update role
-                $role = Yii::$app->request->post('role');
+                // Update role - get from User array or separate field
+                $role = $userData['role'] ?? Yii::$app->request->post('role');
                 if ($role) {
                     $auth = Yii::$app->authManager;
                     // Remove all existing roles
@@ -272,10 +282,14 @@ class UserController extends BaseController
                 }
 
                 // Log activity
-                ActivityLog::log(ActivityLog::TYPE_USER_UPDATED, 'ข้อมูลผู้ใช้ถูกแก้ไขโดยผู้ดูแลระบบ', [
-                    'user_id' => $model->id,
-                    'updated_by' => Yii::$app->user->id,
-                ]);
+                AuditLog::log(
+                    'update',
+                    User::class,
+                    $model->id,
+                    [],
+                    ['updated_by' => Yii::$app->user->id],
+                    'ข้อมูลผู้ใช้ถูกแก้ไขโดยผู้ดูแลระบบ'
+                );
 
                 Yii::$app->session->setFlash('success', 'บันทึกข้อมูลผู้ใช้สำเร็จ');
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -320,10 +334,14 @@ class UserController extends BaseController
             Yii::$app->authManager->revokeAll($model->id);
 
             // Log activity
-            ActivityLog::log(ActivityLog::TYPE_USER_DELETED, 'ผู้ใช้ถูกลบโดยผู้ดูแลระบบ', [
-                'user_id' => $model->id,
-                'deleted_by' => Yii::$app->user->id,
-            ]);
+            AuditLog::log(
+                'delete',
+                User::class,
+                $model->id,
+                [],
+                ['deleted_by' => Yii::$app->user->id],
+                'ผู้ใช้ถูกลบโดยผู้ดูแลระบบ'
+            );
 
             Yii::$app->session->setFlash('success', 'ลบผู้ใช้สำเร็จ');
         } else {
@@ -359,10 +377,14 @@ class UserController extends BaseController
         if ($model->save(false)) {
             // Log activity
             $action = $newStatus == User::STATUS_ACTIVE ? 'เปิดใช้งาน' : 'ระงับ';
-            ActivityLog::log(ActivityLog::TYPE_STATUS_CHANGE, "บัญชีผู้ใช้ถูก{$action}โดยผู้ดูแลระบบ", [
-                'user_id' => $model->id,
-                'changed_by' => Yii::$app->user->id,
-            ]);
+            AuditLog::log(
+                'update',
+                User::class,
+                $model->id,
+                ['status' => $model->status],
+                ['status' => $newStatus, 'changed_by' => Yii::$app->user->id],
+                "บัญชีผู้ใช้ถูก{$action}โดยผู้ดูแลระบบ"
+            );
 
             return [
                 'success' => true,
@@ -403,10 +425,14 @@ class UserController extends BaseController
             }
 
             // Log activity
-            ActivityLog::log(ActivityLog::TYPE_PASSWORD_RESET, 'รหัสผ่านถูกรีเซ็ตโดยผู้ดูแลระบบ', [
-                'user_id' => $model->id,
-                'reset_by' => Yii::$app->user->id,
-            ]);
+            AuditLog::log(
+                'update',
+                User::class,
+                $model->id,
+                [],
+                ['reset_by' => Yii::$app->user->id],
+                'รหัสผ่านถูกรีเซ็ตโดยผู้ดูแลระบบ'
+            );
 
             return [
                 'success' => true,
@@ -441,10 +467,14 @@ class UserController extends BaseController
             $auth->assign($role, $userId);
 
             // Log activity
-            ActivityLog::log(ActivityLog::TYPE_ROLE_ASSIGNED, "กำหนดบทบาท {$roleName} ให้ผู้ใช้", [
-                'user_id' => $userId,
-                'assigned_by' => Yii::$app->user->id,
-            ]);
+            AuditLog::log(
+                'update',
+                User::class,
+                $userId,
+                [],
+                ['role' => $roleName, 'assigned_by' => Yii::$app->user->id],
+                "กำหนดบทบาท {$roleName} ให้ผู้ใช้"
+            );
 
             return [
                 'success' => true,
@@ -483,10 +513,14 @@ class UserController extends BaseController
             $auth->revoke($role, $userId);
 
             // Log activity
-            ActivityLog::log(ActivityLog::TYPE_ROLE_REVOKED, "ยกเลิกบทบาท {$roleName} จากผู้ใช้", [
-                'user_id' => $userId,
-                'revoked_by' => Yii::$app->user->id,
-            ]);
+            AuditLog::log(
+                'update',
+                User::class,
+                $userId,
+                ['role' => $roleName],
+                ['revoked_by' => Yii::$app->user->id],
+                "ยกเลิกบทบาท {$roleName} จากผู้ใช้"
+            );
 
             return [
                 'success' => true,
@@ -574,7 +608,7 @@ class UserController extends BaseController
         $model = $this->findModel($id);
 
         $dataProvider = new ActiveDataProvider([
-            'query' => ActivityLog::find()->where(['user_id' => $id]),
+            'query' => AuditLog::find()->where(['user_id' => $id]),
             'pagination' => ['pageSize' => 50],
             'sort' => [
                 'defaultOrder' => ['created_at' => SORT_DESC],
@@ -616,8 +650,8 @@ class UserController extends BaseController
             fputcsv($handle, [
                 $user->username,
                 $user->email,
-                $user->first_name . ' ' . $user->last_name,
-                $user->department ? ($user->department->name_th ?? $user->department->name) : '',
+                $user->full_name,
+                $user->department ? ($user->department->name_th ?? $user->department->name_en) : '',
                 $user->position,
                 $user->phone,
                 $user->getStatusLabel(),
@@ -694,10 +728,14 @@ class UserController extends BaseController
         Yii::$app->user->login($model);
 
         // Log activity
-        ActivityLog::log(ActivityLog::TYPE_IMPERSONATION, 'ผู้ดูแลระบบเข้าสู่ระบบในนามผู้ใช้', [
-            'impersonated_user_id' => $id,
-            'impersonator_id' => Yii::$app->session->get('impersonator_id'),
-        ]);
+        AuditLog::log(
+            'login',
+            User::class,
+            $id,
+            [],
+            ['impersonator_id' => Yii::$app->session->get('impersonator_id')],
+            'ผู้ดูแลระบบเข้าสู่ระบบในนามผู้ใช้'
+        );
 
         Yii::$app->session->setFlash('warning', 'คุณกำลังเข้าสู่ระบบในนามของ ' . $model->fullname);
 

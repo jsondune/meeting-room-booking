@@ -155,7 +155,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 $img = Html::img($avatar, ['class' => 'rounded-circle me-2', 'style' => 'width: 32px; height: 32px; object-fit: cover;']);
                             } else {
                                 $img = '<span class="avatar-circle bg-primary text-white me-2" style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 12px;">'
-                                    . strtoupper(substr($model->user->first_name ?? 'U', 0, 1))
+                                    . strtoupper(substr($model->user->full_name ?? 'U', 0, 1))
                                     . '</span>';
                             }
                             return $img . '<span>' . Html::encode($model->user->full_name ?? '-') . '</span>'

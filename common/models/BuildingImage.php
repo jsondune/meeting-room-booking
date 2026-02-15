@@ -56,9 +56,16 @@ class BuildingImage extends ActiveRecord
 
     public function getUrl()
     {
-        // file_path is like: uploads/buildings/5/filename.jpg
-        // Return relative URL from web root
-        return '/' . $this->file_path;
+        // Check if path already starts with /uploads/ or uploads/ (old format)
+        if (strpos($this->file_path, '/uploads/') === 0) {
+            return $this->file_path;
+        }
+        if (strpos($this->file_path, 'uploads/') === 0) {
+            return '/' . $this->file_path;
+        }
+        
+        // New format: buildings/5/filename.jpg - use @uploadsUrl alias
+        return Yii::getAlias('@uploadsUrl') . '/' . ltrim($this->file_path, '/');
     }
     
     public function getFullUrl()

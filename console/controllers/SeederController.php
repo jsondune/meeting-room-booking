@@ -138,8 +138,7 @@ class SeederController extends Controller
                 'username' => 'superadmin',
                 'email' => 'superadmin@bizco.co.th',
                 'password' => 'Admin@123',
-                'first_name' => 'ผู้ดูแล',
-                'last_name' => 'ระบบ',
+                'full_name' => 'ผู้ดูแลระบบ',
                 'role' => 'superadmin',
                 'department_id' => 1,
             ],
@@ -147,8 +146,7 @@ class SeederController extends Controller
                 'username' => 'admin',
                 'email' => 'admin@bizco.co.th',
                 'password' => 'Admin@123',
-                'first_name' => 'แอดมิน',
-                'last_name' => 'ทั่วไป',
+                'full_name' => 'แอดมินทั่วไป',
                 'role' => 'admin',
                 'department_id' => 1,
             ],
@@ -156,8 +154,7 @@ class SeederController extends Controller
                 'username' => 'approver',
                 'email' => 'approver@bizco.co.th',
                 'password' => 'User@123',
-                'first_name' => 'ผู้อนุมัติ',
-                'last_name' => 'การจอง',
+                'full_name' => 'ผู้อนุมัติการจอง',
                 'role' => 'approver',
                 'department_id' => 2,
             ],
@@ -174,8 +171,7 @@ class SeederController extends Controller
                 'username' => 'user' . $i,
                 'email' => "user{$i}@bizco.co.th",
                 'password' => 'User@123',
-                'first_name' => $firstName,
-                'last_name' => $lastName,
+                'full_name' => $firstName . " " . $lastName,
                 'role' => 'user',
                 'department_id' => rand(1, 10),
             ];
@@ -191,8 +187,7 @@ class SeederController extends Controller
                 $user->email = $data['email'];
                 $user->setPassword($data['password']);
                 $user->generateAuthKey();
-                $user->first_name = $data['first_name'];
-                $user->last_name = $data['last_name'];
+                $user->full_name = $data['full_name'];
                 $user->department_id = $data['department_id'];
                 $user->status = User::STATUS_ACTIVE;
                 

@@ -59,11 +59,14 @@ $isNewRecord = $model->isNewRecord;
                                 ])->label('ยืนยันรหัสผ่าน <span class="text-danger">*</span>') ?>
                             </div>
                         <?php else: ?>
-                            <div class="col-12">
-                                <div class="alert alert-info mb-0">
-                                    <i class="bi bi-info-circle me-2"></i>
-                                    หากต้องการเปลี่ยนรหัสผ่าน ให้ใช้ฟังก์ชัน "รีเซ็ตรหัสผ่าน" แทน
-                                </div>
+                            <div class="col-md-6">
+                                <label class="form-label">รหัสผ่านใหม่</label>
+                                <input type="password" class="form-control" name="User[password]" placeholder="เว้นว่างถ้าไม่ต้องการเปลี่ยน">
+                                <small class="text-muted">เว้นว่างถ้าไม่ต้องการเปลี่ยนรหัสผ่าน</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">ยืนยันรหัสผ่านใหม่</label>
+                                <input type="password" class="form-control" name="User[password_confirm]" placeholder="ยืนยันรหัสผ่านใหม่">
                             </div>
                         <?php endif; ?>
                     </div>
@@ -209,7 +212,7 @@ $isNewRecord = $model->isNewRecord;
                 <div class="card-body text-center">
                     <div class="mb-3">
                         <?php if ($model->avatar): ?>
-                            <img id="avatar-preview" src="<?= $model->avatar ?>" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                            <img id="avatar-preview" src="<?= $model->avatarUrl ?>" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
                         <?php else: ?>
                             <?php
                             $colors = ['bg-primary', 'bg-success', 'bg-info', 'bg-warning', 'bg-danger'];

@@ -177,7 +177,7 @@ $statusLabels = [
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width:32px;height:32px;font-size:14px;">
-                                                <?= mb_substr($user->first_name ?? 'U', 0, 1) ?>
+                                                <?= mb_substr($user->full_name ?? 'U', 0, 1) ?>
                                             </div>
                                             <div class="fw-medium"><?= Html::encode($user->fullName) ?></div>
                                         </div>

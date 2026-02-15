@@ -39,18 +39,7 @@ $roleLabels = [
 <div class="user-view">
     <div class="d-flex justify-content-between align-items-start mb-4">
         <div class="d-flex align-items-center">
-            <?php if ($model->avatar): ?>
-                <img src="<?= $model->avatar ?>" alt="" class="rounded-circle me-3" style="width: 64px; height: 64px; object-fit: cover;">
-            <?php else: ?>
-                <?php
-                $colors = ['bg-primary', 'bg-success', 'bg-info', 'bg-warning', 'bg-danger'];
-                $colorIndex = $model->id % count($colors);
-                $initials = mb_substr($model->full_name ?? $model->username, 0, 1);
-                ?>
-                <div class="rounded-circle <?= $colors[$colorIndex] ?> text-white d-flex align-items-center justify-content-center me-3" style="width: 64px; height: 64px;">
-                    <span class="fs-4 fw-bold"><?= mb_strtoupper($initials) ?></span>
-                </div>
-            <?php endif; ?>
+            <img src="<?= $model->avatarUrl ?>" alt="" class="rounded-circle me-3" style="width: 64px; height: 64px; object-fit: cover;">
             <div>
                 <h1 class="h3 mb-1"><?= Html::encode($model->fullname ?? $model->username) ?></h1>
                 <div class="d-flex align-items-center gap-2">

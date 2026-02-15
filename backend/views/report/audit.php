@@ -16,6 +16,17 @@ $this->params['breadcrumbs'][] = $this->title;
 $startDate = $dateRange['start'] ?? date('Y-m-d', strtotime('-7 days'));
 $endDate = $dateRange['end'] ?? date('Y-m-d');
 
+// Thai date formatter helper
+$formatThaiDate = function($date) {
+    if (empty($date)) return '';
+    $thaiMonths = ['', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+    $timestamp = strtotime($date);
+    $day = date('j', $timestamp);
+    $month = (int)date('n', $timestamp);
+    $year = date('Y', $timestamp) + 543;
+    return $day . ' ' . $thaiMonths[$month] . ' ' . $year;
+};
+
 // Sample stats
 $totalLogs = 1248;
 $todayLogs = 87;
@@ -107,11 +118,21 @@ $uniqueUsers = 42;
                 <form method="get" class="row g-3">
                     <div class="col-md-2">
                         <label class="form-label">วันที่เริ่มต้น</label>
-                        <input type="date" name="start_date" class="form-control" value="<?= $startDate ?>">
+                        <div class="input-group">
+                            <input type="text" class="form-control thai-date-input" id="startDateDisplay" 
+                                   value="<?= $formatThaiDate($startDate) ?>" readonly style="background-color: #fff; cursor: pointer;">
+                            <input type="hidden" name="start_date" id="startDate" value="<?= $startDate ?>">
+                            <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                        </div>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">วันที่สิ้นสุด</label>
-                        <input type="date" name="end_date" class="form-control" value="<?= $endDate ?>">
+                        <div class="input-group">
+                            <input type="text" class="form-control thai-date-input" id="endDateDisplay" 
+                                   value="<?= $formatThaiDate($endDate) ?>" readonly style="background-color: #fff; cursor: pointer;">
+                            <input type="hidden" name="end_date" id="endDate" value="<?= $endDate ?>">
+                            <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                        </div>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">ประเภทกิจกรรม</label>
@@ -582,6 +603,83 @@ function exportReport(format) {
     window.location.href = window.location.pathname + '?' + params.toString();
 }
 window.exportReport = exportReport;
+
+// Thai date formatter for JavaScript
+const thaiMonthsShort = ['', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+function formatThaiDateJS(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear() + 543;
+    return day + ' ' + thaiMonthsShort[month] + ' ' + year;
+}
+
+// Initialize Thai Date Pickers
+function initThaiDatePicker(displayId, hiddenId) {
+    const displayInput = document.getElementById(displayId);
+    const hiddenInput = document.getElementById(hiddenId);
+    if (!displayInput || !hiddenInput) return;
+    
+    const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 
+                       'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+    const thaiDaysShort = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+    
+    let selectedDate = hiddenInput.value ? new Date(hiddenInput.value) : new Date();
+    let viewDate = new Date(selectedDate);
+    
+    const pickerContainer = document.createElement('div');
+    pickerContainer.className = 'thai-datepicker-report';
+    pickerContainer.style.cssText = 'position:absolute;top:100%;left:0;z-index:1050;background:#fff;border:1px solid #dee2e6;border-radius:0.5rem;box-shadow:0 0.5rem 1rem rgba(0,0,0,0.15);padding:1rem;min-width:280px;display:none;';
+    displayInput.parentElement.style.position = 'relative';
+    displayInput.parentElement.appendChild(pickerContainer);
+    
+    function renderCalendar() {
+        const year = viewDate.getFullYear();
+        const month = viewDate.getMonth();
+        const thaiYear = year + 543;
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        
+        let html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">';
+        html += '<button type="button" class="btn btn-sm btn-outline-secondary prev-month"><i class="bi bi-chevron-left"></i></button>';
+        html += '<span style="font-weight:600;">' + thaiMonths[month] + ' ' + thaiYear + '</span>';
+        html += '<button type="button" class="btn btn-sm btn-outline-secondary next-month"><i class="bi bi-chevron-right"></i></button>';
+        html += '</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;">';
+        
+        thaiDaysShort.forEach(day => { html += '<div style="font-size:0.75rem;font-weight:600;color:#6c757d;padding:0.25rem;">' + day + '</div>'; });
+        for (let i = 0; i < firstDay; i++) { html += '<div></div>'; }
+        
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month, day);
+            const dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+            const isSelected = dateStr === hiddenInput.value;
+            const style = 'padding:0.5rem;border-radius:0.25rem;cursor:pointer;' + (isSelected ? 'background:#0d6efd;color:#fff;' : '');
+            html += '<div class="date-selectable" data-date="' + dateStr + '" style="' + style + '">' + day + '</div>';
+        }
+        html += '</div>';
+        pickerContainer.innerHTML = html;
+        
+        pickerContainer.querySelector('.prev-month').addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); viewDate.setMonth(viewDate.getMonth() - 1); renderCalendar(); });
+        pickerContainer.querySelector('.next-month').addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); viewDate.setMonth(viewDate.getMonth() + 1); renderCalendar(); });
+        pickerContainer.querySelectorAll('.date-selectable').forEach(el => {
+            el.addEventListener('click', function() {
+                hiddenInput.value = this.dataset.date;
+                displayInput.value = formatThaiDateJS(this.dataset.date);
+                pickerContainer.style.display = 'none';
+            });
+            el.addEventListener('mouseenter', function() { if (!this.style.backgroundColor.includes('13, 110, 253')) this.style.backgroundColor = '#e9ecef'; });
+            el.addEventListener('mouseleave', function() { if (!this.style.backgroundColor.includes('13, 110, 253')) this.style.backgroundColor = ''; });
+        });
+    }
+    
+    displayInput.addEventListener('click', function(e) { e.stopPropagation(); viewDate = new Date(selectedDate); renderCalendar(); pickerContainer.style.display = pickerContainer.style.display === 'none' ? 'block' : 'none'; });
+    document.addEventListener('click', function(e) { if (!pickerContainer.contains(e.target) && e.target !== displayInput) pickerContainer.style.display = 'none'; });
+}
+
+// Initialize date pickers
+initThaiDatePicker('startDateDisplay', 'startDate');
+initThaiDatePicker('endDateDisplay', 'endDate');
 
 const chartColors = {
     primary: '#0d6efd',

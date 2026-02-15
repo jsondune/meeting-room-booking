@@ -331,8 +331,8 @@ class Equipment extends ActiveRecord
             return false;
         }
 
-        // Create upload directory if not exists
-        $uploadPath = Yii::getAlias('@webroot/uploads/equipment');
+        // Create upload directory using shared @uploads alias
+        $uploadPath = Yii::getAlias('@uploads/equipment');
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }
@@ -342,10 +342,10 @@ class Equipment extends ActiveRecord
 
         // Generate unique filename
         $fileName = 'eq_' . time() . '_' . Yii::$app->security->generateRandomString(8) . '.' . $file->extension;
-        $filePath = $uploadPath . '/' . $fileName;
+        $filePath = $uploadPath . DIRECTORY_SEPARATOR . $fileName;
 
         if ($file->saveAs($filePath)) {
-            return '/uploads/equipment/' . $fileName;
+            return 'equipment/' . $fileName;
         }
 
         return false;
@@ -358,7 +358,15 @@ class Equipment extends ActiveRecord
     public function deleteImage()
     {
         if (!empty($this->image)) {
-            $filePath = Yii::getAlias('@webroot') . $this->image;
+            // Handle old format: /uploads/equipment/xxx.jpg
+            if (strpos($this->image, '/uploads/') === 0) {
+                $relativePath = substr($this->image, 9); // Remove '/uploads/'
+                $filePath = Yii::getAlias('@uploads') . '/' . ltrim($relativePath, '/');
+            } else {
+                // New format: equipment/xxx.jpg
+                $filePath = Yii::getAlias('@uploads') . '/' . ltrim($this->image, '/');
+            }
+            
             if (file_exists($filePath) && is_file($filePath)) {
                 @unlink($filePath);
             }
@@ -379,8 +387,12 @@ class Equipment extends ActiveRecord
             if (strpos($this->image, 'http') === 0) {
                 return $this->image;
             }
-            // Return web-accessible path
-            return Yii::$app->request->baseUrl . $this->image;
+            // Check if path already starts with /uploads/ (old format)
+            if (strpos($this->image, '/uploads/') === 0) {
+                return $this->image;
+            }
+            // Return web-accessible path using @uploadsUrl alias
+            return Yii::getAlias('@uploadsUrl') . '/' . ltrim($this->image, '/');
         }
         return null;
     }

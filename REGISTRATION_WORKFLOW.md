@@ -157,7 +157,7 @@
 ```sql
 INSERT INTO user (
     username, email, password_hash, 
-    first_name, last_name, phone, department_id,
+    full_name, phone, department_id,
     status, role, auth_key, verification_token,
     created_at, updated_at
 ) VALUES (...)

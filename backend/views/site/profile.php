@@ -62,7 +62,7 @@ $formatThaiDateTime = function($datetime) use ($thaiMonthsShort) {
                             </a>
                         </div>
                         
-                        <h4 class="mb-1"><?= Html::encode($user->first_name . ' ' . $user->last_name) ?></h4>
+                        <h4 class="mb-1"><?= Html::encode($user->full_name) ?></h4>
                         <p class="text-muted mb-2"><?= Html::encode($user->position ?? '-') ?></p>
                         <?php if ($user->department): ?>
                             <span class="badge bg-primary"><?= Html::encode($user->department->name_th ?? '-') ?></span>
@@ -126,13 +126,9 @@ $formatThaiDateTime = function($datetime) use ($thaiMonthsShort) {
                                 <label class="form-label text-muted small mb-1">อีเมล</label>
                                 <div class="fw-semibold"><?= Html::encode($user->email) ?></div>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label text-muted small mb-1">ชื่อ</label>
-                                <div class="fw-semibold"><?= Html::encode($user->first_name) ?></div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label text-muted small mb-1">นามสกุล</label>
-                                <div class="fw-semibold"><?= Html::encode($user->last_name) ?></div>
+                            <div class="col-md-12">
+                                <label class="form-label text-muted small mb-1">ชื่อ-นามสกุล</label>
+                                <div class="fw-semibold"><?= Html::encode($user->full_name) ?></div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label text-muted small mb-1">โทรศัพท์</label>

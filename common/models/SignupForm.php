@@ -14,8 +14,7 @@ class SignupForm extends Model
     public $email;
     public $password;
     public $password_confirm;
-    public $first_name;
-    public $last_name;
+    public $full_name;
     public $phone;
     public $department_id;
     public $agree_terms;
@@ -27,10 +26,10 @@ class SignupForm extends Model
     {
         return [
             // Required fields
-            [['username', 'email', 'password', 'password_confirm', 'first_name', 'last_name'], 'required'],
+            [['username', 'email', 'password', 'password_confirm', 'full_name'], 'required'],
             
             // Trim whitespace
-            [['username', 'email', 'first_name', 'last_name'], 'trim'],
+            [['username', 'email', 'full_name'], 'trim'],
             
             // Username
             ['username', 'string', 'min' => 3, 'max' => 50],
@@ -52,7 +51,7 @@ class SignupForm extends Model
                 'message' => 'รหัสผ่านไม่ตรงกัน'],
             
             // Name
-            [['first_name', 'last_name'], 'string', 'max' => 100],
+            [['full_name'], 'string', 'max' => 200],
             
             // Phone (optional)
             ['phone', 'string', 'max' => 20],
@@ -80,8 +79,7 @@ class SignupForm extends Model
             'email' => 'อีเมล',
             'password' => 'รหัสผ่าน',
             'password_confirm' => 'ยืนยันรหัสผ่าน',
-            'first_name' => 'ชื่อ',
-            'last_name' => 'นามสกุล',
+            'full_name' => 'ชื่อ-นามสกุล',
             'phone' => 'เบอร์โทรศัพท์',
             'department_id' => 'หน่วยงาน',
             'agree_terms' => 'ยอมรับเงื่อนไขการใช้งาน',
@@ -102,8 +100,7 @@ class SignupForm extends Model
         $user = new User();
         $user->username = $this->username;
         $user->email = $this->email;
-        $user->first_name = $this->first_name;
-        $user->last_name = $this->last_name;
+        $user->full_name = $this->full_name;
         $user->phone = $this->phone;
         $user->department_id = $this->department_id;
         $user->status = User::STATUS_INACTIVE; // Require email verification

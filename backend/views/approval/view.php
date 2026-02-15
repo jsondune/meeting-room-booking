@@ -307,17 +307,10 @@ $waitingDays = floor($waitingHours / 24);
                 </div>
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <?php if ($model->user && $model->user->avatar): ?>
-                            <img src="<?= $model->user->getAvatarUrl() ?>" 
-                                 class="rounded-circle me-3" 
-                                 style="width: 60px; height: 60px; object-fit: cover;"
-                                 alt="<?= Html::encode($model->user->full_name) ?>">
-                        <?php else: ?>
-                            <div class="bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center text-white"
-                                 style="width: 60px; height: 60px; font-size: 1.5rem;">
-                                <?= mb_substr($model->user->full_name ?? 'U', 0, 1) ?>
-                            </div>
-                        <?php endif; ?>
+                        <img src="<?= $model->user ? $model->user->avatarUrl : '' ?>" 
+                             class="rounded-circle me-3" 
+                             style="width: 60px; height: 60px; object-fit: cover;"
+                             alt="<?= Html::encode($model->user->full_name ?? '') ?>">
                         <div>
                             <h6 class="mb-1"><?= Html::encode($model->user->full_name ?? '-') ?></h6>
                             <p class="text-muted mb-0 small">

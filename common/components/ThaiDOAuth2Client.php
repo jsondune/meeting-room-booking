@@ -251,8 +251,7 @@ class ThaiDOAuth2Client extends OAuth2Client
         $user = new \common\models\User();
         $user->email = $userInfo['email'] ?? null;
         $user->username = $this->generateUsername($userInfo);
-        $user->first_name = $userInfo['first_name'] ?? '';
-        $user->last_name = $userInfo['last_name'] ?? '';
+        $user->full_name = $userInfo['full_name'] ?? '';
         $user->phone = $userInfo['phone'] ?? null;
         $user->avatar = $userInfo['avatar'] ?? null;
         $user->status = \common\models\User::STATUS_ACTIVE;

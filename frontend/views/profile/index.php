@@ -57,7 +57,7 @@ $formatThaiDateTime = function($datetime) use ($thaiMonthsShort) {
                             </a>
                         </div>
                         
-                        <h4 class="mb-1"><?= Html::encode($user->first_name . ' ' . $user->last_name) ?></h4>
+                        <h4 class="mb-1"><?= Html::encode($user->full_name) ?></h4>
                         <p class="text-muted mb-2"><?= Html::encode($user->position) ?></p>
                         <span class="badge bg-primary"><?= Html::encode(($user->department->name_th ?? '-')) ?></span>
                     </div>
@@ -162,15 +162,10 @@ $formatThaiDateTime = function($datetime) use ($thaiMonthsShort) {
                             <div class="card-body">
                                 <form id="profileForm">
                                     <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">ชื่อ</label>
-                                            <input type="text" class="form-control" name="first_name" 
-                                                   value="<?= Html::encode($user->first_name) ?>" disabled>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">นามสกุล</label>
-                                            <input type="text" class="form-control" name="last_name" 
-                                                   value="<?= Html::encode($user->last_name) ?>" disabled>
+                                        <div class="col-md-12">
+                                            <label class="form-label">ชื่อ-นามสกุล</label>
+                                            <input type="text" class="form-control" name="full_name" 
+                                                   value="<?= Html::encode($user->full_name) ?>" disabled>
                                         </div>
                                     </div>
                                     <div class="row mb-3">

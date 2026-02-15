@@ -350,6 +350,62 @@ class Booking extends ActiveRecord
     }
 
     /**
+     * Before validate - normalize time format
+     */
+    public function beforeValidate()
+    {
+        if (parent::beforeValidate()) {
+            // Normalize start_time to H:i:s format
+            if ($this->start_time) {
+                $this->start_time = $this->normalizeTime($this->start_time);
+            }
+            
+            // Normalize end_time to H:i:s format
+            if ($this->end_time) {
+                $this->end_time = $this->normalizeTime($this->end_time);
+            }
+            
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Normalize time to H:i:s format
+     * Converts H:i to H:i:s by appending :00
+     * 
+     * @param string $time
+     * @return string
+     */
+    protected function normalizeTime($time)
+    {
+        if (empty($time)) {
+            return $time;
+        }
+        
+        // Remove any extra whitespace
+        $time = trim($time);
+        
+        // If already in H:i:s format, return as is
+        if (preg_match('/^\d{2}:\d{2}:\d{2}$/', $time)) {
+            return $time;
+        }
+        
+        // If in H:i format, append :00
+        if (preg_match('/^\d{2}:\d{2}$/', $time)) {
+            return $time . ':00';
+        }
+        
+        // Try to parse and format
+        $timestamp = strtotime($time);
+        if ($timestamp !== false) {
+            return date('H:i:s', $timestamp);
+        }
+        
+        return $time;
+    }
+
+    /**
      * Before save
      */
     public function beforeSave($insert)

@@ -107,7 +107,7 @@ $typeLabels = [
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar-circle me-2" style="width: 32px; height: 32px; font-size: 12px;">
-                                                <?= strtoupper(substr($model->user->first_name ?? 'U', 0, 1) . substr($model->user->last_name ?? '', 0, 1)) ?>
+                                                <?= strtoupper(substr($model->user->full_name ?? 'U', 0, 1) . substr($model->user->last_name ?? '', 0, 1)) ?>
                                             </div>
                                             <div>
                                                 <div><?= Html::encode($model->user->full_name ?? '-') ?></div>

@@ -33,9 +33,24 @@ class SettingController extends Controller
                                      'update-holiday', 'delete-holiday', 'import-holidays',
                                      'email-templates', 'update-email-template', 'preview-email',
                                      'test-email', 'backup', 'restore', 'cache-clear',
-                                     'maintenance-mode', 'logs', 'system-info', 'settings'],
+                                     'maintenance-mode', 'logs', 'system-info'],
                         'allow' => true,
-                        'roles' => ['admin', 'superadmin'],
+                        'matchCallback' => function($rule, $action) {
+                            if (Yii::$app->user->isGuest) {
+                                return false;
+                            }
+                            $user = Yii::$app->user->identity;
+                            // Check role from user table column
+                            if ($user && isset($user->role) && in_array($user->role, ['admin', 'superadmin'])) {
+                                return true;
+                            }
+                            // Also check RBAC if available
+                            $auth = Yii::$app->authManager;
+                            if ($auth) {
+                                return $auth->checkAccess($user->id, 'admin') || $auth->checkAccess($user->id, 'superadmin');
+                            }
+                            return false;
+                        },
                     ],
                 ],
             ],

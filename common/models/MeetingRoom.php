@@ -329,8 +329,8 @@ class MeetingRoom extends ActiveRecord
      */
     public function uploadImages()
     {
-        // Use @backend/web for backend uploads and normalize path for Windows
-        $basePath = Yii::getAlias('@backend/web/uploads/rooms');
+        // Use shared @uploads alias
+        $basePath = Yii::getAlias('@uploads/rooms');
         $uploadPath = $basePath . DIRECTORY_SEPARATOR . $this->id;
         
         // Normalize path separators for Windows
@@ -367,8 +367,8 @@ class MeetingRoom extends ActiveRecord
                 $image->room_id = $this->id;
                 $image->filename = $filename;
                 $image->original_name = $file->baseName . '.' . $file->extension;
-                // Store with forward slashes for web URL
-                $image->file_path = 'uploads/rooms/' . $this->id . '/' . $filename;
+                // Store relative path for web URL
+                $image->file_path = 'rooms/' . $this->id . '/' . $filename;
                 $image->file_size = $file->size;
                 $image->mime_type = $file->type;
                 
@@ -440,9 +440,9 @@ class MeetingRoom extends ActiveRecord
      */
     public function isAvailable($date, $startTime, $endTime, $excludeBookingId = null)
     {
-        // Normalize time format to H:i for comparison
-        $startTime = date('H:i', strtotime($startTime));
-        $endTime = date('H:i', strtotime($endTime));
+        // Normalize time format to H:i:s for consistent database comparison
+        $startTime = date('H:i:s', strtotime($startTime));
+        $endTime = date('H:i:s', strtotime($endTime));
         
         // Check if date is in available days (skip if not configured)
         if (!empty($this->available_days)) {
@@ -466,8 +466,8 @@ class MeetingRoom extends ActiveRecord
         
         // Check if time is within operating hours (skip if not configured)
         if (!empty($this->operating_start_time) && !empty($this->operating_end_time)) {
-            $operatingStart = date('H:i', strtotime($this->operating_start_time));
-            $operatingEnd = date('H:i', strtotime($this->operating_end_time));
+            $operatingStart = date('H:i:s', strtotime($this->operating_start_time));
+            $operatingEnd = date('H:i:s', strtotime($this->operating_end_time));
             
             if ($startTime < $operatingStart || $endTime > $operatingEnd) {
                 return false;
@@ -475,18 +475,19 @@ class MeetingRoom extends ActiveRecord
         }
         
         // Check for conflicting bookings
+        // Two bookings overlap if: existingStart < newEnd AND existingEnd > newStart
         $query = Booking::find()
             ->where(['room_id' => $this->id])
             ->andWhere(['booking_date' => $date])
-            ->andWhere(['not in', 'status', ['cancelled', 'rejected']])
-            ->andWhere([
-                'or',
-                ['and', ['<', 'start_time', $endTime . ':00'], ['>', 'end_time', $startTime . ':00']],
-                ['and', ['<', 'start_time', $endTime], ['>', 'end_time', $startTime]],
-            ]);
+            ->andWhere(['not in', 'status', [
+                Booking::STATUS_CANCELLED, 
+                Booking::STATUS_REJECTED
+            ]])
+            ->andWhere(['<', 'start_time', $endTime])
+            ->andWhere(['>', 'end_time', $startTime]);
         
         if ($excludeBookingId) {
-            $query->andWhere(['not', ['id' => $excludeBookingId]]);
+            $query->andWhere(['<>', 'id', $excludeBookingId]);
         }
         
         return !$query->exists();
@@ -838,8 +839,9 @@ class MeetingRoom extends ActiveRecord
     public function getImageUrl()
     {
         $primaryImage = $this->getPrimaryImage();
-        if ($primaryImage && $primaryImage->file_path) {
-            return Yii::getAlias('@web/' . $primaryImage->file_path);
+        if ($primaryImage) {
+            // Use RoomImage's getUrl() which handles both old and new path formats
+            return $primaryImage->getUrl();
         }
         // Fallback to placeholder
         $text = urlencode($this->name_th ?? 'Meeting Room');

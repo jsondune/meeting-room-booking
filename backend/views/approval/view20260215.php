@@ -128,7 +128,7 @@ $waitingDays = floor($waitingHours / 24);
             <i class="bi bi-alarm fs-4 me-3"></i>
             <div>
                 <strong>การจองวันนี้!</strong>
-                กรุณาพิจารณาโดยเร็ว เนื่องจากการจองนี้ต้องใช้ในวันนี้
+                โปรดพิจารณาโดยเร็ว เนื่องจากการจองนี้ต้องใช้ในวันนี้
             </div>
         </div>
     <?php elseif ($isTomorrow && $model->status === 'pending'): ?>
@@ -136,7 +136,7 @@ $waitingDays = floor($waitingHours / 24);
             <i class="bi bi-calendar-event fs-4 me-3"></i>
             <div>
                 <strong>การจองวันพรุ่งนี้</strong>
-                กรุณาพิจารณาภายในวันนี้
+                โปรดพิจารณาภายในวันนี้
             </div>
         </div>
     <?php endif; ?>
@@ -488,7 +488,7 @@ $waitingDays = floor($waitingHours / 24);
                         <?php if (!empty($conflicts)): ?>
                             <div class="alert alert-warning small mb-3">
                                 <i class="bi bi-exclamation-triangle me-1"></i>
-                                พบการจองทับซ้อน กรุณาตรวจสอบก่อนอนุมัติ
+                                พบการจองทับซ้อน โปรดตรวจสอบก่อนอนุมัติ
                             </div>
                         <?php endif; ?>
 
@@ -623,7 +623,7 @@ $waitingDays = floor($waitingHours / 24);
                 <div class="mb-3">
                     <label class="form-label">เหตุผลในการปฏิเสธ <span class="text-danger">*</span></label>
                     <textarea name="reason" class="form-control" rows="3" 
-                              placeholder="กรุณาระบุเหตุผล..." required></textarea>
+                              placeholder="โปรดระบุเหตุผล..." required></textarea>
                 </div>
 
                 <div class="d-flex flex-wrap gap-2">

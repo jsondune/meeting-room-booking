@@ -27,8 +27,7 @@ class UserTest extends Unit
         $user = new User();
         $user->username = 'testuser_' . time();
         $user->email = 'test_' . time() . '@example.com';
-        $user->first_name = 'Test';
-        $user->last_name = 'User';
+        $user->full_name = 'Test';
         $user->setPassword('TestPass123!');
         $user->generateAuthKey();
         $user->status = User::STATUS_ACTIVE;
@@ -110,19 +109,16 @@ class UserTest extends Unit
         $user = new User();
         
         // With first and last name
-        $user->first_name = 'สมชาย';
-        $user->last_name = 'ใจดี';
+        $user->full_name = 'สมชาย ใจดี';
         $user->username = 'somchai';
         $this->assertEquals('สมชาย ใจดี', $user->getDisplayName(), 'Display name should be full name');
         
         // With only first name
-        $user->first_name = 'สมชาย';
-        $user->last_name = '';
+        $user->full_name = 'สมชาย';
         $this->assertEquals('สมชาย', $user->getDisplayName(), 'Display name should be first name');
         
         // With no names
-        $user->first_name = '';
-        $user->last_name = '';
+        $user->full_name = '';
         $this->assertEquals('somchai', $user->getDisplayName(), 'Display name should be username');
     }
     

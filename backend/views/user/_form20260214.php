@@ -212,7 +212,7 @@ $isNewRecord = $model->isNewRecord;
                 <div class="card-body text-center">
                     <div class="mb-3">
                         <?php if ($model->avatar): ?>
-                            <img id="avatar-preview" src="<?= $model->avatarUrl ?>" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                            <img id="avatar-preview" src="<?= $model->avatar ?>" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
                         <?php else: ?>
                             <?php
                             $colors = ['bg-primary', 'bg-success', 'bg-info', 'bg-warning', 'bg-danger'];

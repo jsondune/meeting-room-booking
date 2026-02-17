@@ -68,17 +68,11 @@ $this->title = 'ลงทะเบียน';
 
 <!-- Row 1: Name -->
 <div class="row">
-    <div class="col-md-6 mb-2">
-        <?= $form->field($model, 'first_name')->textInput([
-            'placeholder' => 'ชื่อจริง',
+    <div class="col-md-12 mb-2">
+        <?= $form->field($model, 'full_name')->textInput([
+            'placeholder' => 'ชื่อ-นามสกุล',
             'class' => 'form-control',
         ])->label('ชื่อ <span class="text-danger">*</span>') ?>
-    </div>
-    <div class="col-md-6 mb-2">
-        <?= $form->field($model, 'last_name')->textInput([
-            'placeholder' => 'นามสกุล',
-            'class' => 'form-control',
-        ])->label('นามสกุล <span class="text-danger">*</span>') ?>
     </div>
 </div>
 

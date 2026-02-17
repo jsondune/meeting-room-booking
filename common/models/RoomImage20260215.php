@@ -1,6 +1,6 @@
 <?php
 /**
- * Building Image Model
+ * Room Image Model
  */
 
 namespace common\models;
@@ -8,18 +8,18 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 
-class BuildingImage extends ActiveRecord
+class RoomImage extends ActiveRecord
 {
     public static function tableName()
     {
-        return '{{%building_image}}';
+        return '{{%room_image}}';
     }
 
     public function rules()
     {
         return [
-            [['building_id', 'filename', 'original_name', 'file_path'], 'required'],
-            ['building_id', 'integer'],
+            [['room_id', 'filename', 'original_name', 'file_path'], 'required'],
+            ['room_id', 'integer'],
             [['filename', 'original_name', 'alt_text'], 'string', 'max' => 255],
             ['file_path', 'string', 'max' => 500],
             ['mime_type', 'string', 'max' => 100],
@@ -34,7 +34,7 @@ class BuildingImage extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'building_id' => 'อาคาร',
+            'room_id' => 'ห้องประชุม',
             'filename' => 'ชื่อไฟล์',
             'original_name' => 'ชื่อไฟล์เดิม',
             'file_path' => 'ตำแหน่งไฟล์',
@@ -49,22 +49,15 @@ class BuildingImage extends ActiveRecord
         ];
     }
 
-    public function getBuilding()
+    public function getRoom()
     {
-        return $this->hasOne(Building::class, ['id' => 'building_id']);
+        return $this->hasOne(MeetingRoom::class, ['id' => 'room_id']);
     }
 
     public function getUrl()
     {
-        // Check if path already starts with /uploads/ or uploads/ (old format)
-        if (strpos($this->file_path, '/uploads/') === 0) {
-            return $this->file_path;
-        }
-        if (strpos($this->file_path, 'uploads/') === 0) {
-            return '/' . $this->file_path;
-        }
-        
-        // New format: buildings/5/filename.jpg - use @uploadsUrl alias
+        // file_path is like: rooms/5/filename.jpg
+        // Return URL using @uploadsUrl alias
         return Yii::getAlias('@uploadsUrl') . '/' . ltrim($this->file_path, '/');
     }
     
@@ -75,6 +68,7 @@ class BuildingImage extends ActiveRecord
     
     public function getThumbnailUrl($width = 200, $height = 150)
     {
+        // Return original URL - implement thumbnail generation if needed
         return $this->getUrl();
     }
     

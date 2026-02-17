@@ -45,8 +45,7 @@ class BookingWorkflowCest
         $this->user->generateAuthKey();
         $this->user->role = 'user';
         $this->user->status = User::STATUS_ACTIVE;
-        $this->user->first_name = 'Test';
-        $this->user->last_name = 'User';
+        $this->user->full_name = 'Test User';
         $this->user->save();
 
         // Create test approver
@@ -57,8 +56,7 @@ class BookingWorkflowCest
         $this->approver->generateAuthKey();
         $this->approver->role = 'approver';
         $this->approver->status = User::STATUS_ACTIVE;
-        $this->approver->first_name = 'Test';
-        $this->approver->last_name = 'Approver';
+        $this->approver->full_name = 'Test Approver';
         $this->approver->save();
 
         // Create test room

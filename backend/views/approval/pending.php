@@ -207,9 +207,7 @@ $formatThaiDateTime = function($datetime, $format = 'medium') use ($thaiMonths, 
                             $user = $model->user;
                             if (!$user) return '-';
                             
-                            $avatar = $user->avatar 
-                                ? Html::img($user->avatar, ['class' => 'rounded-circle me-2', 'style' => 'width: 32px; height: 32px; object-fit: cover;'])
-                                : '<span class="avatar-placeholder rounded-circle me-2 d-inline-flex align-items-center justify-content-center bg-secondary text-white" style="width: 32px; height: 32px; font-size: 14px;">' . strtoupper(substr($user->username ?: 'U', 0, 1)) . '</span>';
+                            $avatar = Html::img($user->avatarUrl, ['class' => 'rounded-circle me-2', 'style' => 'width: 32px; height: 32px; object-fit: cover;']);
                             
                             $name = Html::encode($user->full_name ?? $user->username);
                             $dept = $user->department ? '<br><small class="text-muted">' . Html::encode($user->department->name_th) . '</small>' : '';

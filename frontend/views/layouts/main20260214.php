@@ -19,7 +19,7 @@ AppAsset::register($this);
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="ระบบจองห้องประชุม - Meeting Room Booking System">
-    <meta name="author" content="Digital Technology Division">
+    <meta name="author" content="Dunyawat & AI">
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?> | ระบบจองห้องประชุม</title>
     

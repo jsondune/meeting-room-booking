@@ -303,7 +303,7 @@ $formatThaiDateTime = function($datetime, $format = 'medium') use ($thaiMonths, 
                     <p class="text-muted mb-3">คุณกำลังจะปฏิเสธ <strong id="reject-count">0</strong> รายการ</p>
                     <div class="mb-3">
                         <label for="bulk-reject-reason" class="form-label">เหตุผลในการปฏิเสธ <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="bulk-reject-reason" name="reason" rows="3" required placeholder="กรุณาระบุเหตุผลในการปฏิเสธ..."></textarea>
+                        <textarea class="form-control" id="bulk-reject-reason" name="reason" rows="3" required placeholder="โปรดระบุเหตุผลในการปฏิเสธ..."></textarea>
                     </div>
                     <div class="d-flex flex-wrap gap-2">
                         <button type="button" class="btn btn-sm btn-outline-secondary quick-reason" data-reason="ห้องประชุมไม่ว่าง">ห้องไม่ว่าง</button>
@@ -350,7 +350,7 @@ $('#btn-bulk-approve').on('click', function() {
     });
     
     if (ids.length === 0) {
-        alert('กรุณาเลือกรายการที่ต้องการอนุมัติ');
+        alert('โปรดเลือกรายการที่ต้องการอนุมัติ');
         return;
     }
     
@@ -369,7 +369,7 @@ $('#btn-bulk-approve').on('click', function() {
             location.reload();
         },
         error: function() {
-            alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            alert('เกิดข้อผิดพลาด โปรดลองใหม่อีกครั้ง');
         }
     });
 });

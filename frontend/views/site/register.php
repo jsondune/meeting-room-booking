@@ -40,15 +40,10 @@ $this->title = 'สมัครสมาชิก';
                             <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>" value="<?= Yii::$app->request->csrfToken ?>">
 
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-12 mb-3">
                                     <label class="form-label">ชื่อ <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" name="first_name" required 
-                                           placeholder="กรอกชื่อ">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">นามสกุล <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" name="last_name" required 
-                                           placeholder="กรอกนามสกุล">
+                                    <input type="text" class="form-control" name="full_name" required 
+                                           placeholder="กรอก ชื่อ-นามสกุล">
                                 </div>
                             </div>
 

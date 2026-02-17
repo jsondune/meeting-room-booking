@@ -34,8 +34,8 @@ $purposes = [
     'other' => 'อื่นๆ',
 ];
 
-// Pre-selected room
-$selectedRoomId = Yii::$app->request->get('room_id');
+// Pre-selected room - use model value first (for validation errors), then GET parameter
+$selectedRoomId = $model->room_id ?: Yii::$app->request->get('room_id');
 ?>
 
 <div class="booking-create">
@@ -188,7 +188,7 @@ $selectedRoomId = Yii::$app->request->get('room_id');
                                         <div class="position-relative">
                                             <input type="text" id="thaiDateDisplay" class="form-control" 
                                                    readonly placeholder="เลือกวันที่" style="background-color: #fff; cursor: pointer;" required>
-                                            <input type="hidden" name="Booking[booking_date]" id="bookingDate" value="">
+                                            <input type="hidden" name="Booking[booking_date]" id="bookingDate" value="<?= Html::encode($model->booking_date) ?>">
                                             <i class="fas fa-calendar-alt position-absolute" style="right: 12px; top: 50%; transform: translateY(-50%); color: #6c757d; pointer-events: none;"></i>
                                         </div>
                                     </div>
@@ -196,9 +196,11 @@ $selectedRoomId = Yii::$app->request->get('room_id');
                                         <label class="form-label">เวลาเริ่ม <span class="text-danger">*</span></label>
                                         <select class="form-select" name="Booking[start_time]" id="startTime" required>
                                             <option value="">-- เลือก --</option>
-                                            <?php for ($h = 8; $h <= 17; $h++): ?>
-                                                <option value="<?= sprintf('%02d:00', $h) ?>"><?= sprintf('%02d:00 น.', $h) ?></option>
-                                                <option value="<?= sprintf('%02d:30', $h) ?>"><?= sprintf('%02d:30 น.', $h) ?></option>
+                                            <?php 
+                                            $modelStartTime = $model->start_time ? substr($model->start_time, 0, 5) : '';
+                                            for ($h = 8; $h <= 17; $h++): ?>
+                                                <option value="<?= sprintf('%02d:00', $h) ?>" <?= $modelStartTime === sprintf('%02d:00', $h) ? 'selected' : '' ?>><?= sprintf('%02d:00 น.', $h) ?></option>
+                                                <option value="<?= sprintf('%02d:30', $h) ?>" <?= $modelStartTime === sprintf('%02d:30', $h) ? 'selected' : '' ?>><?= sprintf('%02d:30 น.', $h) ?></option>
                                             <?php endfor; ?>
                                         </select>
                                     </div>
@@ -206,9 +208,11 @@ $selectedRoomId = Yii::$app->request->get('room_id');
                                         <label class="form-label">เวลาสิ้นสุด <span class="text-danger">*</span></label>
                                         <select class="form-select" name="Booking[end_time]" id="endTime" required>
                                             <option value="">-- เลือก --</option>
-                                            <?php for ($h = 9; $h <= 18; $h++): ?>
-                                                <option value="<?= sprintf('%02d:00', $h) ?>"><?= sprintf('%02d:00 น.', $h) ?></option>
-                                                <option value="<?= sprintf('%02d:30', $h) ?>"><?= sprintf('%02d:30 น.', $h) ?></option>
+                                            <?php 
+                                            $modelEndTime = $model->end_time ? substr($model->end_time, 0, 5) : '';
+                                            for ($h = 9; $h <= 18; $h++): ?>
+                                                <option value="<?= sprintf('%02d:00', $h) ?>" <?= $modelEndTime === sprintf('%02d:00', $h) ? 'selected' : '' ?>><?= sprintf('%02d:00 น.', $h) ?></option>
+                                                <option value="<?= sprintf('%02d:30', $h) ?>" <?= $modelEndTime === sprintf('%02d:30', $h) ? 'selected' : '' ?>><?= sprintf('%02d:30 น.', $h) ?></option>
                                             <?php endfor; ?>
                                         </select>
                                     </div>
@@ -267,31 +271,31 @@ $selectedRoomId = Yii::$app->request->get('room_id');
                                     <div class="col-md-6">
                                         <label class="form-label">หัวข้อ/เรื่อง <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="Booking[meeting_title]" id="topic" 
-                                               placeholder="ระบุหัวข้อการประชุม" required>
+                                               placeholder="ระบุหัวข้อการประชุม" value="<?= Html::encode($model->meeting_title) ?>" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">วัตถุประสงค์ <span class="text-danger">*</span></label>
                                         <select class="form-select" name="Booking[meeting_type]" id="purpose" required>
                                             <option value="">-- เลือกวัตถุประสงค์ --</option>
                                             <?php foreach ($purposes as $key => $label): ?>
-                                                <option value="<?= $key ?>"><?= $label ?></option>
+                                                <option value="<?= $key ?>" <?= $model->meeting_type === $key ? 'selected' : '' ?>><?= $label ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">จำนวนผู้เข้าร่วม <span class="text-danger">*</span></label>
                                         <input type="number" class="form-control" name="Booking[attendees_count]" id="attendees" 
-                                               min="1" placeholder="ระบุจำนวนคน" required>
+                                               min="1" placeholder="ระบุจำนวนคน" value="<?= Html::encode($model->attendees_count) ?>" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">ผู้ติดต่อ</label>
                                         <input type="text" class="form-control" name="Booking[contact_person]" 
-                                               placeholder="ชื่อผู้ติดต่อ">
+                                               placeholder="ชื่อผู้ติดต่อ" value="<?= Html::encode($model->contact_person) ?>">
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label">รายละเอียดเพิ่มเติม</label>
                                         <textarea class="form-control" name="Booking[meeting_description]" rows="3" 
-                                                  placeholder="ระบุรายละเอียดเพิ่มเติม (ถ้ามี)"></textarea>
+                                                  placeholder="ระบุรายละเอียดเพิ่มเติม (ถ้ามี)"><?= Html::encode($model->meeting_description) ?></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -842,8 +846,14 @@ $this->registerCss($css);
         
         if (!displayInput || !hiddenInput) return;
         
-        let selectedDate = new Date();
-        selectedDate.setDate(selectedDate.getDate() + 1); // Default to tomorrow
+        // Use existing value from model (for validation errors), or default to tomorrow
+        let selectedDate;
+        if (hiddenInput.value) {
+            selectedDate = new Date(hiddenInput.value);
+        } else {
+            selectedDate = new Date();
+            selectedDate.setDate(selectedDate.getDate() + 1); // Default to tomorrow
+        }
         let viewDate = new Date(selectedDate);
         const minDate = new Date();
         minDate.setHours(0, 0, 0, 0);

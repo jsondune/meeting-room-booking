@@ -42,7 +42,7 @@ $logoUrl = Yii::$app->params['logoUrl'] ?? '';
                     <tr>
                         <td style="padding: 40px;">
                             <p style="color: #374151; font-size: 16px; margin: 0 0 20px; line-height: 1.6;">
-                                สวัสดีคุณ <?= Html::encode($user->first_name ?? $user->username) ?>,
+                                สวัสดีคุณ <?= Html::encode($user->full_name ?? $user->username) ?>,
                             </p>
                             
                             <p style="color: #6b7280; font-size: 15px; margin: 0 0 15px; line-height: 1.6;">

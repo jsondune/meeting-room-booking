@@ -586,7 +586,7 @@ $unreadNotifications = Yii::$app->user->isGuest ? 0 : Notification::getUnreadCou
     <!-- Footer -->
     <footer class="text-center py-3 border-top bg-white">
         <small class="text-muted">
-            &copy; <?= date('Y') + 543 ?> ระบบจองห้องประชุม - Meeting Room Booking System v1.0
+            &copy; <?= date('Y') + 543 ?> ระบบจองห้องประชุม - Meeting Room Booking System v1.1 | Developed by Dunyawat &amp; AI
         </small>
     </footer>
 </div>

@@ -358,15 +358,7 @@ class Equipment extends ActiveRecord
     public function deleteImage()
     {
         if (!empty($this->image)) {
-            // Handle old format: /uploads/equipment/xxx.jpg
-            if (strpos($this->image, '/uploads/') === 0) {
-                $relativePath = substr($this->image, 9); // Remove '/uploads/'
-                $filePath = Yii::getAlias('@uploads') . '/' . ltrim($relativePath, '/');
-            } else {
-                // New format: equipment/xxx.jpg
-                $filePath = Yii::getAlias('@uploads') . '/' . ltrim($this->image, '/');
-            }
-            
+            $filePath = Yii::getAlias('@uploads') . '/' . ltrim($this->image, '/');
             if (file_exists($filePath) && is_file($filePath)) {
                 @unlink($filePath);
             }
@@ -385,10 +377,6 @@ class Equipment extends ActiveRecord
         if (!empty($this->image)) {
             // If it's already a full URL
             if (strpos($this->image, 'http') === 0) {
-                return $this->image;
-            }
-            // Check if path already starts with /uploads/ (old format)
-            if (strpos($this->image, '/uploads/') === 0) {
                 return $this->image;
             }
             // Return web-accessible path using @uploadsUrl alias

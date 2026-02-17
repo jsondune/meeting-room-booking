@@ -243,8 +243,8 @@ class Building extends ActiveRecord
      */
     public function uploadImages()
     {
-        // Use @backend/web for backend uploads and normalize path for Windows
-        $basePath = Yii::getAlias('@backend/web/uploads/buildings');
+        // Use shared @uploads alias
+        $basePath = Yii::getAlias('@uploads/buildings');
         $uploadPath = $basePath . DIRECTORY_SEPARATOR . $this->id;
         
         // Normalize path separators for Windows
@@ -281,8 +281,8 @@ class Building extends ActiveRecord
                 $image->building_id = $this->id;
                 $image->filename = $filename;
                 $image->original_name = $file->baseName . '.' . $file->extension;
-                // Store with forward slashes for web URL
-                $image->file_path = 'uploads/buildings/' . $this->id . '/' . $filename;
+                // Store relative path for web URL
+                $image->file_path = 'buildings/' . $this->id . '/' . $filename;
                 $image->file_size = $file->size;
                 $image->mime_type = $file->type;
                 

@@ -185,7 +185,7 @@ class MeetingRoom extends ActiveRecord
             ['is_featured', 'default', 'value' => false],
             
             // File upload
-            [['imageFiles'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif, webp', 'maxFiles' => 10, 'maxSize' => 5 * 1024 * 1024],
+            [['imageFiles'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif, webp', 'maxFiles' => 5, 'maxSize' => 2 * 1024 * 1024],
             
             // Equipment selection
             ['equipmentIds', 'safe'],
@@ -243,12 +243,31 @@ class MeetingRoom extends ActiveRecord
     /**
      * Generate room code before save
      */
+    /**
+     * Before validate - convert arrays to strings
+     */
+    public function beforeValidate()
+    {
+        // Convert available_days array to comma-separated string before validation
+        if (is_array($this->available_days)) {
+            $this->available_days = implode(',', $this->available_days);
+        }
+        
+        return parent::beforeValidate();
+    }
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
             if ($insert && empty($this->room_code)) {
                 $this->room_code = $this->generateRoomCode();
             }
+            
+            // Convert available_days array to comma-separated string (backup)
+            if (is_array($this->available_days)) {
+                $this->available_days = implode(',', $this->available_days);
+            }
+            
             return true;
         }
         return false;
@@ -310,13 +329,30 @@ class MeetingRoom extends ActiveRecord
      */
     public function uploadImages()
     {
-        $uploadPath = Yii::getAlias('@uploads/rooms/' . $this->id);
+        // Use shared @uploads alias
+        $basePath = Yii::getAlias('@uploads/rooms');
+        $uploadPath = $basePath . DIRECTORY_SEPARATOR . $this->id;
+        
+        // Normalize path separators for Windows
+        $uploadPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $uploadPath);
+        
+        // Create base uploads/rooms directory first if not exists
+        $basePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $basePath);
+        if (!is_dir($basePath)) {
+            @mkdir($basePath, 0755, true);
+        }
+        
+        // Create room-specific directory
         if (!is_dir($uploadPath)) {
-            mkdir($uploadPath, 0755, true);
+            if (!@mkdir($uploadPath, 0755, true)) {
+                Yii::error('Failed to create upload directory: ' . $uploadPath);
+                return 0;
+            }
         }
         
         $existingCount = RoomImage::find()->where(['room_id' => $this->id])->count();
-        $maxImages = 10;
+        $maxImages = 5;
+        $uploadedCount = 0;
         
         foreach ($this->imageFiles as $index => $file) {
             if ($existingCount >= $maxImages) {
@@ -324,32 +360,40 @@ class MeetingRoom extends ActiveRecord
             }
             
             $filename = Yii::$app->security->generateRandomString(16) . '.' . $file->extension;
-            $filePath = $uploadPath . '/' . $filename;
+            $filePath = $uploadPath . DIRECTORY_SEPARATOR . $filename;
             
             if ($file->saveAs($filePath)) {
                 $image = new RoomImage();
                 $image->room_id = $this->id;
                 $image->filename = $filename;
                 $image->original_name = $file->baseName . '.' . $file->extension;
-                $image->file_path = 'uploads/rooms/' . $this->id . '/' . $filename;
+                // Store relative path for web URL
+                $image->file_path = 'rooms/' . $this->id . '/' . $filename;
                 $image->file_size = $file->size;
                 $image->mime_type = $file->type;
                 
                 // Get image dimensions
-                $imageInfo = getimagesize($filePath);
-                if ($imageInfo) {
-                    $image->image_width = $imageInfo[0];
-                    $image->image_height = $imageInfo[1];
+                if (file_exists($filePath)) {
+                    $imageInfo = @getimagesize($filePath);
+                    if ($imageInfo) {
+                        $image->image_width = $imageInfo[0];
+                        $image->image_height = $imageInfo[1];
+                    }
                 }
                 
-                // Set first image as primary
-                $image->is_primary = ($existingCount == 0 && $index == 0);
+                // Set first image as primary if no primary exists
+                $hasPrimary = RoomImage::find()->where(['room_id' => $this->id, 'is_primary' => 1])->exists();
+                $image->is_primary = (!$hasPrimary && $index == 0) ? 1 : 0;
                 $image->sort_order = $existingCount + $index;
                 
-                $image->save();
-                $existingCount++;
+                if ($image->save()) {
+                    $uploadedCount++;
+                    $existingCount++;
+                }
             }
         }
+        
+        return $uploadedCount;
     }
 
     /**
@@ -396,9 +440,9 @@ class MeetingRoom extends ActiveRecord
      */
     public function isAvailable($date, $startTime, $endTime, $excludeBookingId = null)
     {
-        // Normalize time format to H:i for comparison
-        $startTime = date('H:i', strtotime($startTime));
-        $endTime = date('H:i', strtotime($endTime));
+        // Normalize time format to H:i:s for consistent database comparison
+        $startTime = date('H:i:s', strtotime($startTime));
+        $endTime = date('H:i:s', strtotime($endTime));
         
         // Check if date is in available days (skip if not configured)
         if (!empty($this->available_days)) {
@@ -422,8 +466,8 @@ class MeetingRoom extends ActiveRecord
         
         // Check if time is within operating hours (skip if not configured)
         if (!empty($this->operating_start_time) && !empty($this->operating_end_time)) {
-            $operatingStart = date('H:i', strtotime($this->operating_start_time));
-            $operatingEnd = date('H:i', strtotime($this->operating_end_time));
+            $operatingStart = date('H:i:s', strtotime($this->operating_start_time));
+            $operatingEnd = date('H:i:s', strtotime($this->operating_end_time));
             
             if ($startTime < $operatingStart || $endTime > $operatingEnd) {
                 return false;
@@ -431,18 +475,19 @@ class MeetingRoom extends ActiveRecord
         }
         
         // Check for conflicting bookings
+        // Two bookings overlap if: existingStart < newEnd AND existingEnd > newStart
         $query = Booking::find()
             ->where(['room_id' => $this->id])
             ->andWhere(['booking_date' => $date])
-            ->andWhere(['not in', 'status', ['cancelled', 'rejected']])
-            ->andWhere([
-                'or',
-                ['and', ['<', 'start_time', $endTime . ':00'], ['>', 'end_time', $startTime . ':00']],
-                ['and', ['<', 'start_time', $endTime], ['>', 'end_time', $startTime]],
-            ]);
+            ->andWhere(['not in', 'status', [
+                Booking::STATUS_CANCELLED, 
+                Booking::STATUS_REJECTED
+            ]])
+            ->andWhere(['<', 'start_time', $endTime])
+            ->andWhere(['>', 'end_time', $startTime]);
         
         if ($excludeBookingId) {
-            $query->andWhere(['not', ['id' => $excludeBookingId]]);
+            $query->andWhere(['<>', 'id', $excludeBookingId]);
         }
         
         return !$query->exists();
@@ -572,6 +617,24 @@ class MeetingRoom extends ActiveRecord
     {
         $layouts = self::getLayoutOptions();
         return $layouts[$this->room_layout] ?? $this->room_layout;
+    }
+
+    /**
+     * Alias for room_layout (backward compatibility for default_layout)
+     * @return string|null
+     */
+    public function getDefault_layout()
+    {
+        return $this->room_layout;
+    }
+
+    /**
+     * Setter for default_layout (backward compatibility)
+     * @param string|null $value
+     */
+    public function setDefault_layout($value)
+    {
+        $this->room_layout = $value;
     }
 
     /**
@@ -777,7 +840,7 @@ class MeetingRoom extends ActiveRecord
     {
         $primaryImage = $this->getPrimaryImage();
         if ($primaryImage && $primaryImage->file_path) {
-            return Yii::getAlias('@web/' . $primaryImage->file_path);
+            return Yii::getAlias('@uploadsUrl') . '/' . ltrim($primaryImage->file_path, '/');
         }
         // Fallback to placeholder
         $text = urlencode($this->name_th ?? 'Meeting Room');
@@ -941,12 +1004,22 @@ class MeetingRoom extends ActiveRecord
      */
     public static function getDropdownList()
     {
-        $rooms = static::findActive()
-            ->orderBy(['building_id' => SORT_ASC, 'sort_order' => SORT_ASC, 'name_th' => SORT_ASC])
-            ->all();
-        
-        return ArrayHelper::map($rooms, 'id', function ($room) {
-            return $room->getDisplayName() . ' (รองรับ ' . $room->capacity . ' คน)';
-        });
+        try {
+            $rooms = static::find()
+                ->where(['status' => self::STATUS_ACTIVE])
+                ->orderBy(['building_id' => SORT_ASC, 'sort_order' => SORT_ASC, 'name_th' => SORT_ASC])
+                ->all();
+            
+            if (empty($rooms)) {
+                return [];
+            }
+            
+            return ArrayHelper::map($rooms, 'id', function ($room) {
+                return $room->name_th . ' (รองรับ ' . $room->capacity . ' คน)';
+            });
+        } catch (\Exception $e) {
+            Yii::error('Error in getDropdownList: ' . $e->getMessage());
+            return [];
+        }
     }
 }

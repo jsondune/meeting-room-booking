@@ -56,15 +56,8 @@ class BuildingImage extends ActiveRecord
 
     public function getUrl()
     {
-        // Check if path already starts with /uploads/ or uploads/ (old format)
-        if (strpos($this->file_path, '/uploads/') === 0) {
-            return $this->file_path;
-        }
-        if (strpos($this->file_path, 'uploads/') === 0) {
-            return '/' . $this->file_path;
-        }
-        
-        // New format: buildings/5/filename.jpg - use @uploadsUrl alias
+        // file_path is like: buildings/5/filename.jpg
+        // Return URL using @uploadsUrl alias
         return Yii::getAlias('@uploadsUrl') . '/' . ltrim($this->file_path, '/');
     }
     

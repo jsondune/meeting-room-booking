@@ -381,8 +381,7 @@ abstract class OAuth2Client extends Component
         $user = new User();
         $user->email = $userInfo['email'] ?? null;
         $user->username = $this->generateUsername($userInfo);
-        $user->first_name = $userInfo['first_name'] ?? '';
-        $user->last_name = $userInfo['last_name'] ?? '';
+        $user->full_name = $userInfo['full_name'] ?? '';
         $user->avatar = $userInfo['avatar'] ?? null;
         $user->status = User::STATUS_ACTIVE;
         $user->setPassword(Yii::$app->security->generateRandomString(16));

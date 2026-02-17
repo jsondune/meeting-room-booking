@@ -46,8 +46,7 @@ class m240101_000001_create_meeting_room_booking_tables extends Migration
             'email_verified_at' => $this->timestamp()->null(),       
             
             // Profile information
-            'first_name' => $this->string(100)->notNull(),
-            'last_name' => $this->string(100)->notNull(),
+            'full_name' => $this->string(200)->notNull(),
             'phone' => $this->string(20),
             'avatar' => $this->string(255),
             'department_id' => $this->integer()->unsigned(),
@@ -808,8 +807,7 @@ class m240101_000001_create_meeting_room_booking_tables extends Migration
             'email' => 'admin@example.com',
             'password_hash' => Yii::$app->security->generatePasswordHash('Admin@123'),
             'auth_key' => Yii::$app->security->generateRandomString(),
-            'first_name' => 'System',
-            'last_name' => 'Administrator',
+            'full_name' => 'System Administrator',
             'status' => 10,
             'role' => 'superadmin',
             'password_changed_at' => date('Y-m-d H:i:s'),

@@ -333,7 +333,7 @@ AppAsset::register($this);
         <div class="row align-items-center">
             <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
                 <span class="text-muted">
-                    &copy; <?= date('Y') + 543 ?> <?= Html::encode(Yii::$app->name) ?>
+                    &copy; <?= date('Y') + 543 ?> <?= Html::encode(Yii::$app->name) ?> v1.1 | Developed by Dunyawat &amp; AI
                 </span>
             </div>
             <div class="col-md-6 text-center text-md-end">

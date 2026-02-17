@@ -19,8 +19,7 @@ use yii\web\IdentityInterface;
  * @property string $auth_key
  * @property string|null $password_reset_token
  * @property string|null $verification_token
- * @property string $first_name
- * @property string $last_name
+ * @property string $full_name
  * @property string|null $phone
  * @property string|null $avatar
  * @property int|null $department_id
@@ -108,7 +107,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['role', 'default', 'value' => self::ROLE_USER],
             ['role', 'in', 'range' => [self::ROLE_VIEWER, self::ROLE_USER, self::ROLE_MANAGER, self::ROLE_ADMIN, self::ROLE_SUPERADMIN]],
             
-            [['username', 'email', 'first_name', 'last_name'], 'required'],
+            [['username', 'email', 'full_name'], 'required'],
             [['username', 'email'], 'trim'],
             ['username', 'string', 'min' => 3, 'max' => 50],
             ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_]+$/', 'message' => 'Username can only contain letters, numbers, and underscores.'],
@@ -126,7 +125,7 @@ class User extends ActiveRecord implements IdentityInterface
                 }
             }],
             
-            [['first_name', 'last_name'], 'string', 'max' => 100],
+            [['full_name'], 'string', 'max' => 200],
             ['phone', 'string', 'max' => 20],
             ['phone', 'match', 'pattern' => '/^[0-9\-\+\s]+$/', 'message' => 'Invalid phone number format.'],
             
@@ -164,26 +163,26 @@ class User extends ActiveRecord implements IdentityInterface
         $scenarios = parent::scenarios();
         
         // Default scenario
-        $scenarios[self::SCENARIO_DEFAULT] = ['username', 'email', 'first_name', 'last_name', 'phone', 
+        $scenarios[self::SCENARIO_DEFAULT] = ['username', 'email', 'full_name', 'phone', 
             'position', 'department_id', 'avatar', 'avatarFile', 'status', 'role',
             'azure_id', 'google_id', 'thaid_id', 'facebook_id', 'two_factor_enabled'];
         
         // Create scenario (regular registration)
         $scenarios['create'] = ['username', 'email', 'password', 'password_confirm', 
-            'first_name', 'last_name', 'phone', 'position', 'department_id'];
+            'full_name', 'phone', 'position', 'department_id'];
         
         // Admin create scenario
         $scenarios['admin-create'] = ['username', 'email', 'password', 'password_confirm',
-            'first_name', 'last_name', 'phone', 'position', 'department_id', 
+            'full_name', 'phone', 'position', 'department_id', 
             'avatar', 'avatarFile', 'status', 'role'];
         
         // Admin update scenario
         $scenarios['admin-update'] = ['username', 'email', 'password', 'password_confirm',
-            'first_name', 'last_name', 'phone', 'position', 'department_id',
+            'full_name', 'phone', 'position', 'department_id',
             'avatar', 'avatarFile', 'status', 'role'];
         
         // Profile update scenario
-        $scenarios['profile'] = ['first_name', 'last_name', 'phone', 'position', 'avatar', 'avatarFile'];
+        $scenarios['profile'] = ['full_name', 'phone', 'position', 'avatar', 'avatarFile'];
         
         // Password change scenario
         $scenarios['password'] = ['password', 'password_confirm'];
@@ -202,8 +201,7 @@ class User extends ActiveRecord implements IdentityInterface
             'email' => 'อีเมล',
             'password' => 'รหัสผ่าน',
             'password_confirm' => 'ยืนยันรหัสผ่าน',
-            'first_name' => 'ชื่อ',
-            'last_name' => 'นามสกุล',
+            'full_name' => 'ชื่อ-นามสกุล',
             'phone' => 'เบอร์โทรศัพท์',
             'avatar' => 'รูปโปรไฟล์',
             'department_id' => 'หน่วยงาน',
@@ -437,7 +435,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getFullName()
     {
-        return $this->first_name . ' ' . $this->last_name;
+        return $this->full_name;
     }
 
     /**
@@ -509,8 +507,8 @@ class User extends ActiveRecord implements IdentityInterface
             return null;
         }
 
-        // Create upload directory
-        $uploadPath = Yii::getAlias('@frontend/web/uploads/avatars');
+        // Create upload directory using shared @uploads alias
+        $uploadPath = Yii::getAlias('@uploads/avatars');
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }
@@ -520,10 +518,10 @@ class User extends ActiveRecord implements IdentityInterface
 
         // Generate unique filename
         $filename = 'avatar_' . $this->id . '_' . time() . '.' . $file->extension;
-        $filePath = $uploadPath . '/' . $filename;
+        $filePath = $uploadPath . DIRECTORY_SEPARATOR . $filename;
 
         if ($file->saveAs($filePath)) {
-            return '/uploads/avatars/' . $filename;
+            return 'avatars/' . $filename;
         }
 
         return null;
@@ -541,13 +539,14 @@ class User extends ActiveRecord implements IdentityInterface
                 return $this->avatar;
             }
             
-            // For local files, prepend base URL
-            $baseUrl = '';
-            if (Yii::$app instanceof \yii\web\Application) {
-                $baseUrl = Yii::$app->request->baseUrl;
+            // Check if path already starts with /uploads/ (old format)
+            if (strpos($this->avatar, '/uploads/') === 0) {
+                return $this->avatar;
             }
             
-            return $baseUrl . $this->avatar;
+            // For new format (without /uploads/ prefix), use @uploadsUrl alias
+            $uploadsUrl = Yii::getAlias('@uploadsUrl');
+            return $uploadsUrl . '/' . ltrim($this->avatar, '/');
         }
         
         // Return default avatar with initials
@@ -560,9 +559,8 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getDefaultAvatarUrl()
     {
-        $firstName = $this->first_name ?? 'U';
-        $lastName = $this->last_name ?? '';
-        $initials = mb_substr($firstName, 0, 1) . mb_substr($lastName, 0, 1);
+        $fullName = $this->full_name ?? 'U';
+        $initials = mb_substr($fullName, 0, 1);
         $initials = strtoupper($initials);
         
         // Use UI Avatars service for default avatar
@@ -576,7 +574,16 @@ class User extends ActiveRecord implements IdentityInterface
     public function deleteOldAvatar()
     {
         if (!empty($this->avatar) && strpos($this->avatar, 'http') !== 0) {
-            $filePath = Yii::getAlias('@frontend/web') . $this->avatar;
+            // Handle old format: /uploads/avatars/xxx.jpg
+            if (strpos($this->avatar, '/uploads/') === 0) {
+                // Remove /uploads/ prefix to get relative path
+                $relativePath = substr($this->avatar, 9); // Remove '/uploads/'
+                $filePath = Yii::getAlias('@uploads') . '/' . ltrim($relativePath, '/');
+            } else {
+                // New format: avatars/xxx.jpg
+                $filePath = Yii::getAlias('@uploads') . '/' . ltrim($this->avatar, '/');
+            }
+            
             if (file_exists($filePath)) {
                 return @unlink($filePath);
             }

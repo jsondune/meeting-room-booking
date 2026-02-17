@@ -389,15 +389,13 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Generates password hash using bcrypt (Yii2 default)
+     * Generates password hash using Argon2id
      */
     public function setPassword($password)
     {
-        if (!empty($password)) {
-            // Use Yii2 default bcrypt hashing (cost = 13)
-            $this->password_hash = Yii::$app->security->generatePasswordHash($password);
-            $this->password_changed_at = date('Y-m-d H:i:s');
-        }
+        // Use Argon2id for password hashing (OWASP recommended)
+        $this->password_hash = Yii::$app->security->generatePasswordHash($password, PASSWORD_ARGON2ID);
+        $this->password_changed_at = date('Y-m-d H:i:s');
     }
 
     /**
@@ -868,8 +866,7 @@ class User extends ActiveRecord implements IdentityInterface
                 $this->generateAuthKey();
             }
             
-            // Only hash password if it's not empty
-            if (!empty($this->password)) {
+            if ($this->password) {
                 $this->setPassword($this->password);
             }
             

@@ -193,17 +193,6 @@ $isNewRecord = $model->isNewRecord;
                     <?= $form->field($model, 'role')->dropDownList($roles, [
                         'class' => 'form-select'
                     ])->label('บทบาท') ?>
-                    
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" name="User[must_change_password]" 
-                               id="must_change_password" value="1" 
-                               <?= $model->must_change_password ? 'checked' : '' ?>
-                               <?= $isNewRecord ? 'checked' : '' ?>>
-                        <label class="form-check-label" for="must_change_password">
-                            <i class="bi bi-key me-1"></i>บังคับเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบครั้งถัดไป
-                        </label>
-                        <div class="form-text">ผู้ใช้จะต้องตั้งรหัสผ่านใหม่ก่อนใช้งานระบบ</div>
-                    </div>
 
                     <div class="d-grid gap-2 mt-4">
                         <?= Html::submitButton(

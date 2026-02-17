@@ -187,9 +187,6 @@ class UserController extends BaseController
             }
             $model->generateAuthKey();
             $model->generateEmailVerificationToken();
-            
-            // Force password change on first login
-            $model->must_change_password = 1;
 
             // Handle avatar upload
             $avatarFile = UploadedFile::getInstance($model, 'avatarFile');
@@ -201,8 +198,8 @@ class UserController extends BaseController
             }
 
             if ($model->save()) {
-                // Assign role - get from POST (not from User array)
-                $role = Yii::$app->request->post('role');
+                // Assign role - get from User array or separate field
+                $role = $userData['role'] ?? Yii::$app->request->post('role');
                 if ($role) {
                     $auth = Yii::$app->authManager;
                     $roleObj = $auth->getRole($role);
@@ -269,13 +266,10 @@ class UserController extends BaseController
             if (!empty($userData['removeAvatar'])) {
                 $model->avatar = null;
             }
-            
-            // Handle must_change_password checkbox
-            $model->must_change_password = isset($userData['must_change_password']) ? 1 : 0;
 
             if ($model->save()) {
-                // Update role - get from POST (not from User array)
-                $role = Yii::$app->request->post('role');
+                // Update role - get from User array or separate field
+                $role = $userData['role'] ?? Yii::$app->request->post('role');
                 if ($role) {
                     $auth = Yii::$app->authManager;
                     // Remove all existing roles
@@ -423,7 +417,6 @@ class UserController extends BaseController
 
         $model->setPassword($newPassword);
         $model->generateAuthKey();
-        $model->must_change_password = 1;  // Force user to change password on next login
 
         if ($model->save(false)) {
             // Send email if requested
@@ -658,7 +651,7 @@ class UserController extends BaseController
                 $user->username,
                 $user->email,
                 $user->full_name,
-                $user->department ? $user->department->name_th : '',
+                $user->department ? ($user->department->name_th ?? $user->department->name_en) : '',
                 $user->position,
                 $user->phone,
                 $user->getStatusLabel(),

@@ -3,8 +3,8 @@
  * SiteController - Backend site controller for dashboard and authentication
  * Meeting Room Booking System
  * 
- * @author Digital Technology & AI Division
- * @version 1.0.0
+ * @author Dunyawat & AI
+ * @version 1.1.0
  */
 
 namespace backend\controllers;
@@ -20,6 +20,7 @@ use common\models\Equipment;
 use common\models\LoginHistory;
 use common\models\AuditLog;
 use common\models\SystemSetting;
+use common\models\ForceChangePasswordForm;
 use backend\models\LoginForm;
 
 /**
@@ -46,7 +47,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'profile', 'change-password', 'two-factor', 'verify-two-factor', 'notifications'],
+                        'actions' => ['logout', 'index', 'profile', 'change-password', 'two-factor', 'verify-two-factor', 'notifications', 'force-change-password'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -65,6 +66,28 @@ class SiteController extends Controller
                 ],
             ],
         ];
+    }
+    
+    /**
+     * Check if user must change password before each action
+     */
+    public function beforeAction($action)
+    {
+        if (parent::beforeAction($action)) {
+            // Skip check for these actions
+            $allowedActions = ['force-change-password', 'logout', 'login', 'error', 'captcha', 'oauth', 'oauth-callback'];
+            
+            if (!Yii::$app->user->isGuest && !in_array($action->id, $allowedActions)) {
+                $user = Yii::$app->user->identity;
+                if ($user && !empty($user->must_change_password)) {
+                    Yii::$app->session->setFlash('warning', 'กรุณาเปลี่ยนรหัสผ่านก่อนใช้งานระบบ');
+                    $this->redirect(['force-change-password']);
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -212,6 +235,35 @@ class SiteController extends Controller
             'labels' => $labels,
             'data' => $data,
         ];
+    }
+    
+    /**
+     * Force change password action
+     * Required for first-time login
+     *
+     * @return string|\yii\web\Response
+     */
+    public function actionForceChangePassword()
+    {
+        // If user doesn't need to change password, redirect to home
+        $user = Yii::$app->user->identity;
+        if (!$user || empty($user->must_change_password)) {
+            return $this->goHome();
+        }
+        
+        $model = new ForceChangePasswordForm();
+        
+        if ($model->load(Yii::$app->request->post()) && $model->changePassword()) {
+            Yii::$app->session->setFlash('success', 'เปลี่ยนรหัสผ่านสำเร็จ คุณสามารถใช้งานระบบได้แล้ว');
+            return $this->goHome();
+        }
+        
+        // Use simple login layout
+        $this->layout = 'main-login';
+        
+        return $this->render('force-change-password', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -402,7 +454,7 @@ class SiteController extends Controller
                 Yii::$app->session->remove('2fa_required');
                 Yii::$app->session->remove('2fa_user_id');
                 Yii::$app->user->login($user);
-                Yii::$app->session->setFlash('warning', 'คุณใช้รหัสสำรอง โปรดสร้างรหัสสำรองใหม่');
+                Yii::$app->session->setFlash('warning', 'คุณใช้รหัสสำรอง กรุณาสร้างรหัสสำรองใหม่');
                 return $this->goHome();
             }
             
@@ -472,7 +524,7 @@ class SiteController extends Controller
             LoginHistory::logAttempt(null, 'oauth_' . $provider, $provider, 'failed', $e->getMessage());
         }
 
-        Yii::$app->session->setFlash('error', 'ไม่สามารถเข้าสู่ระบบได้ โปรดลองใหม่อีกครั้ง');
+        Yii::$app->session->setFlash('error', 'ไม่สามารถเข้าสู่ระบบได้ กรุณาลองใหม่อีกครั้ง');
         return $this->redirect(['login']);
     }
 
@@ -744,7 +796,7 @@ class SiteController extends Controller
         $model = new \backend\models\ForgotPasswordForm();
 
         if ($model->load(Yii::$app->request->post()) && $model->sendEmail()) {
-            Yii::$app->session->setFlash('success', 'โปรดตรวจสอบอีเมลของคุณสำหรับคำแนะนำในการรีเซ็ตรหัสผ่าน');
+            Yii::$app->session->setFlash('success', 'กรุณาตรวจสอบอีเมลของคุณสำหรับคำแนะนำในการรีเซ็ตรหัสผ่าน');
             return $this->redirect(['login']);
         }
 

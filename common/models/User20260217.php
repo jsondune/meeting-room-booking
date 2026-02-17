@@ -34,7 +34,6 @@ use yii\web\IdentityInterface;
  * @property int $failed_login_attempts
  * @property string|null $locked_until
  * @property string|null $password_changed_at
- * @property bool $must_change_password
  * @property string|null $last_login_at
  * @property string|null $last_login_ip
  * @property int $status

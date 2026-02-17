@@ -16,7 +16,7 @@ return [
     'class' => 'yii\db\Connection',
     'dsn' => 'mysql:host=localhost;dbname=mrbapp',
     'username' => 'root',
-    'password' => '',
+    'password' => 'l{4rYu(PjqIC',
     'charset' => 'utf8mb4',
     
     // Schema caching for production

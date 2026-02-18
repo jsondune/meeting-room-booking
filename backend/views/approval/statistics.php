@@ -434,7 +434,7 @@ $departmentRejected = [];
 
 foreach ($departmentStats as $deptId => $data) {
     $dept = \common\models\Department::findOne($deptId);
-    $departmentLabels[] = $dept ? $dept->name : "ID: {$deptId}";
+    $departmentLabels[] = $dept ? $dept->name_th : "ID: {$deptId}";
     $departmentApproved[] = $data['approved'];
     $departmentRejected[] = $data['rejected'];
 }

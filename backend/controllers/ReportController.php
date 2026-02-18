@@ -509,7 +509,7 @@ class ReportController extends BaseController
             $departments = Department::find()->indexBy('id')->all();
             foreach ($revenueByGroup as &$item) {
                 $dept = isset($departments[$item['department_id']]) ? $departments[$item['department_id']] : null;
-                $item['name'] = $dept ? $dept->name_th : 'ไม่ระบุ';
+                $item['name_th'] = $dept ? $dept->name_th : 'ไม่ระบุ';
             }
         } else {
             // Group by month
@@ -707,7 +707,7 @@ class ReportController extends BaseController
         $departments = Department::find()->indexBy('id')->all();
         foreach ($topDepartments as &$item) {
             $dept = isset($departments[$item['department_id']]) ? $departments[$item['department_id']] : null;
-            $item['name'] = $dept ? $dept->name_th : 'ไม่ระบุ';
+            $item['name_th'] = $dept ? $dept->name_th : 'ไม่ระบุ';
         }
 
         return $this->render('room-usage', [

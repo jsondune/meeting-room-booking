@@ -206,81 +206,43 @@ class BookingController extends Controller
 
             $transaction = Yii::$app->db->beginTransaction();
             try {
-                // Handle date range booking
-                if ($model->is_date_range && $model->booking_end_date) {
-                    $result = $model->createDateRangeBookings();
-                    
-                    if ($result['success']) {
-                        // Save attendees and equipment for each booking
-                        foreach ($result['bookings'] as $booking) {
-                            if (!empty($attendeesData)) {
-                                $booking->saveAttendees($attendeesData);
-                            }
-                            if (!empty($equipmentData)) {
-                                $booking->saveEquipmentRequests($equipmentData);
-                            }
-                        }
-                        
-                        $transaction->commit();
-                        
-                        $message = "สร้างการจองสำเร็จ {$result['createdCount']} รายการ";
-                        if (!empty($result['conflictDates'])) {
-                            $message .= " (ข้ามวันที่ไม่ว่าง " . count($result['conflictDates']) . " วัน)";
-                        }
-                        Yii::$app->session->setFlash('success', $message);
-                        
-                        // Redirect to first booking
-                        return $this->redirect(['view', 'id' => $result['bookings'][0]->id]);
-                    } else {
-                        $transaction->rollBack();
-                        $errorMsg = implode(', ', $result['errors']);
-                        if (!empty($result['conflictDates'])) {
-                            $errorMsg .= ' (วันที่ไม่ว่าง: ' . implode(', ', $result['conflictDates']) . ')';
-                        }
-                        Yii::$app->session->setFlash('error', $errorMsg);
-                        
-                        // Continue to show form
+                // Calculate costs
+                $model->calculateCosts();
+
+                if ($model->save()) {
+                    // Save attendees
+                    if (!empty($attendeesData)) {
+                        $model->saveAttendees($attendeesData);
                     }
+
+                    // Save equipment requests
+                    if (!empty($equipmentData)) {
+                        $model->saveEquipmentRequests($equipmentData);
+                    }
+
+                    // Handle recurring bookings
+                    if ($model->is_recurring && $model->recurrence_pattern) {
+                        $model->createRecurringBookings();
+                    }
+
+                    // Send confirmation notification
+                    $model->sendBookingConfirmation();
+
+                    $transaction->commit();
+
+                    Yii::$app->session->setFlash('success', 'สร้างการจองสำเร็จ รหัสการจอง: ' . $model->booking_code);
+                    return $this->redirect(['view', 'id' => $model->id]);
                 } else {
-                    // Normal single-day booking
-                    // Calculate costs
-                    $model->calculateCosts();
-
-                    if ($model->save()) {
-                        // Save attendees
-                        if (!empty($attendeesData)) {
-                            $model->saveAttendees($attendeesData);
-                        }
-
-                        // Save equipment requests
-                        if (!empty($equipmentData)) {
-                            $model->saveEquipmentRequests($equipmentData);
-                        }
-
-                        // Handle recurring bookings
-                        if ($model->is_recurring && $model->recurrence_pattern) {
-                            $model->createRecurringBookings();
-                        }
-
-                        // Send confirmation notification
-                        $model->sendBookingConfirmation();
-
-                        $transaction->commit();
-
-                        Yii::$app->session->setFlash('success', 'สร้างการจองสำเร็จ รหัสการจอง: ' . $model->booking_code);
-                        return $this->redirect(['view', 'id' => $model->id]);
-                    } else {
-                        // Show validation errors
-                        $errors = $model->getErrors();
-                        $errorMsg = [];
-                        foreach ($errors as $field => $messages) {
-                            $errorMsg[] = $model->getAttributeLabel($field) . ': ' . implode(', ', $messages);
-                        }
-                        Yii::$app->session->setFlash('error', 'ไม่สามารถบันทึกได้: ' . implode(' | ', $errorMsg));
+                    // Show validation errors
+                    $errors = $model->getErrors();
+                    $errorMsg = [];
+                    foreach ($errors as $field => $messages) {
+                        $errorMsg[] = $model->getAttributeLabel($field) . ': ' . implode(', ', $messages);
                     }
-
-                    $transaction->rollBack();
+                    Yii::$app->session->setFlash('error', 'ไม่สามารถบันทึกได้: ' . implode(' | ', $errorMsg));
                 }
+
+                $transaction->rollBack();
             } catch (\Exception $e) {
                 $transaction->rollBack();
                 Yii::$app->session->setFlash('error', 'เกิดข้อผิดพลาด: ' . $e->getMessage());

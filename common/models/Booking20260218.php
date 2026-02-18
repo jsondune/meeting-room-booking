@@ -89,21 +89,6 @@ class Booking extends ActiveRecord
      * @var array Internal attendee user IDs
      */
     public $attendeeIds = [];
-    
-    /**
-     * @var string End date for date range booking (virtual property)
-     */
-    public $booking_end_date;
-    
-    /**
-     * @var bool Is this a date range booking
-     */
-    public $is_date_range = false;
-    
-    /**
-     * @var bool Skip weekends when creating date range bookings
-     */
-    public $skip_weekends = true;
 
     /**
      * {@inheritdoc}
@@ -243,13 +228,6 @@ class Booking extends ActiveRecord
             ['room_id', 'validateRoomAvailability'],
             ['attendees_count', 'validateCapacity'],
             
-            // Date range booking fields (virtual)
-            ['booking_end_date', 'date', 'format' => 'php:Y-m-d'],
-            ['booking_end_date', 'validateDateRange'],
-            ['is_date_range', 'boolean'],
-            ['skip_weekends', 'boolean'],
-            [['booking_end_date', 'is_date_range', 'skip_weekends'], 'safe'],
-            
             // Safe attributes
             [['equipmentRequests', 'attendeeIds'], 'safe'],
         ];
@@ -281,9 +259,6 @@ class Booking extends ActiveRecord
             'is_recurring' => 'การจองซ้ำ',
             'recurrence_pattern' => 'รูปแบบการจองซ้ำ',
             'recurrence_end_date' => 'วันสิ้นสุดการจองซ้ำ',
-            'booking_end_date' => 'วันที่สิ้นสุด',
-            'is_date_range' => 'จองหลายวัน',
-            'skip_weekends' => 'ข้ามวันเสาร์-อาทิตย์',
             'status' => 'สถานะ',
             'approved_by' => 'อนุมัติโดย',
             'approved_at' => 'วันที่อนุมัติ',
@@ -372,154 +347,6 @@ class Booking extends ActiveRecord
                 $this->addError($attribute, "ห้องนี้รองรับได้สูงสุด {$this->room->capacity} คน");
             }
         }
-    }
-    
-    /**
-     * Validate date range booking
-     */
-    public function validateDateRange($attribute, $params)
-    {
-        if ($this->is_date_range && $this->booking_end_date) {
-            $startDate = strtotime($this->booking_date);
-            $endDate = strtotime($this->booking_end_date);
-            
-            if ($endDate < $startDate) {
-                $this->addError($attribute, 'วันที่สิ้นสุดต้องมากกว่าหรือเท่ากับวันที่เริ่มต้น');
-                return;
-            }
-            
-            // Check max days (max 30 days per booking)
-            $diffDays = ($endDate - $startDate) / (60 * 60 * 24);
-            if ($diffDays > 30) {
-                $this->addError($attribute, 'สามารถจองช่วงวันได้สูงสุด 30 วัน');
-            }
-        }
-    }
-    
-    /**
-     * Create multiple bookings for date range
-     * @return array ['success' => bool, 'bookings' => Booking[], 'errors' => array, 'conflictDates' => array]
-     */
-    public function createDateRangeBookings()
-    {
-        $result = [
-            'success' => false,
-            'bookings' => [],
-            'errors' => [],
-            'conflictDates' => [],
-            'createdCount' => 0,
-        ];
-        
-        if (!$this->is_date_range || !$this->booking_end_date) {
-            $result['errors'][] = 'ไม่ได้เลือกจองแบบช่วงวัน';
-            return $result;
-        }
-        
-        $startDate = strtotime($this->booking_date);
-        $endDate = strtotime($this->booking_end_date);
-        
-        if ($endDate < $startDate) {
-            $result['errors'][] = 'วันที่สิ้นสุดต้องมากกว่าวันที่เริ่มต้น';
-            return $result;
-        }
-        
-        $currentDate = $startDate;
-        $bookings = [];
-        $conflictDates = [];
-        
-        // Generate bookings for each date
-        while ($currentDate <= $endDate) {
-            $dateStr = date('Y-m-d', $currentDate);
-            $dayOfWeek = date('N', $currentDate); // 1=Monday, 7=Sunday
-            
-            // Skip weekends if requested
-            if ($this->skip_weekends && ($dayOfWeek == 6 || $dayOfWeek == 7)) {
-                $currentDate = strtotime('+1 day', $currentDate);
-                continue;
-            }
-            
-            // Check room availability for this date
-            if ($this->room && !$this->room->isAvailable($dateStr, $this->start_time, $this->end_time)) {
-                $conflictDates[] = $dateStr;
-                $currentDate = strtotime('+1 day', $currentDate);
-                continue;
-            }
-            
-            // Create booking for this date
-            $booking = new self();
-            $booking->attributes = $this->attributes;
-            $booking->booking_date = $dateStr;
-            $booking->is_date_range = false; // Individual booking
-            $booking->booking_end_date = null;
-            $booking->generateBookingCode();
-            
-            $bookings[] = $booking;
-            $currentDate = strtotime('+1 day', $currentDate);
-        }
-        
-        if (empty($bookings)) {
-            $result['errors'][] = 'ไม่มีวันที่สามารถจองได้ในช่วงที่เลือก';
-            $result['conflictDates'] = $conflictDates;
-            return $result;
-        }
-        
-        // Save all bookings in transaction
-        $transaction = Yii::$app->db->beginTransaction();
-        try {
-            $firstBookingId = null;
-            foreach ($bookings as $index => $booking) {
-                // Link to first booking as parent
-                if ($index > 0 && $firstBookingId) {
-                    $booking->parent_booking_id = $firstBookingId;
-                }
-                
-                if (!$booking->save()) {
-                    throw new \Exception('ไม่สามารถบันทึกการจองวันที่ ' . $booking->booking_date . ': ' . implode(', ', $booking->getFirstErrors()));
-                }
-                
-                if ($index === 0) {
-                    $firstBookingId = $booking->id;
-                }
-            }
-            
-            $transaction->commit();
-            $result['success'] = true;
-            $result['bookings'] = $bookings;
-            $result['createdCount'] = count($bookings);
-            $result['conflictDates'] = $conflictDates;
-            
-        } catch (\Exception $e) {
-            $transaction->rollBack();
-            $result['errors'][] = $e->getMessage();
-        }
-        
-        return $result;
-    }
-    
-    /**
-     * Get dates in a date range
-     * @return array
-     */
-    public function getDateRangeDates()
-    {
-        $dates = [];
-        if (!$this->is_date_range || !$this->booking_end_date) {
-            return [$this->booking_date];
-        }
-        
-        $startDate = strtotime($this->booking_date);
-        $endDate = strtotime($this->booking_end_date);
-        $currentDate = $startDate;
-        
-        while ($currentDate <= $endDate) {
-            $dayOfWeek = date('N', $currentDate);
-            if (!$this->skip_weekends || ($dayOfWeek != 6 && $dayOfWeek != 7)) {
-                $dates[] = date('Y-m-d', $currentDate);
-            }
-            $currentDate = strtotime('+1 day', $currentDate);
-        }
-        
-        return $dates;
     }
 
     /**
@@ -666,7 +493,7 @@ class Booking extends ActiveRecord
     /**
      * Generate unique booking code
      */
-    public function generateBookingCode()
+    protected function generateBookingCode()
     {
         $prefix = 'BK';
         $year = date('y');

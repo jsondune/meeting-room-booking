@@ -221,10 +221,11 @@ AppAsset::register($this);
     $menuItems = [
         ['label' => '<i class="fas fa-home me-1"></i> หน้าแรก', 'url' => ['/site/index'], 'encode' => false],
         ['label' => '<i class="fas fa-building me-1"></i> ห้องประชุม', 'url' => ['/room/index'], 'encode' => false],
+        ['label' => '<i class="fas fa-calendar-alt me-1"></i> ปฏิทินภาพรวม', 'url' => ['/site/calendar-overview'], 'encode' => false],
     ];
     
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => '<i class="fas fa-calendar-alt me-1"></i> ปฏิทิน', 'url' => ['/site/calendar'], 'encode' => false];
+        // Guest users can view calendar
     } else {
         $menuItems[] = ['label' => '<i class="fas fa-calendar-plus me-1"></i> จองห้องประชุม', 'url' => ['/booking/create'], 'encode' => false];
         $menuItems[] = ['label' => '<i class="fas fa-list-alt me-1"></i> การจองของฉัน', 'url' => ['/booking/my-bookings'], 'encode' => false];

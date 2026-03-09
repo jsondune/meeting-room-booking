@@ -44,6 +44,8 @@ class SiteController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
+                    'calendar-overview-events' => ['post'],
+                    'room-status' => ['post'],
                 ],
             ],
         ];
@@ -108,8 +110,8 @@ class SiteController extends Controller
             return $this->goHome();
         }
         
-        // Use auth layout (simple layout without navigation)
-        $this->layout = 'auth';
+        // Use no layout - view has its own HTML
+        $this->layout = false;
         
         return $this->render('force-change-password', [
             'model' => $model,
@@ -123,31 +125,45 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        // Get featured rooms
-        $featuredRooms = MeetingRoom::find()
-            ->where(['status' => MeetingRoom::STATUS_ACTIVE])
-            ->andWhere(['is_featured' => 1])
-            ->orderBy(['sort_order' => SORT_ASC])
-            ->limit(6)
-            ->all();
+        $featuredRooms = [];
+        $availableRoomsCount = 0;
+        $buildings = [];
+        $todayBookings = 0;
+        
+        try {
+            // Get featured rooms
+            $featuredRooms = MeetingRoom::find()
+                ->where(['status' => MeetingRoom::STATUS_ACTIVE])
+                ->orderBy(['sort_order' => SORT_ASC])
+                ->limit(6)
+                ->all();
 
-        // Get today's available rooms count
-        $today = date('Y-m-d');
-        $availableRoomsCount = MeetingRoom::find()
-            ->where(['status' => MeetingRoom::STATUS_ACTIVE])
-            ->count();
+            // Get today's available rooms count
+            $availableRoomsCount = MeetingRoom::find()
+                ->where(['status' => MeetingRoom::STATUS_ACTIVE])
+                ->count();
 
-        // Get buildings list
-        $buildings = Building::find()
-            ->where(['is_active' => true])
-            ->orderBy(['name_th' => SORT_ASC])
-            ->all();
+            // Get buildings list - with fallback
+            try {
+                if (class_exists('common\models\Building')) {
+                    $buildings = Building::find()
+                        ->orderBy(['name_th' => SORT_ASC])
+                        ->all();
+                }
+            } catch (\Exception $e) {
+                $buildings = [];
+            }
 
-        // Get total bookings today
-        $todayBookings = Booking::find()
-            ->where(['booking_date' => $today])
-            ->andWhere(['in', 'status', [Booking::STATUS_APPROVED, Booking::STATUS_PENDING]])
-            ->count();
+            // Get total bookings today
+            $today = date('Y-m-d');
+            $todayBookings = Booking::find()
+                ->where(['booking_date' => $today])
+                ->andWhere(['in', 'status', [Booking::STATUS_APPROVED, Booking::STATUS_PENDING]])
+                ->count();
+                
+        } catch (\Exception $e) {
+            Yii::error('Homepage error: ' . $e->getMessage());
+        }
 
         return $this->render('index', [
             'featuredRooms' => $featuredRooms,
@@ -155,6 +171,16 @@ class SiteController extends Controller
             'buildings' => $buildings,
             'todayBookings' => $todayBookings,
         ]);
+    }
+    
+    /**
+     * Calendar Overview - Shows all room bookings
+     *
+     * @return string
+     */
+    public function actionCalendarOverview()
+    {
+        return $this->render('calendar-overview');
     }
 
     /**
@@ -727,4 +753,133 @@ class SiteController extends Controller
     {
         return $this->render('faq');
     }
+    
+    /**
+     * API: Get calendar events for overview (POST endpoint)
+     *
+     * @return array
+     */
+    public function actionCalendarOverviewEvents()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        $request = Yii::$app->request;
+        $data = json_decode($request->rawBody, true) ?: [];
+        
+        $start = $data['start'] ?? date('Y-m-01');
+        $end = $data['end'] ?? date('Y-m-t');
+        $rooms = $data['rooms'] ?? [];
+        $statuses = $data['statuses'] ?? ['approved', 'pending'];
+        
+        try {
+            $query = Booking::find()
+                ->alias('b')
+                ->select([
+                    'b.id', 'b.meeting_title', 'b.booking_date', 'b.start_time', 'b.end_time',
+                    'b.room_id', 'b.user_id', 'b.status', 'b.attendees_count', 'b.meeting_description'
+                ])
+                ->with(['room', 'user'])
+                ->where(['>=', 'b.booking_date', substr($start, 0, 10)])
+                ->andWhere(['<=', 'b.booking_date', substr($end, 0, 10)]);
+            
+            if (!empty($rooms)) {
+                $query->andWhere(['in', 'b.room_id', $rooms]);
+            }
+            
+            if (!empty($statuses)) {
+                $query->andWhere(['in', 'b.status', $statuses]);
+            }
+            
+            $bookings = $query->all();
+            
+            $events = [];
+            foreach ($bookings as $booking) {
+                $departmentName = '';
+                if ($booking->user && method_exists($booking->user, 'getDepartment')) {
+                    try {
+                        $departmentName = $booking->user->department ? $booking->user->department->name_th : '';
+                    } catch (\Exception $e) {
+                        $departmentName = '';
+                    }
+                }
+                
+                $events[] = [
+                    'id' => $booking->id,
+                    'title' => $booking->meeting_title ?: 'ไม่ระบุหัวข้อ',
+                    'start' => $booking->booking_date . 'T' . $booking->start_time,
+                    'end' => $booking->booking_date . 'T' . $booking->end_time,
+                    'room_id' => $booking->room_id,
+                    'room_name' => $booking->room ? $booking->room->name_th : '',
+                    'user_name' => $booking->user ? ($booking->user->full_name ?? $booking->user->username) : '',
+                    'user_phone' => $booking->user ? ($booking->user->phone ?? '') : '',
+                    'user_email' => $booking->user ? ($booking->user->email ?? '') : '',
+                    'department' => $departmentName,
+                    'status' => $booking->status,
+                    'attendees_count' => $booking->attendees_count ?? 1,
+                    'description' => $booking->meeting_description ?? '',
+                ];
+            }
+            
+            return $events;
+        } catch (\Exception $e) {
+            Yii::error('Calendar events error: ' . $e->getMessage());
+            return [];
+        }
+    }
+    
+    /**
+     * API: Get current room status
+     *
+     * @return array
+     */
+    public function actionRoomStatus()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        $request = Yii::$app->request;
+        $data = json_decode($request->rawBody, true);
+        
+        $date = $data['date'] ?? date('Y-m-d');
+        $time = $data['time'] ?? date('H:i');
+        
+        $rooms = MeetingRoom::find()
+            ->where(['status' => MeetingRoom::STATUS_ACTIVE])
+            ->all();
+        
+        $result = [];
+        
+        foreach ($rooms as $room) {
+            // Find current booking
+            $currentBooking = Booking::find()
+                ->where(['room_id' => $room->id, 'booking_date' => $date])
+                ->andWhere(['in', 'status', [Booking::STATUS_APPROVED]])
+                ->andWhere(['<=', 'start_time', $time . ':00'])
+                ->andWhere(['>', 'end_time', $time . ':00'])
+                ->one();
+            
+            if ($currentBooking) {
+                $result[$room->id] = [
+                    'in_use' => true,
+                    'booking_title' => $currentBooking->meeting_title,
+                    'available_at' => substr($currentBooking->end_time, 0, 5) . ' น.',
+                ];
+            } else {
+                // Find next booking
+                $nextBooking = Booking::find()
+                    ->where(['room_id' => $room->id, 'booking_date' => $date])
+                    ->andWhere(['in', 'status', [Booking::STATUS_APPROVED, Booking::STATUS_PENDING]])
+                    ->andWhere(['>', 'start_time', $time . ':00'])
+                    ->orderBy(['start_time' => SORT_ASC])
+                    ->one();
+                
+                $result[$room->id] = [
+                    'in_use' => false,
+                    'next_booking' => $nextBooking ? substr($nextBooking->start_time, 0, 5) . ' น.' : null,
+                ];
+            }
+        }
+        
+        return $result;
+    }
 }
+

@@ -74,15 +74,18 @@ $this->title = 'หน้าแรก';
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card text-center h-100 border-0 shadow-sm">
-                <div class="card-body py-4">
-                    <div class="stat-icon mb-3">
-                        <i class="fas fa-calendar-check fa-2x text-info"></i>
+            <a href="<?= Url::to(['/site/calendar-overview']) ?>" class="text-decoration-none">
+                <div class="card text-center h-100 border-0 shadow-sm">
+                    <div class="card-body py-4">
+                        <div class="stat-icon mb-3">
+                            <i class="fas fa-calendar-check fa-2x text-info"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1"><?= number_format($todayBookings) ?></h3>
+                        <p class="text-muted mb-0">การจองวันนี้</p>
+                        <small class="text-primary"><i class="fas fa-eye me-1"></i>ดูปฏิทินภาพรวม</small>
                     </div>
-                    <h3 class="fw-bold mb-1"><?= number_format($todayBookings) ?></h3>
-                    <p class="text-muted mb-0">การจองวันนี้</p>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col-6 col-md-3">
             <div class="card text-center h-100 border-0 shadow-sm">
@@ -92,6 +95,25 @@ $this->title = 'หน้าแรก';
                     </div>
                     <h3 class="fw-bold mb-1">24/7</h3>
                     <p class="text-muted mb-0">พร้อมให้บริการ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Calendar Overview Quick Access -->
+<section class="calendar-quick-access mb-5">
+    <div class="card border-0 shadow-sm bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h4 class="text-white mb-2"><i class="fas fa-calendar-alt me-2"></i>ปฏิทินภาพรวมห้องประชุม</h4>
+                    <p class="text-white-50 mb-0">ดูตารางการใช้งานห้องประชุมทุกห้อง พร้อมข้อมูลติดต่อผู้จองเพื่อประสานงาน</p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="<?= Url::to(['/site/calendar-overview']) ?>" class="btn btn-light btn-lg">
+                        <i class="fas fa-external-link-alt me-2"></i>เปิดปฏิทิน
+                    </a>
                 </div>
             </div>
         </div>

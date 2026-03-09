@@ -16,6 +16,7 @@ use common\models\ResetPasswordForm;
 use common\models\ContactForm;
 use common\models\Building;
 use common\models\Holiday;
+use common\models\ForceChangePasswordForm;
 
 /**
  * Site controller - Frontend public pages
@@ -30,10 +31,10 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout', 'dashboard', 'profile'],
+                'only' => ['logout', 'dashboard', 'profile', 'force-change-password'],
                 'rules' => [
                     [
-                        'actions' => ['logout', 'dashboard', 'profile'],
+                        'actions' => ['logout', 'dashboard', 'profile', 'force-change-password'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -46,6 +47,28 @@ class SiteController extends Controller
                 ],
             ],
         ];
+    }
+    
+    /**
+     * Check if user must change password before each action
+     */
+    public function beforeAction($action)
+    {
+        if (parent::beforeAction($action)) {
+            // Skip check for these actions
+            $allowedActions = ['force-change-password', 'logout', 'login', 'signup', 'error', 'captcha'];
+            
+            if (!Yii::$app->user->isGuest && !in_array($action->id, $allowedActions)) {
+                $user = Yii::$app->user->identity;
+                if ($user && !empty($user->must_change_password)) {
+                    Yii::$app->session->setFlash('warning', 'กรุณาเปลี่ยนรหัสผ่านก่อนใช้งานระบบ');
+                    $this->redirect(['force-change-password']);
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -62,6 +85,35 @@ class SiteController extends Controller
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
+    }
+    
+    /**
+     * Force change password action
+     * Required for first-time login
+     *
+     * @return string|Response
+     */
+    public function actionForceChangePassword()
+    {
+        // If user doesn't need to change password, redirect to home
+        $user = Yii::$app->user->identity;
+        if (!$user || empty($user->must_change_password)) {
+            return $this->goHome();
+        }
+        
+        $model = new ForceChangePasswordForm();
+        
+        if ($model->load(Yii::$app->request->post()) && $model->changePassword()) {
+            Yii::$app->session->setFlash('success', 'เปลี่ยนรหัสผ่านสำเร็จ คุณสามารถใช้งานระบบได้แล้ว');
+            return $this->goHome();
+        }
+        
+        // Use auth layout (simple layout without navigation)
+        $this->layout = 'auth';
+        
+        return $this->render('force-change-password', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -148,6 +200,8 @@ class SiteController extends Controller
             ->count();
 
         // Monthly booking chart data (last 6 months)
+        $thaiMonthsShort = [1 => 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 
+                           'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
         $monthlyData = [];
         for ($i = 5; $i >= 0; $i--) {
             $month = date('Y-m', strtotime("-{$i} months"));
@@ -155,8 +209,14 @@ class SiteController extends Controller
                 ->where(['user_id' => $user->id])
                 ->andWhere(['like', 'booking_date', $month . '%', false])
                 ->count();
+            
+            // Format as Thai: ม.ค.69
+            $monthNum = (int)date('n', strtotime($month . '-01'));
+            $yearBE = (date('Y', strtotime($month . '-01')) + 543) % 100; // Last 2 digits of BE year
+            $thaiLabel = $thaiMonthsShort[$monthNum] . $yearBE;
+            
             $monthlyData[] = [
-                'month' => date('M Y', strtotime($month . '-01')),
+                'month' => $thaiLabel,
                 'count' => (int)$count,
             ];
         }
@@ -230,7 +290,7 @@ class SiteController extends Controller
             if ($model->sendEmail(Yii::$app->params['adminEmail'])) {
                 Yii::$app->session->setFlash('success', 'ขอบคุณสำหรับการติดต่อ เราจะตอบกลับโดยเร็วที่สุด');
             } else {
-                Yii::$app->session->setFlash('error', 'เกิดข้อผิดพลาดในการส่งอีเมล โปรดลองใหม่อีกครั้ง');
+                Yii::$app->session->setFlash('error', 'เกิดข้อผิดพลาดในการส่งอีเมล กรุณาลองใหม่อีกครั้ง');
             }
 
             return $this->refresh();
@@ -266,7 +326,7 @@ class SiteController extends Controller
 
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
-            Yii::$app->session->setFlash('success', 'ลงทะเบียนสำเร็จ โปรดตรวจสอบอีเมลเพื่อยืนยันบัญชี');
+            Yii::$app->session->setFlash('success', 'ลงทะเบียนสำเร็จ กรุณาตรวจสอบอีเมลเพื่อยืนยันบัญชี');
             return $this->redirect(['login']);
         }
 
@@ -287,7 +347,7 @@ class SiteController extends Controller
         $model = new PasswordResetRequestForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-                Yii::$app->session->setFlash('success', 'โปรดตรวจสอบอีเมลสำหรับคำแนะนำในการรีเซ็ตรหัสผ่าน');
+                Yii::$app->session->setFlash('success', 'กรุณาตรวจสอบอีเมลสำหรับคำแนะนำในการรีเซ็ตรหัสผ่าน');
                 return $this->redirect(['login']);
             }
 
@@ -622,7 +682,7 @@ class SiteController extends Controller
         if (!$roomId || !$date || !$startTime || !$endTime) {
             return [
                 'success' => false,
-                'message' => 'โปรดระบุข้อมูลให้ครบถ้วน',
+                'message' => 'กรุณาระบุข้อมูลให้ครบถ้วน',
             ];
         }
 

@@ -528,22 +528,20 @@ document.addEventListener('DOMContentLoaded', function() {
             end: '<?= $maxDate ?>'
         },
         
-        // Custom day header format with Buddhist year
-        dayHeaderFormat: function(date) {
+        // Custom day header with Buddhist year
+        dayHeaderContent: function(arg) {
             const thaiDays = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
-            const d = date.date;
-            const day = d.day;
-            const month = d.month + 1;
-            const year = d.year + 543;
-            const dayName = thaiDays[d.dow];
-            return `${dayName} ${day}/${month}/${year}`;
+            const date = arg.date;
+            const dayName = thaiDays[date.getDay()];
+            const day = date.getDate();
+            const month = date.getMonth() + 1;
+            const year = date.getFullYear() + 543;
+            return { html: `<div class="fc-day-header-thai">${dayName}<br><small>${day}/${month}/${year}</small></div>` };
         },
         
         // Custom day cell content for month view
         dayCellContent: function(arg) {
             const day = arg.date.getDate();
-            const month = arg.date.getMonth() + 1;
-            const year = arg.date.getFullYear() + 543;
             return { html: `<span class="fc-daygrid-day-number">${day}</span>` };
         },
         

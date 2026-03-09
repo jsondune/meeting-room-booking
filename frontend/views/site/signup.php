@@ -87,7 +87,7 @@ $this->title = 'ลงทะเบียน';
     <div class="col-md-6 mb-2">
         <?= $form->field($model, 'email')->textInput([
             'type' => 'email',
-            'placeholder' => 'example@email.com',
+            'placeholder' => 'example@pi.ac.th',
             'class' => 'form-control',
         ])->label('อีเมล <span class="text-danger">*</span>') ?>
     </div>

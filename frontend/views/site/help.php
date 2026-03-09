@@ -126,7 +126,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <div class="text-center p-3">
                                     <i class="bi bi-envelope text-primary fs-1 mb-3"></i>
                                     <h6>อีเมล</h6>
-                                    <p class="text-muted mb-0">support@pi.ac.th</p>
+                                    <p class="text-muted mb-0">digitaltechnology@pi.ac.th</p>
                                 </div>
                             </div>
                             <div class="col-md-4">

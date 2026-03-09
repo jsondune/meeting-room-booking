@@ -234,7 +234,18 @@ $orgDepartment = 'กองเทคโนโลยีดิจิทัล';
                         <div class="timeline">
                             <div class="d-flex mb-3">
                                 <div class="flex-shrink-0">
-                                    <span class="badge bg-primary rounded-pill">v1.0.1</span>
+                                    <span class="badge bg-primary rounded-pill">v1.2.0</span>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <div class="fw-bold small">มีนาคม 2569</div>
+                                    <p class="text-muted small mb-0">
+                                        -เพิ่มปฏิทินภาพรวม สำหรับผู้ใช้ที่ล็อกอิน
+                                    </p>
+                                </div>
+                            </div>                                 
+                            <div class="d-flex mb-3">
+                                <div class="flex-shrink-0">
+                                    <span class="badge bg-primary rounded-pill">v1.1.0</span>
                                 </div>
                                 <div class="flex-grow-1 ms-3">
                                     <div class="fw-bold small">กุมภาพันธ์ 2569</div>
@@ -249,7 +260,7 @@ $orgDepartment = 'กองเทคโนโลยีดิจิทัล';
                                     <span class="badge bg-primary rounded-pill">v1.0.0</span>
                                 </div>
                                 <div class="flex-grow-1 ms-3">
-                                    <div class="fw-bold small">มกราคม 2569</div>
+                                    <div class="fw-bold small">กุมภาพันธ์ 2569</div>
                                     <p class="text-muted small mb-0">
                                         เปิดใช้งานระบบเวอร์ชันแรก รองรับการจองห้องประชุม การอนุมัติ และการแจ้งเตือน
                                     </p>
@@ -260,7 +271,7 @@ $orgDepartment = 'กองเทคโนโลยีดิจิทัล';
                                     <span class="badge bg-secondary rounded-pill">v0.9.0</span>
                                 </div>
                                 <div class="flex-grow-1 ms-3">
-                                    <div class="fw-bold small">ธันวาคม 2568</div>
+                                    <div class="fw-bold small">มกราคม 2569</div>
                                     <p class="text-muted small mb-0">
                                         ทดสอบระบบ (Beta Testing) และปรับปรุงตาม Feedback ของผู้ใช้งาน
                                     </p>
@@ -271,7 +282,7 @@ $orgDepartment = 'กองเทคโนโลยีดิจิทัล';
                                     <span class="badge bg-secondary rounded-pill">v0.1.0</span>
                                 </div>
                                 <div class="flex-grow-1 ms-3">
-                                    <div class="fw-bold small">ตุลาคม 2568</div>
+                                    <div class="fw-bold small">ธันวาคม 2568</div>
                                     <p class="text-muted small mb-0">
                                         เริ่มต้นพัฒนาระบบ วิเคราะห์ความต้องการ และออกแบบ UI/UX
                                     </p>

@@ -7,16 +7,16 @@
 return [
     // Application info
     'appName' => 'ระบบจองห้องประชุม',
-    'appVersion' => '1.0.0',
+    'appVersion' => '1.2.0',
     'adminEmail' => getenv('ADMIN_EMAIL') ?: 'digitaltechnology@pi.ac.th',
     'supportEmail' => getenv('SUPPORT_EMAIL') ?: 'digitaltechnology@pi.ac.th',
     'senderEmail' => getenv('SENDER_EMAIL') ?: 'noreply@pi.ac.th',
     'senderName' => getenv('SENDER_NAME') ?: 'ระบบจองห้องประชุม',
     
     // URLs
-    'frontendUrl' => getenv('FRONTEND_URL') ?: 'http://mrb.test/frontend',
-    'backendUrl' => getenv('BACKEND_URL') ?: 'http://mrb.test/backend',
-    'apiUrl' => getenv('API_URL') ?: 'http://mrb.test:8082',
+    'frontendUrl' => getenv('FRONTEND_URL') ?: 'http://mrb.pi.ac.th',
+    'backendUrl' => getenv('BACKEND_URL') ?: 'http://be-mrb.pi.ac.th',
+    'apiUrl' => getenv('API_URL') ?: 'http://mrb.pi.ac.th:8082',
     
     // Booking settings
     'booking' => [

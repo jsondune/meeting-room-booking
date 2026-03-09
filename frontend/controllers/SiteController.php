@@ -766,8 +766,17 @@ class SiteController extends Controller
         $request = Yii::$app->request;
         $data = json_decode($request->rawBody, true) ?: [];
         
-        $start = $data['start'] ?? date('Y-m-01');
-        $end = $data['end'] ?? date('Y-m-t');
+        // Get calendar settings from params
+        $calendarParams = Yii::$app->params['calendar'] ?? [];
+        $pastDays = $calendarParams['pastDays'] ?? 30;
+        $futureDays = $calendarParams['futureDays'] ?? 180;
+        
+        // Calculate default date range
+        $defaultStart = date('Y-m-d', strtotime("-{$pastDays} days"));
+        $defaultEnd = date('Y-m-d', strtotime("+{$futureDays} days"));
+        
+        $start = $data['start'] ?? $defaultStart;
+        $end = $data['end'] ?? $defaultEnd;
         $rooms = $data['rooms'] ?? [];
         $statuses = $data['statuses'] ?? ['approved', 'pending'];
         

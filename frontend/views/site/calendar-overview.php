@@ -8,6 +8,20 @@ use common\models\Booking;
 
 $this->title = 'ภาพรวมการใช้ห้องประชุม';
 
+// Get calendar settings from params
+$calendarParams = Yii::$app->params['calendar'] ?? [];
+$pastDays = $calendarParams['pastDays'] ?? 30;
+$futureDays = $calendarParams['futureDays'] ?? 180;
+$slotMinTime = $calendarParams['slotMinTime'] ?? '07:00:00';
+$slotMaxTime = $calendarParams['slotMaxTime'] ?? '20:00:00';
+$slotDuration = $calendarParams['slotDuration'] ?? 30;
+$showWeekends = $calendarParams['showWeekends'] ?? true;
+$defaultView = $calendarParams['defaultView'] ?? 'timeGridWeek';
+
+// Calculate valid date range
+$minDate = date('Y-m-d', strtotime("-{$pastDays} days"));
+$maxDate = date('Y-m-d', strtotime("+{$futureDays} days"));
+
 // Initialize variables with defaults
 $rooms = [];
 $buildings = [];
@@ -246,7 +260,14 @@ $roomColors = [
                     <!-- Quick Jump to Date -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold">ไปยังวันที่</label>
-                        <input type="date" class="form-control" id="gotoDate" value="<?= date('Y-m-d') ?>">
+                        <input type="date" class="form-control" id="gotoDate" 
+                               value="<?= date('Y-m-d') ?>"
+                               min="<?= $minDate ?>"
+                               max="<?= $maxDate ?>">
+                        <small class="text-muted d-block mt-1">
+                            <i class="bi bi-info-circle me-1"></i>
+                            แสดงข้อมูล <?= $pastDays ?> วันย้อนหลัง - <?= $futureDays ?> วันล่วงหน้า
+                        </small>
                     </div>
 
                     <!-- Quick Actions -->
@@ -473,19 +494,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize FullCalendar
     const calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'th',
-        initialView: 'timeGridWeek',
+        initialView: '<?= $defaultView ?>',
         headerToolbar: false,
         height: 'auto',
-        slotMinTime: '07:00:00',
-        slotMaxTime: '20:00:00',
-        slotDuration: '00:30:00',
+        slotMinTime: '<?= $slotMinTime ?>',
+        slotMaxTime: '<?= $slotMaxTime ?>',
+        slotDuration: '00:<?= str_pad($slotDuration, 2, '0', STR_PAD_LEFT) ?>:00',
         allDaySlot: false,
-        weekends: true,
+        weekends: <?= $showWeekends ? 'true' : 'false' ?>,
         nowIndicator: true,
         selectable: <?= Yii::$app->user->isGuest ? 'false' : 'true' ?>,
         selectMirror: true,
         dayMaxEvents: true,
         navLinks: true,
+        
+        // Valid date range (from params: <?= $pastDays ?> days past to <?= $futureDays ?> days future)
+        validRange: {
+            start: '<?= $minDate ?>',
+            end: '<?= $maxDate ?>'
+        },
         
         // Custom title format with Buddhist year
         titleFormat: function(date) {

@@ -14,9 +14,9 @@ return [
     // ============================================================
     // Admin & Support Contact
     // ============================================================
-    'adminEmail' => 'admin@example.com',
-    'supportEmail' => 'support@example.com',
-    'senderEmail' => 'noreply@example.com',
+    'adminEmail' => 'digitaltechnology@pi.ac.th',
+    'supportEmail' => 'digitaltechnology@pi.ac.th',
+    'senderEmail' => 'noreply@pi.ac.th',
     'senderName' => 'Meeting Room Booking System',
     
     // ============================================================
@@ -24,7 +24,7 @@ return [
     // ============================================================
     'appName' => 'ระบบจองห้องประชุม',
     'appNameEn' => 'Meeting Room Booking System',
-    'appVersion' => '1.0.0',
+    'appVersion' => '1.2.0',
     'organization' => 'สถาบันพระบรมราชชนก',
     'organizationEn' => 'Praboromarajchanok Institute',
     
@@ -39,10 +39,10 @@ return [
         'futureDays' => 180,
         
         // เวลาเริ่มต้นของตารางปฏิทิน (Calendar start time)
-        'slotMinTime' => '07:00:00',
+        'slotMinTime' => '06:00:00',
         
         // เวลาสิ้นสุดของตารางปฏิทิน (Calendar end time)
-        'slotMaxTime' => '20:00:00',
+        'slotMaxTime' => '23:30:00',
         
         // ช่วงเวลาแต่ละ slot (Slot duration in minutes)
         'slotDuration' => 30,

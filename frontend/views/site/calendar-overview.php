@@ -260,10 +260,13 @@ $roomColors = [
                     <!-- Quick Jump to Date -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold">ไปยังวันที่</label>
-                        <input type="date" class="form-control" id="gotoDate" 
-                               value="<?= date('Y-m-d') ?>"
-                               min="<?= $minDate ?>"
-                               max="<?= $maxDate ?>">
+                        <div class="position-relative">
+                            <input type="text" class="form-control" id="gotoDateDisplay" 
+                                   readonly placeholder="เลือกวันที่" 
+                                   style="background-color: #fff; cursor: pointer;">
+                            <input type="hidden" id="gotoDate" value="<?= date('Y-m-d') ?>">
+                            <i class="bi bi-calendar3 position-absolute" style="right: 12px; top: 50%; transform: translateY(-50%); color: #6c757d; pointer-events: none;"></i>
+                        </div>
                         <small class="text-muted d-block mt-1">
                             <i class="bi bi-info-circle me-1"></i>
                             แสดงข้อมูล <?= $pastDays ?> วันย้อนหลัง - <?= $futureDays ?> วันล่วงหน้า
@@ -290,13 +293,24 @@ $roomColors = [
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-calendar3 me-2"></i>ปฏิทินห้องประชุม</h5>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-outline-secondary" id="btnPrev">
-                            <i class="bi bi-chevron-left"></i>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" id="btnNext">
-                            <i class="bi bi-chevron-right"></i>
-                        </button>
+                    <div class="d-flex align-items-center gap-2">
+                        <span id="calendarMonthTitle" class="fw-semibold text-primary" style="min-width: 150px; text-align: center;">
+                            <?php
+                            $thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 
+                                          'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+                            $currentMonth = $thaiMonths[date('n') - 1];
+                            $currentYear = date('Y') + 543;
+                            echo "{$currentMonth} พ.ศ. {$currentYear}";
+                            ?>
+                        </span>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="btnPrev">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="btnNext">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -514,6 +528,25 @@ document.addEventListener('DOMContentLoaded', function() {
             end: '<?= $maxDate ?>'
         },
         
+        // Custom day header format with Buddhist year
+        dayHeaderFormat: function(date) {
+            const thaiDays = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
+            const d = date.date;
+            const day = d.day;
+            const month = d.month + 1;
+            const year = d.year + 543;
+            const dayName = thaiDays[d.dow];
+            return `${dayName} ${day}/${month}/${year}`;
+        },
+        
+        // Custom day cell content for month view
+        dayCellContent: function(arg) {
+            const day = arg.date.getDate();
+            const month = arg.date.getMonth() + 1;
+            const year = arg.date.getFullYear() + 543;
+            return { html: `<span class="fc-daygrid-day-number">${day}</span>` };
+        },
+        
         // Custom title format with Buddhist year
         titleFormat: function(date) {
             const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 
@@ -615,9 +648,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const month = thaiMonths[start.getMonth()];
         const year = start.getFullYear() + 543;
         
+        // Update FullCalendar title (if exists)
         const titleEl = document.querySelector('.fc-toolbar-title');
         if (titleEl) {
-            titleEl.textContent = `${month} ${year}`;
+            titleEl.textContent = `${month} พ.ศ. ${year}`;
+        }
+        
+        // Also update our custom header
+        const customTitleEl = document.getElementById('calendarMonthTitle');
+        if (customTitleEl) {
+            customTitleEl.textContent = `${month} พ.ศ. ${year}`;
         }
     }
     
@@ -626,12 +666,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const props = event.extendedProps;
         const startTime = event.start.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
         const endTime = event.end.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-        const dateStr = event.start.toLocaleDateString('th-TH', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        });
+        
+        // Format date with Buddhist year
+        const thaiDays = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+        const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 
+                           'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+        const d = event.start;
+        const dayName = thaiDays[d.getDay()];
+        const day = d.getDate();
+        const month = thaiMonths[d.getMonth()];
+        const year = d.getFullYear() + 543;
+        const dateStr = `วัน${dayName}ที่ ${day} ${month} พ.ศ. ${year}`;
         
         const statusBadge = {
             'approved': '<span class="badge bg-success">อนุมัติแล้ว</span>',
@@ -791,19 +836,192 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Select all rooms
-    document.getElementById('selectAllRooms').addEventListener('click', function(e) {
-        e.preventDefault();
-        const allChecked = document.querySelectorAll('.room-checkbox:checked').length === 
-                          document.querySelectorAll('.room-checkbox').length;
-        document.querySelectorAll('.room-checkbox').forEach(cb => cb.checked = !allChecked);
-        this.textContent = allChecked ? 'เลือกทั้งหมด' : 'ยกเลิกทั้งหมด';
-        calendar.refetchEvents();
-    });
+    const selectAllBtn = document.getElementById('selectAllRooms');
+    if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const allChecked = document.querySelectorAll('.room-checkbox:checked').length === 
+                              document.querySelectorAll('.room-checkbox').length;
+            document.querySelectorAll('.room-checkbox').forEach(cb => cb.checked = !allChecked);
+            this.textContent = allChecked ? 'เลือกทั้งหมด' : 'ยกเลิกทั้งหมด';
+            calendar.refetchEvents();
+        });
+    }
     
-    // Go to date
-    document.getElementById('gotoDate').addEventListener('change', function() {
-        calendar.gotoDate(this.value);
-    });
+    // Thai Date Picker for Go to Date
+    (function initThaiDatePicker() {
+        const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 
+                           'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+        const thaiMonthsShort = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 
+                                 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+        
+        const displayInput = document.getElementById('gotoDateDisplay');
+        const hiddenInput = document.getElementById('gotoDate');
+        
+        if (!displayInput || !hiddenInput) return;
+        
+        // Date range limits from PHP
+        const minDate = new Date('<?= $minDate ?>');
+        const maxDate = new Date('<?= $maxDate ?>');
+        
+        let selectedDate = hiddenInput.value ? new Date(hiddenInput.value) : new Date();
+        let viewDate = new Date(selectedDate);
+        
+        function formatThaiDate(date) {
+            const day = date.getDate();
+            const month = thaiMonthsShort[date.getMonth()];
+            const year = date.getFullYear() + 543;
+            return `${day} ${month} ${year}`;
+        }
+        
+        function updateDisplay() {
+            displayInput.value = formatThaiDate(selectedDate);
+            hiddenInput.value = selectedDate.toISOString().split('T')[0];
+        }
+        
+        // Create picker container
+        const pickerContainer = document.createElement('div');
+        pickerContainer.className = 'thai-datepicker-goto';
+        pickerContainer.style.cssText = `
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1060;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            padding: 1rem;
+            min-width: 280px;
+            display: none;
+        `;
+        displayInput.parentElement.appendChild(pickerContainer);
+        
+        function renderCalendar() {
+            const year = viewDate.getFullYear();
+            const month = viewDate.getMonth();
+            const thaiYear = year + 543;
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            let html = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="gotoPickerPrevMonth">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <span style="font-weight: 600;">${thaiMonths[month]} ${thaiYear}</span>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="gotoPickerNextMonth">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center;">
+                    <div style="font-size: 0.75rem; color: #dc3545; padding: 0.25rem;">อา</div>
+                    <div style="font-size: 0.75rem; color: #6c757d; padding: 0.25rem;">จ</div>
+                    <div style="font-size: 0.75rem; color: #6c757d; padding: 0.25rem;">อ</div>
+                    <div style="font-size: 0.75rem; color: #6c757d; padding: 0.25rem;">พ</div>
+                    <div style="font-size: 0.75rem; color: #6c757d; padding: 0.25rem;">พฤ</div>
+                    <div style="font-size: 0.75rem; color: #6c757d; padding: 0.25rem;">ศ</div>
+                    <div style="font-size: 0.75rem; color: #dc3545; padding: 0.25rem;">ส</div>
+            `;
+            
+            // Empty cells
+            for (let i = 0; i < firstDay; i++) {
+                html += `<div style="padding: 0.5rem;"></div>`;
+            }
+            
+            // Days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const dateStr = date.toISOString().split('T')[0];
+                const isSelected = date.toDateString() === selectedDate.toDateString();
+                const isToday = date.toDateString() === new Date().toDateString();
+                const isOutOfRange = date < minDate || date > maxDate;
+                const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+                
+                let style = 'padding: 0.5rem; border-radius: 0.25rem; cursor: pointer;';
+                if (isSelected) {
+                    style += ' background-color: rgb(13, 110, 253); color: white;';
+                } else if (isToday) {
+                    style += ' background-color: #e7f1ff; border: 1px solid rgb(13, 110, 253);';
+                } else if (isOutOfRange) {
+                    style += ' color: #dee2e6; cursor: not-allowed;';
+                } else if (isWeekend) {
+                    style += ' color: #dc3545;';
+                }
+                
+                if (isOutOfRange) {
+                    html += `<div style="${style}">${day}</div>`;
+                } else {
+                    html += `<div class="goto-date-selectable" data-date="${dateStr}" style="${style}">${day}</div>`;
+                }
+            }
+            
+            html += '</div>';
+            pickerContainer.innerHTML = html;
+            
+            // Event listeners
+            pickerContainer.querySelector('#gotoPickerPrevMonth')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                viewDate.setMonth(viewDate.getMonth() - 1);
+                renderCalendar();
+            });
+            
+            pickerContainer.querySelector('#gotoPickerNextMonth')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                viewDate.setMonth(viewDate.getMonth() + 1);
+                renderCalendar();
+            });
+            
+            pickerContainer.querySelectorAll('.goto-date-selectable').forEach(el => {
+                el.addEventListener('click', function() {
+                    const dateStr = this.dataset.date;
+                    selectedDate = new Date(dateStr);
+                    updateDisplay();
+                    pickerContainer.style.display = 'none';
+                    calendar.gotoDate(selectedDate);
+                });
+                
+                el.addEventListener('mouseenter', function() {
+                    if (!this.style.backgroundColor.includes('13, 110, 253')) {
+                        this.style.backgroundColor = '#e9ecef';
+                    }
+                });
+                
+                el.addEventListener('mouseleave', function() {
+                    if (!this.style.backgroundColor.includes('13, 110, 253')) {
+                        this.style.backgroundColor = '';
+                    }
+                });
+            });
+        }
+        
+        // Toggle picker
+        displayInput.addEventListener('click', function(e) {
+            e.stopPropagation();
+            viewDate = new Date(selectedDate);
+            renderCalendar();
+            pickerContainer.style.display = pickerContainer.style.display === 'none' ? 'block' : 'none';
+        });
+        
+        // Close on outside click
+        document.addEventListener('click', function(e) {
+            if (!pickerContainer.contains(e.target) && e.target !== displayInput) {
+                pickerContainer.style.display = 'none';
+            }
+        });
+        
+        // Initial display
+        updateDisplay();
+        
+        // Expose function to update from outside
+        window.updateGotoDatePicker = function(date) {
+            selectedDate = date;
+            updateDisplay();
+        };
+    })();
     
     // Navigation buttons
     document.getElementById('btnPrev').addEventListener('click', function() {
@@ -816,7 +1034,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.getElementById('btnToday').addEventListener('click', function() {
         calendar.today();
-        document.getElementById('gotoDate').value = new Date().toISOString().split('T')[0];
+        if (window.updateGotoDatePicker) {
+            window.updateGotoDatePicker(new Date());
+        }
     });
     
     // Update current time
